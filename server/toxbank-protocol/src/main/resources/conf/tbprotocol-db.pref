@@ -1,0 +1,27 @@
+#MySQL Database config
+Host=${ambit.db.host}
+Scheme=jdbc\:mysql
+Port=3306
+Database=${toxbank.db}
+User=${toxbank.db.user}
+Password=${toxbank.db.user.password}
+#Only for running tests, the web application does not use it
+database.user.root.password=${toxbank.db.user.root.password}
+database.user.test.password=${toxbank.db.user.test.password}
+#MySQL test db, user and pass
+database.test=toxbank-test
+database.test.port=3306
+database.user.test=${toxbank.db.user.test}
+# REST services config
+#Allow to create the database via curl -X POST /admin/database -d "user=root" -d "pass=thepass" -d "dbname=thedbname"
+#The database will be created only if it does not exist. 
+#The database name should be the same as set by the Database property in this file
+database.create=${toxbank.db.create.allow}
+#How to serialize RDF/XML - by Jena (standard, prettier, slower) or StAX (faster)
+rdf.writer=${rdf.writer}
+#URI of the ontology service , e.g. http://localhost:8080/ontology
+service.ontology=${service.ontology}
+license.intextfiles=${license.intextfiles}
+#Protect /admin resources via OpenTox AA
+aa.admin=${aa.admin}
+MAXRECORDS=0

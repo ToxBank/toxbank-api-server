@@ -1,0 +1,24 @@
+#MySQL Database config
+#This is copied from ambit rest services and may not be entirely releant
+Host=${ambit.db.host}
+Scheme=jdbc\:mysql
+Port=3306
+Database=${ambit.db}
+User=${ambit.db.user.test}
+Password=${ambit.db.user.test.password}
+#Only for running tests, the web application does not use it
+database.user.root.password=${ambit.db.user.root.password}
+database.user.test.password=${ambit.db.user.test.password}
+#MySQL test db, user and pass
+database.test=tb-test
+database.test.port=3306
+database.user.test=${ambit.db.user.test}
+#AMBIT REST services config
+#Allow to create the database via curl -X POST /admin/database -d "user=root" -d "pass=thepass" -d "dbname=thedbname"
+#The database will be created only if it does not exist. 
+#The database name should be the same as set by the Database property in this file
+database.create=${ambit.db.create.allow}
+#How to serialize RDF/XML - by Jena (standard, prettier, slower) or StAX (faster)
+rdf.writer=${rdf.writer}
+#URI of the ontology service , e.g. http://localhost:8080/ontology
+service.ontology=${service.ontology}

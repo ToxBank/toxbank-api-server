@@ -1,0 +1,5 @@
+Package: org.toxbank.demo
+Main-Class: org.toxbank.demo.TBApplication
+Manifest-version: ${project.version}
+Package-Version: ${project.version}
+Package-Vendor: Ideaconsult Ltd.

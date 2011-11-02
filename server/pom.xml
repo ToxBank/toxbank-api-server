@@ -1,0 +1,349 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.toxbank</groupId>
+  <artifactId>toxbank-rest</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>REST-Toxbank</name>
+  <description>proof of concept</description>
+    <url>https://github.com/vedina/toxbank-rest</url>
+
+
+  <properties>
+  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  	<junit.version>4.8.1</junit.version>
+	<restlet.version>2.0-M6</restlet.version>
+	<modbcum.version>0.0.1-SNAPSHOT</modbcum.version>
+	<restnet.version>0.0.1-SNAPSHOT</restnet.version>
+  </properties>
+ <issueManagement>
+ <!-- 
+  	<system>GitHub</system>
+  	<url>https://github.com/vedina/toxbank/issues</url>
+  	 -->
+  </issueManagement>
+  <scm>
+  <!-- 
+  	<connection>scm:git:https://vedina@github.com/vedina/RESTNet.git</connection>
+  	<developerConnection>scm:git:git@github.com:vedina/RESTNet.git</developerConnection>
+  	<url>scm:git:git://github.com/vedina/RESTNet.git</url>
+  	 -->
+  </scm>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+  <dependency>
+  <groupId>net.ideaconsult.restnet</groupId>
+  <artifactId>restnet-i</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+   </dependency>
+  <dependency>
+  <groupId>net.ideaconsult.restnet</groupId>
+  <artifactId>restnet-c</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+   </dependency>   
+     <dependency>
+  <groupId>net.ideaconsult.restnet</groupId>
+  <artifactId>restnet-a</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+   </dependency>
+  <dependency>
+  <groupId>net.ideaconsult.restnet</groupId>
+  <artifactId>restnet-rdf</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+   </dependency>   
+  	<dependency>
+    	<groupId>org.restlet.jee</groupId>
+    	<artifactId>org.restlet.ext.servlet</artifactId>
+    	<version>${restlet.version}</version>
+    </dependency>
+  	 <dependency>
+  		<groupId>javax.servlet</groupId>
+  		<artifactId>servlet-api</artifactId>
+  		<version>2.5</version>
+  		<scope>provided</scope>
+  	</dependency>   
+  </dependencies>
+  <repositories>
+  	 <repository>
+        <id>ambit-plovdiv</id>
+        <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/thirdparty</url>
+        <snapshots>
+  			<enabled>false</enabled>
+  		</snapshots>
+    </repository>
+  	 <repository>
+        <id>ambit-plovdiv-releases</id>
+        <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/releases</url>
+        <snapshots>
+  			<enabled>false</enabled>
+  		</snapshots>
+    </repository>
+       <repository>
+        <id>ambit-plovdiv-snapshots</id>
+        <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/snapshots</url>
+        <releases>
+        	<enabled>false</enabled>
+        </releases>
+        <snapshots>
+                        <enabled>true</enabled>
+                </snapshots>
+    </repository>
+  	<repository>
+  		<id>mvnrepository</id>
+  		<name>mvnrepository</name>
+  		<url>http://mvnrepository.com/</url>
+  		<snapshots>
+  			<enabled>false</enabled>
+  		</snapshots>
+  	</repository>
+
+
+  </repositories>  
+
+    <build>
+    
+	<resources>
+		<resource>
+			<directory>src/main/resources</directory>
+			<filtering>true</filtering>
+		</resource>
+	</resources>	
+  	<pluginManagement>
+  		<plugins>
+  			<plugin>
+  				<groupId>org.apache.maven.plugins</groupId>
+  				<artifactId>maven-compiler-plugin</artifactId>
+  				<version>2.3.1</version>
+		        <configuration>
+		          <source>1.6</source>
+		          <target>1.6</target>
+		       </configuration>  				
+  			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+				<skip>true</skip>
+				<disableXmlReport>true</disableXmlReport>
+        		<argLine>-Xmx1024m</argLine>
+				</configuration>
+			</plugin>
+		</plugins>
+	</pluginManagement>	
+  </build>
+     <modules>
+  	<module>toxbank-war</module>
+  	<module>toxbank-resource</module>
+  	<module>toxbank-protocol</module>
+  	<module>toxbank-interface</module>
+     </modules>
+ 
+   <distributionManagement>
+
+    <snapshotRepository>
+  		<id>ambit-plovdiv-snapshots</id>
+  		<url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/snapshots</url>
+	 </snapshotRepository>
+	<repository>
+        <id>ambit-plovdiv-releases</id>
+        <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/releases</url>
+    </repository>
+<!-- 
+    <site>
+      <id>website_ambit</id>
+      <url>scp://shell.sourceforge.net/home/groups/a/am/ambit/htdocs/AMBIT2-LIBS</url>
+    </site>
+ 	 -->
+  </distributionManagement>
+
+   <inceptionYear>2005</inceptionYear>
+   <licenses>
+  <license>
+    <name>LGPL3</name>
+    <url>http://www.gnu.org/licenses/lgpl.html</url>
+    <distribution>repo</distribution>
+    <comments>LGPL 3</comments>
+  </license>
+</licenses>
+<reporting>
+    <plugins>
+<!-- 
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jxr-maven-plugin</artifactId>
+      </plugin>
+-->      
+      <!-- 
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+     <plugin>
+        <artifactId>maven-clover-plugin</artifactId>
+      </plugin>      
+	-->             
+          <plugin>
+          <!-- UML class diagrams  -->
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+			<version>2.7</version>            
+             <!-- <docletPath>/path/to/UmlGraph.jar</docletPath> -->
+	        <configuration>
+	          <source>1.5</source>
+	          <aggregate>false</aggregate>
+	          <doclet>gr.spinellis.umlgraph.doclet.UmlGraphDoc</doclet>
+	          <docletArtifact>
+	            <groupId>gr.spinellis</groupId>
+	            <artifactId>UmlGraph</artifactId>
+	            <version>4.6</version>
+	          </docletArtifact>
+	          <additionalparam>
+	          <!--  http://www.umlgraph.org/doc/cd-opt.html 
+	          	-attributes
+	          	-views
+	          	-types 
+	            -inferrel -inferdep -quiet -hide java.*
+	            -collpackages java.util.* -qualify
+	            -postfixpackage 
+	            --> 
+	            -all
+	          </additionalparam>
+	    
+	        </configuration>
+          
+         </plugin>
+         <!-- 
+		<plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-project-info-reports-plugin</artifactId>
+ 			<version>2.1</version> 		    
+		    <configuration>
+		      <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+		    </configuration>
+		  </plugin>
+		   -->          
+         <!-- 
+          <plugin>
+          	<groupId>org.apache.maven.plugins</groupId>
+          	<artifactId>maven-pmd-plugin</artifactId>
+          	<version>2.4</version>
+			<configuration>
+				<linkXref>false</linkXref>
+				<sourceEncoding>utf-8</sourceEncoding>
+				<minimumTokens>100</minimumTokens>
+				<targetJdk>
+					1.5
+				</targetJdk>
+				<excludes>
+					<exclude>*/generated/.java</exclude>
+				</excludes>
+			</configuration>          	
+          </plugin>
+           -->
+           
+          <!-- 
+          <plugin>
+          	<groupId>org.codehaus.mojo</groupId>
+          	<artifactId>taglist-maven-plugin</artifactId>
+			<configuration>
+				<tags>
+					<tag>TODO</tag>
+					<tag>@todo</tag>
+					<tag>FIXME</tag>
+					<tag>XXX</tag>
+				</tags>
+			</configuration>          	
+          </plugin>
+          -->
+          <plugin>
+          	<groupId>org.codehaus.mojo</groupId>
+          	<artifactId>jdepend-maven-plugin</artifactId>
+          	<version>2.0-beta-2</version>
+          </plugin>
+          <!-- 
+          <plugin>
+          	<groupId>org.codehaus.mojo</groupId>
+          	<artifactId>cobertura-maven-plugin</artifactId>
+          </plugin>
+           -->
+          <!-- Develop our own rules or follow foreign ones ...
+          <plugin>
+          	<groupId>org.apache.maven.plugins</groupId>
+          	<artifactId>maven-checkstyle-plugin</artifactId>
+          	<configuration>
+				<configLocation>config/maven_checks.xml</configLocation>
+			</configuration>
+          </plugin>
+           -->
+         <!-- needs svn executable  
+ 	  <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changelog-plugin</artifactId>
+      </plugin>
+ 	
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+
+          <aggregate>true</aggregate>
+        </configuration>
+      </plugin>
+ 	  -->
+    </plugins>
+
+    
+  </reporting>
+<profiles>
+	<profile>
+		<id>development</id>
+		<build>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+					<debug>true</debug>
+					<optimize>false</optimize>
+					</configuration>
+				</plugin>
+			</plugins>
+		</build>
+	</profile>
+	<profile>
+		<id>production</id>
+		<build>
+			<plugins>
+				<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+				<debug>false</debug>
+				<optimize>true</optimize>
+				</configuration>
+				</plugin>
+			</plugins>
+		</build>
+	</profile>
+	<profile>
+		<id>toxbank</id>
+		<activation>
+		<activeByDefault>true</activeByDefault>
+		</activation>
+		<properties>
+			<toxbank.db>tb</toxbank.db>
+			<toxbank.db.user>guest</toxbank.db.user>
+			<toxbank.db.user.password>guest</toxbank.db.user.password>
+			<toxbank.db.user.test>guest</toxbank.db.user.test>
+			<rdf.writer>jena</rdf.writer>
+			<tb.aa.admin>false</tb.aa.admin>
+			<service.ontology>none-so-far</service.ontology>
+		</properties>
+	</profile>
+</profiles>
+
+</project>
