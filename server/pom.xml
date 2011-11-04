@@ -69,6 +69,14 @@
   	</dependency>   
   </dependencies>
   <repositories>
+      <repository>
+			<id>maven-restlet</id>
+			<name>Public online Restlet repository</name>
+			<url>http://maven.restlet.org</url>
+	  		<snapshots>
+  			<enabled>false</enabled>
+  			</snapshots>
+		</repository>
   	 <repository>
         <id>ambit-plovdiv</id>
         <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/thirdparty</url>
