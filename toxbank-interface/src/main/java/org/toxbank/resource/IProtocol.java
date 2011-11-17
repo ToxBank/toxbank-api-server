@@ -36,8 +36,8 @@ public interface IProtocol extends Serializable {
 	public void setIdentifier(String identifier);
 	public String getAnAbstract();
 	public void setAnAbstract(String anAbstract);
-	public Iterator<IAuthor> getAuthors() ;
-	public void setAuthors(Iterator<IAuthor> authors) ;
+	public IAuthor getAuthor() ;
+	public void setAuthor(IAuthor author) ;
 	public Iterator<String> getKeywords();
 	public void setKeywords(Iterator<String> keywords);
 	public IOrganisation getOwner() ;

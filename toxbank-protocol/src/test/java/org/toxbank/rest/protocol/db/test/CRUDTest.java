@@ -27,7 +27,7 @@
  * 
  */
 
-package org.toxbank.rest.protocol.db.update;
+package org.toxbank.rest.protocol.db.test;
 
 import junit.framework.Assert;
 import net.idea.modbcum.i.query.IQueryUpdate;
@@ -37,10 +37,17 @@ import org.dbunit.database.IDatabaseConnection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
+/**
+ * C-UD test
+ * @author nina
+ *
+ * @param <G>
+ * @param <T>
+ */
 public abstract class CRUDTest<G,T> extends DbUnitTest {
 	protected UpdateExecutor<IQueryUpdate<G,T>> executor;
-	protected String dbFile = "src/test/resources/ambit2/db/processors/test/descriptors-datasets.xml";	
+
+	protected String dbFile = "src/test/resources/org/toxbank/protocol/tb.xml";	
 	
 	@Override
 	@Before
@@ -102,6 +109,7 @@ public abstract class CRUDTest<G,T> extends DbUnitTest {
 		deleteVerify(query);
 		c.close();
 	}
+
 
 	protected abstract IQueryUpdate<G,T> createQuery() throws Exception;
 	protected abstract IQueryUpdate<G,T> createQueryNew() throws Exception;

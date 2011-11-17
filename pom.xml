@@ -23,11 +23,11 @@
   	 -->
   </issueManagement>
   <scm>
-  <!-- 
-  	<connection>scm:git:https://vedina@github.com/vedina/RESTNet.git</connection>
-  	<developerConnection>scm:git:git@github.com:vedina/RESTNet.git</developerConnection>
-  	<url>scm:git:git://github.com/vedina/RESTNet.git</url>
-  	 -->
+ 
+  	<connection>scm:git://github.com/ToxBank/toxbank-api-server.git</connection>
+  	<developerConnection>scm:git:git@github.com:ToxBank/toxbank-api-server.git</developerConnection>
+  	<url>https://github.com/ToxBank/toxbank-api-server</url>
+  	
   </scm>
   <dependencies>
     <dependency>
@@ -39,22 +39,22 @@
   <dependency>
   <groupId>net.ideaconsult.restnet</groupId>
   <artifactId>restnet-i</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${restnet.version}</version>
    </dependency>
   <dependency>
   <groupId>net.ideaconsult.restnet</groupId>
   <artifactId>restnet-c</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${restnet.version}</version>
    </dependency>   
      <dependency>
   <groupId>net.ideaconsult.restnet</groupId>
   <artifactId>restnet-a</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${restnet.version}</version>
    </dependency>
   <dependency>
   <groupId>net.ideaconsult.restnet</groupId>
   <artifactId>restnet-rdf</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${restnet.version}</version>
    </dependency>   
   	<dependency>
     	<groupId>org.restlet.jee</groupId>
@@ -318,6 +318,7 @@
 			</plugins>
 		</build>
 	</profile>
+	
 	<profile>
 		<id>production</id>
 		<build>
@@ -339,13 +340,37 @@
 		<activeByDefault>true</activeByDefault>
 		</activation>
 		<properties>
+		<!-- After deployment, these settings could be found (and modified) in {servlet-container}/webapps/{this-app}/WEB-INF/conf/tbprotocol-db.pref -->
+		<!-- The host where MySQL is running -->
+			<toxbank.db.host>localhost</toxbank.db.host>
+		<!-- The database name -->	
 			<toxbank.db>tb</toxbank.db>
+		<!-- The user name -->	
 			<toxbank.db.user>guest</toxbank.db.user>
 			<toxbank.db.user.password>guest</toxbank.db.user.password>
-			<toxbank.db.user.test>guest</toxbank.db.user.test>
+		<!-- How to serialize RDF - by Jena or StAX  jena|stax -->
 			<rdf.writer>jena</rdf.writer>
+			<!-- Protect /admin resource by AA -->
 			<tb.aa.admin>false</tb.aa.admin>
+			<!-- Not used in TB so far -->
 			<service.ontology>none-so-far</service.ontology>
+			<!-- Not used in TB so far -->
+			<license.intextfiles>false</license.intextfiles>
+			<!-- Not used in TB so far -->
+			<aa.admin>false</aa.admin>
+			<!-- Not used in TB so far -->
+			<toxbank.db.create.allow>false</toxbank.db.create.allow>						
+		<!-- Used in surefire tests only-->
+			<!-- Database for tests -->
+			<toxbank.db.test>tb-test</toxbank.db.test>
+			<!-- DB user for tests -->
+			<toxbank.db.user.test>guest</toxbank.db.user.test>
+			<!-- DB password for tests -->
+			<toxbank.db.user.password.test>guest</toxbank.db.user.password.test>
+			<!-- used to create the DB in tests - not necessary, if the test DB exists 
+			<toxbank.db.user.root.password></toxbank.db.user.root.password>
+			-->
+	
 		</properties>
 	</profile>
 </profiles>

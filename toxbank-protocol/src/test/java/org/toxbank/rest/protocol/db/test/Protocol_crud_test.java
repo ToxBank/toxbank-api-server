@@ -27,25 +27,38 @@
  * 
  */
 
-package org.toxbank.rest.protocol.db.update.test;
+package org.toxbank.rest.protocol.db.test;
 
 import junit.framework.Assert;
 import net.idea.modbcum.i.query.IQueryUpdate;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
+import org.toxbank.resource.IAuthor;
+import org.toxbank.resource.IProject;
 import org.toxbank.resource.IProtocol;
 import org.toxbank.rest.protocol.Protocol;
 import org.toxbank.rest.protocol.db.CreateProtocol;
 import org.toxbank.rest.protocol.db.DeleteProtocol;
 import org.toxbank.rest.protocol.db.UpdateProtocol;
-import org.toxbank.rest.protocol.db.update.CRUDTest;
 
 public final class Protocol_crud_test  extends CRUDTest<Object,IProtocol>  {
+
 
 	@Override
 	protected IQueryUpdate<Object,IProtocol> createQuery() throws Exception {
 		IProtocol ref = new Protocol();
+		ref.setIdentifier("identifier");
+		ref.setTitle("title");
+		ref.setAnAbstract("abstract");
+		ref.setAuthor(new IAuthor() {
+			public String toString() { return "author";}
+		});
+		ref.setProject(new IProject() {
+			public String toString() { return "project";}
+		});		
+		ref.setSummarySearchable(true);
+		ref.setFileName("file");
 		return new CreateProtocol(ref);
 	}
 
@@ -53,16 +66,17 @@ public final class Protocol_crud_test  extends CRUDTest<Object,IProtocol>  {
 	protected void createVerify(IQueryUpdate<Object,IProtocol> query)
 			throws Exception {
         IDatabaseConnection c = getConnection();	
-		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM catalog_references where title='newtitle' and url='newurl'");
+		ITable table = 	c.createQueryTable("EXPECTED",
+				String.format("SELECT idprotocol,summarySearchable FROM protocol where identifier='identifier' and title='title' and abstract='abstract' and author='author' and project='project' and filename='file'"));
 		
-		//Assert.assertEquals(1,table.getRowCount());
-		//Assert.assertEquals(_type.Model.toString(),table.getValue(0,"type"));
+		Assert.assertEquals(1,table.getRowCount());
+		Assert.assertEquals(Boolean.TRUE,table.getValue(0,"summarySearchable"));
 		c.close();
 	}
 
 	@Override
 	protected IQueryUpdate<Object,IProtocol> deleteQuery() throws Exception {
-		IProtocol ref = new Protocol();
+		IProtocol ref = new Protocol(2);
 		return new DeleteProtocol(ref);
 	}
 
@@ -70,15 +84,20 @@ public final class Protocol_crud_test  extends CRUDTest<Object,IProtocol>  {
 	protected void deleteVerify(IQueryUpdate<Object,IProtocol> query)
 			throws Exception {
         IDatabaseConnection c = getConnection();	
-		ITable table = 	c.createQueryTable("EXPECTED_USER","SELECT * FROM catalog_references where title='IUPAC name'");
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT idprotocol FROM protocol where idprotocol=2");
 		Assert.assertEquals(0,table.getRowCount());
 		c.close();
 		
 	}
 
 	@Override
+	public void testUpdate() throws Exception {
+		//TODO Not iplemented
+	}
+	@Override
 	protected IQueryUpdate<Object,IProtocol> updateQuery() throws Exception {
 		IProtocol ref = new Protocol();
+		ref.setAnAbstract("NEW");
 		ref.setID(2);
 
 		return new UpdateProtocol(ref);
@@ -88,11 +107,10 @@ public final class Protocol_crud_test  extends CRUDTest<Object,IProtocol>  {
 	protected void updateVerify(IQueryUpdate<Object,IProtocol> query)
 			throws Exception {
         IDatabaseConnection c = getConnection();	
-		ITable table = 	c.createQueryTable("EXPECTED_USER","SELECT * FROM catalog_references where title='IUPAC name'");
-		Assert.assertEquals(0,table.getRowCount());
-		table = 	c.createQueryTable("EXPECTED_USER","SELECT idreference,title,url,type FROM catalog_references where title='New name'");
-		//Assert.assertEquals(1,table.getRowCount());
-		//Assert.assertEquals(_type.Algorithm.toString(),table.getValue(0,"type"));
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT abstract FROM protocol where idprotocol=2");
+		Assert.assertEquals(1,table.getRowCount());
+
+		Assert.assertEquals("NEW",table.getValue(0,"abstract"));
 		
 		c.close();
 		

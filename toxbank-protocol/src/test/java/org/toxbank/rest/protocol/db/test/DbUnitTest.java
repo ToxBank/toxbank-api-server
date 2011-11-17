@@ -27,7 +27,7 @@
  * 
  */
 
-package org.toxbank.rest.protocol.db.update;
+package org.toxbank.rest.protocol.db.test;
 
 import java.io.File;
 import java.io.InputStream;
@@ -54,7 +54,7 @@ public abstract class DbUnitTest {
 		if (properties == null) {
 			properties = new Properties();
 			InputStream in = this.getClass().getClassLoader().getResourceAsStream(
-					"ambit2/db/conf/ambit2.pref");
+					"conf/tbprotocol-db.pref");
 			properties.load(in);
 			in.close();		
 		}
@@ -88,6 +88,7 @@ public abstract class DbUnitTest {
 		String p = properties.getProperty("database.user.test.password");
 		return (p==null) || ("${toxbank.db.user.test.password}".equals(p))?"guest":p;	
 	}
+	/*
 	protected String getAdminUser() {
 		return "root";
 	}
@@ -95,38 +96,26 @@ public abstract class DbUnitTest {
 		loadProperties();
 		String p = properties.getProperty("database.user.root.password");
 		return (p==null) || ("${toxbank.db.user.root.password}".equals(p))?"":p;	
-	}	
+	}
+	*/	
 	@Before
 	public void setUp() throws Exception {
-		IDatabaseConnection c = getConnection(getHost(),"mysql",getPort(),getAdminUser(),getAdminPWD());
-		
-		boolean dbExists = false;
-		Statement st = null;
-		ResultSet rs = null;
+		//IDatabaseConnection c = getConnection(getHost(),"mysql",getPort(),getAdminUser(),getAdminPWD());
+		IDatabaseConnection c = getConnection(getHost(),"mysql",getPort(),getUser(),getPWD());
+		Connection conn = c.getConnection();
+		conn.setAutoCommit(false);
 		try {
-			String sql = String.format("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '%s'",getDatabase());
-			st = c.getConnection().createStatement();
-			rs = st.executeQuery(sql);
-			while (rs.next()) {
-				dbExists = rs.getString(1).equals(getDatabase());
-			}
-		} catch (Exception x) {
-			dbExists = false;
-		} finally {
-			rs.close();
-			st.close();
-		}
-
-		if (!dbExists)
-			try {
-				
 				DbCreateDatabase db = new DbCreateDatabase();
-				db.setConnection(c.getConnection());
-				db.process(getDatabase());
-			} finally {
-				c.close();
-			}
-		
+				db.setConnection(conn);
+				if (!db.dbExists(getDatabase()))
+					db.process(getDatabase());
+				conn.commit();
+		} catch (Exception x) {
+			conn.rollback();
+			throw x;
+		} finally {
+			c.close();
+		}
 
 	}
 	protected IDatabaseConnection getConnection(String host,String db,String port,String user, String pass) throws Exception {
@@ -147,13 +136,15 @@ public abstract class DbUnitTest {
 	}
     public void setUpDatabase(String xmlfile) throws Exception {
     	//This ensures all tables as defined in the schema are cleaned up, and is a single place to modify if a schema changes
-    	initDB("src/test/resources/ambit2/db/processors/test/tables.xml",DatabaseOperation.DELETE_ALL,true);
+    	initDB("src/test/resources/org/toxbank/protocol/tables.xml",DatabaseOperation.DELETE_ALL,true);
     	//This will import only records, defined in the xmlfile
     	initDB(xmlfile,DatabaseOperation.INSERT,false);
     }
     
     private void initDB(String xmlfile,DatabaseOperation op,boolean admin ) throws Exception {
-        IDatabaseConnection connection = admin?getConnection(getHost(),getDatabase(),getPort(),getAdminUser(),getAdminPWD()):getConnection();
+        IDatabaseConnection connection = admin?getConnection(getHost(),getDatabase(),getPort(),
+        		getUser(),getPWD()):getConnection();
+        		//getAdminUser(),getAdminPWD()):getConnection();
         FlatXmlDataSetBuilder builder = new FlatXmlDataSetBuilder();
         builder.setCaseSensitiveTableNames(false);
         IDataSet dataSet = builder.build(new File(xmlfile));
