@@ -13,14 +13,14 @@
   	<dependency>
   		<groupId>org.toxbank</groupId>
   		<artifactId>toxbank-interface</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
+  		<version>${project.version}</version>
   		<type>jar</type>
   		<scope>compile</scope>
   	</dependency>
   	<dependency>
   		<groupId>org.toxbank</groupId>
   		<artifactId>toxbank-resource</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
+  		<version>${project.version}</version>
   		<type>jar</type>
   		<scope>compile</scope>
   	</dependency>

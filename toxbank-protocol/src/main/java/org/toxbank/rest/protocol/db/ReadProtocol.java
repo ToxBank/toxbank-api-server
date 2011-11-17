@@ -263,6 +263,6 @@ public class ReadProtocol  extends AbstractQuery<String, IProtocol, EQCondition,
 	}
 	@Override
 	public String toString() {
-		return getValue()==null?"All protocols":String.format("Protocol id=%d",getValue());
+		return getValue()==null?"All protocols":String.format("Protocol id=P%s",getValue().getID());
 	}
 }

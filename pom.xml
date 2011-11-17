@@ -141,6 +141,18 @@
         		<argLine>-Xmx1024m</argLine>
 				</configuration>
 			</plugin>
+			<plugin>
+			<!-- Create jars for test classes -->
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-jar-plugin</artifactId>
+			 <executions>
+			  <execution>
+			    <goals>
+			       <goal>test-jar</goal>
+			    </goals>
+			  </execution>
+			</executions>
+			</plugin>
 		</plugins>
 	</pluginManagement>	
   </build>
