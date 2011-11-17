@@ -1,5 +1,5 @@
 #MySQL Database config
-Host=${ambit.db.host}
+Host=${toxbank.db.host}
 Scheme=jdbc\:mysql
 Port=3306
 Database=${toxbank.db}
@@ -7,11 +7,11 @@ User=${toxbank.db.user}
 Password=${toxbank.db.user.password}
 #Only for running tests, the web application does not use it
 database.user.root.password=${toxbank.db.user.root.password}
-database.user.test.password=${toxbank.db.user.test.password}
 #MySQL test db, user and pass
-database.test=toxbank-test
+database.test=${toxbank.db.test}
 database.test.port=3306
 database.user.test=${toxbank.db.user.test}
+database.user.test.password=${toxbank.db.user.password.test}
 # REST services config
 #Allow to create the database via curl -X POST /admin/database -d "user=root" -d "pass=thepass" -d "dbname=thedbname"
 #The database will be created only if it does not exist. 

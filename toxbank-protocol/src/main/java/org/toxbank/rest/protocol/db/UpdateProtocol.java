@@ -29,7 +29,6 @@
 
 package org.toxbank.rest.protocol.db;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.idea.modbcum.i.exceptions.AmbitException;

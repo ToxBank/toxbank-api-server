@@ -11,6 +11,7 @@ import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.conditions.EQCondition;
 import net.idea.modbcum.q.query.AbstractQuery;
 
+import org.toxbank.resource.IProject;
 import org.toxbank.resource.IProtocol;
 import org.toxbank.rest.protocol.Protocol;
 
@@ -95,7 +96,20 @@ public class ReadProtocol  extends AbstractQuery<String, IProtocol, EQCondition,
 			}
 		},
 		author {
-	
+
+			@Override
+			public QueryParam getParam(IProtocol protocol) {
+				Object project = getValue(protocol);
+				return new QueryParam<String>(String.class, project==null?null:project.toString());
+			}
+			@Override
+			public void setParam(IProtocol protocol, ResultSet rs) throws SQLException {
+				
+			}		
+			@Override
+			public Object getValue(IProtocol protocol) {
+				return  protocol==null?null:protocol.getAuthor();
+			}			
 		},			
 		summarySearchable {
 			@Override
@@ -129,7 +143,8 @@ public class ReadProtocol  extends AbstractQuery<String, IProtocol, EQCondition,
 		project {
 			@Override
 			public QueryParam getParam(IProtocol protocol) {
-				return new QueryParam<String>(String.class, getValue(protocol).toString());
+				Object project = getValue(protocol);
+				return new QueryParam<String>(String.class, project==null?null:project.toString());
 			}
 			@Override
 			public void setParam(IProtocol protocol, ResultSet rs) throws SQLException {

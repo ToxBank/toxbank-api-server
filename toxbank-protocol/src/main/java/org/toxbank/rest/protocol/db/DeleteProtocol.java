@@ -40,7 +40,7 @@ import org.toxbank.resource.IProtocol;
 
 public class DeleteProtocol extends AbstractObjectUpdate<IProtocol> {
 
-	public static final String[] delete_sql = {"delete from protocols where id=?"};
+	public static final String[] delete_sql = {"delete from protocol where idprotocol=?"};
 
 	public DeleteProtocol(IProtocol ref) {
 		super(ref);

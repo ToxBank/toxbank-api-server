@@ -36,72 +36,149 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import net.idea.modbcum.c.DatasourceFactory;
+import net.idea.modbcum.i.LoginInfo;
 import net.idea.modbcum.i.config.Preferences;
 import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.p.AbstractDBProcessor;
+import net.idea.restnet.db.DBConnection;
 
+/**
+ * Creates tables in an existing database. If the database does not exist, or has tables, the call will fail.
+ * Note the behaviour is changed from ambit-db!
+ * @author nina
+ *
+ */
 public class DbCreateDatabase extends AbstractDBProcessor<String,String> {
 	
     /**
 	 */
 	private static final long serialVersionUID = -335737998721944578L;
 	public static final String SQLFile = "org/toxbank/rest/protocol/db/sql/tb.sql";
-	protected boolean dropifexist=false;
 	
 	public DbCreateDatabase() {
-		this(false);
-	}
-	public DbCreateDatabase(Boolean dropifexist) {
 		super();
-		this.dropifexist = dropifexist;
 	}
 	
 
 	@Override
 	public String process(String database) throws AmbitException {
 		try {
-	        createDatabase(database,dropifexist);
-	        createTables(database);
-		} catch (Exception x) {}
+			if (!dbExists(database)) 
+				throw new AmbitException(
+						String.format("Database `%s` does not exist. \nPlease create the database and grant privileges.",database));
+						
+			int tables = tablesExists(database);
+	        if (tables==0)
+	        	createTables(database);
+	        else throw new AmbitException(String.format("Empty database `%s` is expected, but it has %d tables!",database,tables));
+		} catch (AmbitException x) {
+			throw x;
+		} catch (Exception x) {
+			throw new AmbitException(x);
+		}
 		
         try {
         	Preferences.setProperty(Preferences.DATABASE, database.toString());
         	Preferences.saveProperties(getClass().getName());
-        } catch (Exception x) {}
+        } catch (Exception x) {
+        	throw new AmbitException(x);
+        }
         return database;
     }
-	
+	/*
     public void createDatabase(String newDb,boolean dropifexist) throws SQLException {
             Statement t = connection.createStatement();
             if (dropifexist)
             	t.addBatch(String.format("DROP DATABASE IF EXISTS `%s`",newDb));
             t.addBatch(String.format("CREATE SCHEMA IF NOT EXISTS `%s` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin ",newDb));
-            t.addBatch("USE `"+newDb+"`");
+            t.addBatch(String.format("USE `%s`",newDb));
             t.executeBatch();
             t.close();
     }
-    /*
-    public void createTables(String newDB) throws SQLException {
-    	 InputStream in = this.getClass().getClassLoader().getResourceAsStream(
-                 getSQLFile());
-    	try {
-	    	ScriptRunner script = new ScriptRunner(connection,false,false);
-	    	
-	    	script.runScript(new  BufferedReader(new InputStreamReader(in)));
-    	} catch (IOException x) {
-    		x.printStackTrace();
-    		throw new SQLException(x.getMessage());
-    	}
-    	finally {
-    		try {in.close(); } catch (Exception x) {x.printStackTrace();}
-    	}
-    	
-    }
     */
-    
+	public boolean dbExists(String dbname) throws Exception {
+		boolean ok = false;
+		ResultSet rs = null;
+		Statement st = null;
+		try {
+    	
+			st = connection.createStatement();
+			rs = st.executeQuery("show databases");
+			while (rs.next()) {
+				if (dbname.equals(rs.getString(1))) {
+					ok = true;
+					//break; there was smth wrong with not scrolling through all records
+				}
+			}
+			
+		} catch (Exception x) {
+			throw x;
+		} finally {
+			try {if (rs != null) rs.close();} catch (Exception x) {}
+			try {if (st != null) st.close();} catch (Exception x) {}
+		}
+		return ok;
+	}	
+	public int tablesExists(String dbname) throws Exception {
+		int tables = 0;
+		ResultSet rs = null;
+		Statement st = null;
+		try {
+			st = connection.createStatement();
+			rs = st.executeQuery(String.format("Use `%s`",dbname)); //just in case
+		} catch (Exception x) {
+			throw x;			
+		} finally {
+			try {if (rs != null) rs.close();} catch (Exception x) {}
+			try {if (st != null) st.close();} catch (Exception x) {}
+		}			
+		try {
+			st = connection.createStatement();
+			rs = st.executeQuery("show tables");
+			while (rs.next()) {
+				tables++;
+			}
+			
+		} catch (Exception x) {
+			throw x;
+		} finally {
+			try {if (rs != null) rs.close();} catch (Exception x) {}
+			try {if (st != null) st.close();} catch (Exception x) {}
+		}
+		return tables;
+	}		
+	/**
+	 * Verifies if the DB has tables, or is freshly created
+	 * @param dbname
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean dbisEmpty(String dbname) throws Exception {
+		boolean ok = false;
+		ResultSet rs = null;
+		Statement st = null;
+		try {
+    	
+			st = connection.createStatement();
+			rs = st.executeQuery(String.format("Use `%s`",dbname));
+			while (rs.next()) {
+				if (dbname.equals(rs.getString(1))) ok = true;
+			}
+			
+		} catch (Exception x) {
+			throw x;
+		} finally {
+			try {if (rs != null) rs.close();} catch (Exception x) {}
+			try {if (st != null) st.close();} catch (Exception x) {}
+		}
+		return ok;
+	}	
     public void createTables(String newDB) throws SQLException, FileNotFoundException {
         try {
         	URL url = this.getClass().getClassLoader().getResource(getSQLFile());

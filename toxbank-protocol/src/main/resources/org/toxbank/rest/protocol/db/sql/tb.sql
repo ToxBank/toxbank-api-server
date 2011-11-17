@@ -2,7 +2,7 @@
 
 -- Protocols metadata
 
-DROP TABLE IF EXISTS ``protocol`;
+DROP TABLE IF EXISTS `protocol`;
 CREATE TABLE  `protocol` (
   `idprotocol` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `identifier` varchar(45) DEFAULT NULL COMMENT 'Unique human readable ID',

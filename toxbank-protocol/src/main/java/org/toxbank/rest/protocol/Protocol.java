@@ -25,7 +25,7 @@ public class Protocol implements IProtocol {
 	protected String title;
 	protected  String identifier;
 	protected String anAbstract;
-	protected Iterator<IAuthor> authors;
+	protected IAuthor author;
 	protected Iterator<String> keywords;
 	protected IOrganisation owner;
 	protected ITemplate template;
@@ -67,11 +67,11 @@ public class Protocol implements IProtocol {
 	public void setAnAbstract(String anAbstract) {
 		this.anAbstract = anAbstract;
 	}
-	public Iterator<IAuthor> getAuthors() {
-		return authors;
+	public IAuthor getAuthor() {
+		return author;
 	}
-	public void setAuthors(Iterator<IAuthor> authors) {
-		this.authors = authors;
+	public void setAuthor(IAuthor author) {
+		this.author = author;
 	}
 	public Iterator<String> getKeywords() {
 		return keywords;
