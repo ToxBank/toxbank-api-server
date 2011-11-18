@@ -100,8 +100,7 @@ public abstract class DbUnitTest {
 	*/	
 	@Before
 	public void setUp() throws Exception {
-		//IDatabaseConnection c = getConnection(getHost(),"mysql",getPort(),getAdminUser(),getAdminPWD());
-		IDatabaseConnection c = getConnection(getHost(),"mysql",getPort(),getUser(),getPWD());
+		IDatabaseConnection c = getConnection(getHost(),getDatabase(),getPort(),getUser(),getPWD());
 		Connection conn = c.getConnection();
 		conn.setAutoCommit(false);
 		try {
