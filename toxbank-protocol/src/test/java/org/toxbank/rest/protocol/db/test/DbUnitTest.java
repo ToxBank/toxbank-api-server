@@ -106,8 +106,11 @@ public abstract class DbUnitTest {
 		try {
 				DbCreateDatabase db = new DbCreateDatabase();
 				db.setConnection(conn);
-				if (!db.dbExists(getDatabase()))
+				if (!db.dbExists(getDatabase())) {
 					db.process(getDatabase());
+				} else if (db.tablesExists(getDatabase())==0) {
+					db.process(getDatabase());
+				}
 				conn.commit();
 		} catch (Exception x) {
 			conn.rollback();
