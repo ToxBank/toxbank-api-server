@@ -33,14 +33,14 @@ import java.io.File;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Properties;
 
+import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
+import org.dbunit.ext.mysql.MySqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
 import org.toxbank.rest.protocol.db.DbCreateDatabase;
@@ -101,6 +101,8 @@ public abstract class DbUnitTest {
 	@Before
 	public void setUp() throws Exception {
 		IDatabaseConnection c = getConnection(getHost(),getDatabase(),getPort(),getUser(),getPWD());
+		DatabaseConfig config = c.getConfig();
+	    config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());		
 		Connection conn = c.getConnection();
 		conn.setAutoCommit(false);
 		try {
@@ -128,7 +130,10 @@ public abstract class DbUnitTest {
                 		host,port,db,Boolean.toString(isProfileSQL()))
                 , user,pass);
 //SET NAMES utf8	        
-	   return new DatabaseConnection(jdbcConnection);
+        IDatabaseConnection c = new DatabaseConnection(jdbcConnection);
+		DatabaseConfig config = c.getConfig();
+	    config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
+	    return c;
 	}	
 	protected boolean isProfileSQL() {
 		return false;
