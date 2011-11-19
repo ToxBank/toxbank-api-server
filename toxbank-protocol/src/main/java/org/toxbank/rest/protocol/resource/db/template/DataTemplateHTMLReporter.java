@@ -1,4 +1,4 @@
-package org.toxbank.rest.protocol.resource.db;
+package org.toxbank.rest.protocol.resource.db.template;
 
 import java.io.Writer;
 
@@ -16,24 +16,26 @@ import org.toxbank.resource.IProtocol;
 import org.toxbank.resource.ITemplate;
 import org.toxbank.rest.protocol.TBHTMLBeauty;
 import org.toxbank.rest.protocol.db.ReadProtocol;
+import org.toxbank.rest.protocol.db.ReadProtocol.fields;
+import org.toxbank.rest.protocol.resource.db.ProtocolQueryURIReporter;
 
-public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<IProtocol, IQueryRetrieval<IProtocol>> {
+public class DataTemplateHTMLReporter extends QueryHTMLReporter<IProtocol, IQueryRetrieval<IProtocol>> {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -7959033048710547839L;
 	protected boolean editable = false;
-	public ProtocolQueryHTMLReporter() {
+	public DataTemplateHTMLReporter() {
 		this(null,true,false);
 	}
-	public ProtocolQueryHTMLReporter(Request baseRef, boolean collapsed,boolean editable) {
+	public DataTemplateHTMLReporter(Request baseRef, boolean collapsed,boolean editable) {
 		super(baseRef,collapsed,null);
 		this.editable = editable;
 		
 	}
 	@Override
 	protected QueryURIReporter createURIReporter(Request request, ResourceDoc doc) {
-		return new ProtocolQueryURIReporter<IQueryRetrieval<IProtocol>>(request);
+		return new ProtocolQueryURIReporter<IQueryRetrieval<IProtocol>>(request,ITemplate.resource);
 	}
 	@Override
 	public void header(Writer w, IQueryRetrieval<IProtocol> query) {
@@ -47,7 +49,7 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<IProtocol, IQue
 
 				
 				if (editable) {
-					w.write("<h3>Create new Protocol</h3>");
+					w.write("<h3>Create new template</h3>");
 					StringBuilder curlHint = new StringBuilder();
 					curlHint.append("curl -X POST -H 'subjectid:TOKEN'");
 					for (ReadProtocol.fields field : ReadProtocol.fields.values()) {
@@ -59,7 +61,7 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<IProtocol, IQue
 						}
 						
 					}
-					
+					/*
 					output.write("<form method='POST' action=''>");
 					w.write("<table width='99%'>\n");
 					output.write(String.format("<tr><td>API call</td><td title='How to create a new protocol via ToxBank API (cURL example)'><h5>%s</h5></td></tr>",curlHint));
@@ -67,7 +69,8 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<IProtocol, IQue
 					output.write("<tr><td>Not implemented yet!</td><td><input type='submit' enabled='false' value='Create new protocol'></td></tr>");
 					w.write("</table>\n");
 					output.write("</form>");
-					output.write("<hr>");	
+					output.write("<hr>");
+					*/	
 				}
 			} else	{
 				
@@ -137,9 +140,7 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<IProtocol, IQue
 			w.write("<table bgcolor='EEEEEE' width='99%'>\n");
 			if (collapsed) {
 				output.write("<tr bgcolor='FFFFFF' >\n");	
-				for (ReadProtocol.fields field : ReadProtocol.fields.values()) {
-					output.write(String.format("<th>%s</th>",field.toString()));
-				}
+				output.write(String.format("<th>%s</th>",fields.identifier.toString()));
 				output.write(String.format("<th>%s</th>","Template"));
 				output.write("</tr>\n");
 			} else {
@@ -151,82 +152,16 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<IProtocol, IQue
 	public Object processItem(IProtocol protocol) throws AmbitException  {
 		try {
 			String uri = uriReporter.getURI(protocol);
-			if (collapsed) 
-				printTable(output, uri,protocol);
-			else printForm(output,uri,protocol,false);
+			Object value = fields.identifier.getValue(protocol);
+			output.write(String.format("<td><a href='%s'>%s</a></td>",uri,value));
+			output.write(String.format("<td><textarea>%s</textarea></td>",protocol.getTemplate()));
 
 		} catch (Exception x) {
 			
 		}
 		return null;
 	}
-	
-	protected void printForm(Writer output, String uri, IProtocol protocol, boolean editable) {
-		try {
-			
-			for (ReadProtocol.fields field : ReadProtocol.fields.values()) {
-				output.write("<tr bgcolor='FFFFFF'>\n");	
-				Object value = field.getValue(protocol);
 
-				if (editable) {
-					value = field.getHTMLField(protocol);
-				} else 
-					if (value==null) value = "";
-							
-				switch (field) {
-				case idprotocol: {
-					if (!editable)
-						output.write(String.format("<th>%s</th><td align='left'><a href='%s'>%s</a></td>\n",
-							field.toString(),
-							uri,
-							uri));		
-					break;
-				}	
-				case filename: {
-					if (editable)
-						output.write(String.format("<th>%s</th><td align='left'>%s</td>\n",
-								field.toString(),value));
-					else 
-						output.write(String.format("<th>%s</th><td align='left'><a href='%s/file'>Download</a></td>",field.toString(),uri));
-
-					break;
-				}	
-				default :
-					output.write(String.format("<th>%s</th><td align='left'>%s</td>\n",
-						field.toString(),value));
-				}
-							
-				output.write("</tr>\n");				
-			}
-			output.write("<tr bgcolor='FFFFFF'>\n");
-			output.write(String.format("<th>%s</th><td align='left'><a href='%s%s'>Data template</a></td>","Data template",uri,ITemplate.resource));
-			output.write("</tr>\n");
-			output.flush();
-		} catch (Exception x) {x.printStackTrace();} 
-	}	
-	protected void printTable(Writer output, String uri, IProtocol protocol) {
-		try {
-			output.write("<tr bgcolor='FFFFFF'>\n");			
-			for (ReadProtocol.fields field : ReadProtocol.fields.values()) {
-
-				Object value = field.getValue(protocol);
-				switch (field) {
-				case idprotocol: {
-					output.write(String.format("<td><a href='%s'>%s</a></td>",uri,uri));
-					break;
-				}	
-				case filename: {
-					output.write(String.format("<td><a href='%s/file'>Download</a></td>",uri));
-					break;
-				}					
-				default:
-					output.write(String.format("<td>%s</td>",value==null?"":value.toString().length()>40?value.toString().substring(0,40):value.toString()));
-				}
-			}
-		//	output.write(String.format("<td><a href='%s%s'>Data template</a></td>",uri));
-			output.write("</tr>\n");
-		} catch (Exception x) {} 
-	}
 	@Override
 	public void footer(Writer output, IQueryRetrieval<IProtocol> query) {
 		try {

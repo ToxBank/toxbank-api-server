@@ -56,7 +56,7 @@ public class DataTemplateResource extends QueryResource<ReadDataTemplate,IProtoc
 			
 		} else if (variant.getMediaType().equals(MediaType.TEXT_HTML))
 				return new OutputWriterConvertor(
-						new ProtocolQueryHTMLReporter(getRequest(),false,false),
+						new DataTemplateHTMLReporter(getRequest(),false,false),
 						MediaType.TEXT_HTML);
 		else throw new ResourceException(Status.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE);
 	}	
