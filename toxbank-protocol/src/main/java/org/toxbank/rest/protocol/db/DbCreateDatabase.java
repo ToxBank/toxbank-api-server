@@ -36,17 +36,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Properties;
 
-import net.idea.modbcum.c.DatasourceFactory;
-import net.idea.modbcum.i.LoginInfo;
 import net.idea.modbcum.i.config.Preferences;
 import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.p.AbstractDBProcessor;
-import net.idea.restnet.db.DBConnection;
 
 /**
  * Creates tables in an existing database. If the database does not exist, or has tables, the call will fail.
@@ -76,6 +73,7 @@ public class DbCreateDatabase extends AbstractDBProcessor<String,String> {
 			int tables = tablesExists(database);
 	        if (tables==0)
 	        	createTables(database);
+
 	        else throw new AmbitException(String.format("Empty database `%s` is expected, but it has %d tables!",database,tables));
 		} catch (AmbitException x) {
 			throw x;
@@ -152,6 +150,36 @@ public class DbCreateDatabase extends AbstractDBProcessor<String,String> {
 			try {if (st != null) st.close();} catch (Exception x) {}
 		}
 		return tables;
+	}		
+	
+	public String getDbVersion(String dbname) throws Exception {
+		String version = null;
+		ResultSet rs = null;
+		Statement st = null;
+		
+		try {
+			st = connection.createStatement();
+			rs = st.executeQuery(String.format("Use `%s`",dbname)); //just in case
+		} catch (Exception x) {
+			throw x;			
+		} finally {
+			try {if (rs != null) rs.close();} catch (Exception x) {}
+			try {if (st != null) st.close();} catch (Exception x) {}
+		}			
+		try {
+			st = connection.createStatement();
+			rs = st.executeQuery("select concat(idmajor,'.',idminor) from version");
+			while (rs.next()) {
+				version = rs.getString(1);
+			}
+			
+		} catch (Exception x) {
+			throw x;
+		} finally {
+			try {if (rs != null) rs.close();} catch (Exception x) {}
+			try {if (st != null) st.close();} catch (Exception x) {}
+		}
+		return version;
 	}		
 	/**
 	 * Verifies if the DB has tables, or is freshly created
@@ -244,4 +272,20 @@ public class DbCreateDatabase extends AbstractDBProcessor<String,String> {
         return SQLFile;
     }
   
+    protected boolean compareVersions(String dbVersion) throws Exception {
+    	Properties p = new Properties();
+    	
+    	InputStream in = null;
+    	try {
+    		in = getClass().getResourceAsStream("org/toxbank/rest/protocol/db/sql/dbversion.properties");
+    		p.load(in);
+    		return p.get("dbversion").equals(dbVersion);
+    	} catch (Exception x) {
+    		throw x;
+    	} finally {
+    		try {in.close();} catch (Exception x) {}
+    	}
+    	
+    	
+    }
 }

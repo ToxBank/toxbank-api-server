@@ -5,6 +5,7 @@ import net.idea.restnet.db.QueryURIReporter;
 
 import org.restlet.Request;
 import org.toxbank.resource.IProtocol;
+import org.toxbank.resource.ITemplate;
 
 /**
  * Generates URI for {@link ReferenceResource}
@@ -13,13 +14,26 @@ import org.toxbank.resource.IProtocol;
  * @param <Q>
  */
 public class ProtocolQueryURIReporter <Q extends IQueryRetrieval<IProtocol>> extends QueryURIReporter<IProtocol, Q> {
+	String suffix = "";
+	
+
+	public String getSuffix() {
+		return suffix;
+	}
+	public void setSuffix(String suffix) {
+		this.suffix = suffix;
+	}
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 8868430033131766579L;
+	public ProtocolQueryURIReporter(Request baseRef,String suffix) {
+		super(baseRef,null);	
+		this.suffix = suffix;
+	}
 	public ProtocolQueryURIReporter(Request baseRef) {
-		super(baseRef,null);
+		this(baseRef,"");
 	}
 	public ProtocolQueryURIReporter() {
 		this(null);
@@ -27,7 +41,8 @@ public class ProtocolQueryURIReporter <Q extends IQueryRetrieval<IProtocol>> ext
 
 	@Override
 	public String getURI(String ref, IProtocol item) {
-		return String.format("%s%s/P%d",ref,IProtocol.resource,item.getID());
+
+		return String.format("%s%s/P%d%s",ref,IProtocol.resource,item.getID(),suffix);
 	}
 
 }

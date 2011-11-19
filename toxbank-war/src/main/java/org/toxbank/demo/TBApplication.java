@@ -170,9 +170,9 @@ public class TBApplication extends TaskApplication<String> {
 	     router.setDefaultMatchingMode(Template.MODE_STARTS_WITH); 
 	     router.setRoutingMode(Router.MODE_BEST_MATCH); 
 	     
-	     //StringWriter w = new StringWriter();
-	     //AmbitApplication.printRoutes(router,">",w);
-	     //System.out.println(w.toString());
+	     StringWriter w = new StringWriter();
+	     TBApplication.printRoutes(router,">",w);
+	     System.out.println(w.toString());
 
 		 return router;
 	}

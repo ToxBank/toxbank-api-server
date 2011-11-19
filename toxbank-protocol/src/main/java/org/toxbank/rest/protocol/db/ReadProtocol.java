@@ -11,7 +11,6 @@ import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.conditions.EQCondition;
 import net.idea.modbcum.q.query.AbstractQuery;
 
-import org.toxbank.resource.IProject;
 import org.toxbank.resource.IProtocol;
 import org.toxbank.rest.protocol.Protocol;
 
