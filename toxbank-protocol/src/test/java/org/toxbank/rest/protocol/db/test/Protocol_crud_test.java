@@ -29,6 +29,8 @@
 
 package org.toxbank.rest.protocol.db.test;
 
+import java.net.URI;
+
 import junit.framework.Assert;
 import net.idea.modbcum.i.query.IQueryUpdate;
 
@@ -41,6 +43,7 @@ import org.toxbank.rest.protocol.Protocol;
 import org.toxbank.rest.protocol.db.CreateProtocol;
 import org.toxbank.rest.protocol.db.DeleteProtocol;
 import org.toxbank.rest.protocol.db.UpdateProtocol;
+import org.toxbank.rest.protocol.metadata.Document;
 
 public final class Protocol_crud_test  extends CRUDTest<Object,IProtocol>  {
 
@@ -58,7 +61,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,IProtocol>  {
 			public String toString() { return "project";}
 		});		
 		ref.setSummarySearchable(true);
-		ref.setFileName("file");
+		ref.setDocument(new Document(new URI("http://localhost/1.pdf")));
 		return new CreateProtocol(ref);
 	}
 
