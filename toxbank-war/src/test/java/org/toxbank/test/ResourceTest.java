@@ -128,7 +128,7 @@ public abstract class ResourceTest extends DbUnitTest {
 		return client.handle(request);
 	}
 	
-	protected void testAsyncPoll(Reference ref, MediaType media, Representation rep, Method method, Reference expected) throws Exception {
+	protected RemoteTask testAsyncPoll(Reference ref, MediaType media, Representation rep, Method method) throws Exception {
 		RemoteTask task = new RemoteTask(ref,media,rep,method);
 		System.out.println(task.getUrl());
 		while (!task.poll()) {
@@ -140,7 +140,7 @@ public abstract class ResourceTest extends DbUnitTest {
 		if (task.isERROR()) throw task.getError();
 
 		Assert.assertEquals(Status.SUCCESS_OK, task.getStatus());
-		Assert.assertEquals(expected,task.getResult());
+		return task;
 		
        
 	}

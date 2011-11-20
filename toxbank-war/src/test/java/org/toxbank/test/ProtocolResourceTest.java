@@ -8,7 +8,10 @@ import java.net.URL;
 
 import junit.framework.Assert;
 
+import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.ITable;
 import org.junit.Test;
+import org.opentox.dsl.task.RemoteTask;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Reference;
@@ -257,7 +260,6 @@ public class ProtocolResourceTest extends ResourceTest {
 		return o;
 	}
 	
-	
 	@Test
 	public void testCreateEntryFromMultipartWeb() throws Exception {
 		URL url = getClass().getClassLoader().getResource("org/toxbank/protocol/protocol-sample.pdf");
@@ -267,35 +269,35 @@ public class ProtocolResourceTest extends ResourceTest {
 		String[] values = new String[ReadProtocol.fields.values().length];
 		int i=0;
 		for (ReadProtocol.fields field : ReadProtocol.fields.values()) {
-			if (field.equals(field.identifier)) continue;
+			if (field.equals(field.idprotocol)) continue;
+			if (field.equals(field.filename)) continue;
 			names[i] = field.name();
 			values[i] = field.name();
 			i++;
 		}
 		Representation rep = getMultipartWebFormRepresentation(names,values,file,MediaType.APPLICATION_PDF.toString());
 		
-/*		
         IDatabaseConnection c = getConnection();	
-		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM structure");
-		Assert.assertEquals(5,table.getRowCount());
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
+		Assert.assertEquals(2,table.getRowCount());
 		c.close();
-*/
-//curl -H "Content-type:chemical/x-mdl-sdfile/
-		
-		testAsyncPoll(new Reference(String.format("http://localhost:%d%s", port,IProtocol.resource)),
+
+		RemoteTask task = testAsyncPoll(new Reference(String.format("http://localhost:%d%s", port,IProtocol.resource)),
 				MediaType.TEXT_URI_LIST, rep,
-				Method.POST,
-				new Reference(String.format("http://localhost:%d/protocol/P3",port)));
-		/*
+				Method.POST);
+
+		Assert.assertTrue(task.getResult().toString().startsWith(String.format("http://localhost:%d/protocol/P",port)));
+
         c = getConnection();	
-		table = 	c.createQueryTable("EXPECTED","SELECT * FROM structure");
-		Assert.assertEquals(12,table.getRowCount());
-		table = 	c.createQueryTable("EXPECTED","SELECT name,title,url,licenseURI FROM src_dataset join catalog_references using(idreference) where name='new-file-name' and id_srcdataset=4");
+		table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
+		Assert.assertEquals(3,table.getRowCount());
+		table = 	c.createQueryTable("EXPECTED","SELECT idprotocol,filename from protocol where idprotocol>2");
 		Assert.assertEquals(1,table.getRowCount());
-		Assert.assertEquals("junit test on input.sdf",table.getValue(0,"title"));
-		Assert.assertEquals("http://ambit.sourceforge.net",table.getValue(0,"url"));
-		Assert.assertEquals(ISourceDataset.license.CC0_1_0.getURI(),table.getValue(0,"licenseURI"));
+		File f = new File(table.getValue(0,"filename").toString());
+		//System.out.println(f);
+		Assert.assertTrue(f.exists());
+
 		c.close();
-		*/
+
 	}	
 }
