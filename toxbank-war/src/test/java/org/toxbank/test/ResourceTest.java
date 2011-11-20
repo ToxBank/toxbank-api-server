@@ -1,7 +1,9 @@
 package org.toxbank.test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
 
@@ -128,7 +130,7 @@ public abstract class ResourceTest extends DbUnitTest {
 	
 	protected void testAsyncPoll(Reference ref, MediaType media, Representation rep, Method method, Reference expected) throws Exception {
 		RemoteTask task = new RemoteTask(ref,media,rep,method);
-		
+		System.out.println(task.getUrl());
 		while (!task.poll()) {
 			Thread.yield();
 			Thread.sleep(200);
@@ -391,4 +393,65 @@ public abstract class ResourceTest extends DbUnitTest {
 	protected String getUserToken() {
 		return null;
 	}
+	/**
+	 * 
+	 * @param formFields names
+	 * @param formValues values
+	 * @param file
+	 * @return
+	 * @throws Exception
+	 */
+	protected Representation getMultipartWebFormRepresentation(
+				String[] formFields, String[] formValues, 
+				File file, String mediaType) throws Exception {
+		String docPath = file.getAbsolutePath();
+		StringBuffer str_b = new StringBuffer();
+		final String bndry ="XCVBGFDS";
+		String paramName = "filename";
+		String fileName = file.getName();
+		final MediaType type = new MediaType(String.format("multipart/form-data; boundary=%s",bndry));
+	    file = new File(docPath);
+	    
+	    /**
+	     * WRITE THE fields
+	     */
+	    for (int i=0;i< formFields.length;i++ ) {
+		    
+		    String disptn = String.format("--%s\r\nContent-Disposition: form-data; name=\"%s\"\r\n\r\n%s\r\n",
+	    			bndry,formFields[i],formValues[i]);
+		    str_b.append(disptn);
+	    }
+	      
+	    /**
+	     * WRITE THE FIRST/START BOUNDARY
+	     */
+	    String disptn = String.format("--%s\r\nContent-Disposition: form-data; name=\"%s\"; filename=\"%s\"\r\nContent-Type: %s\r\n\r\n",
+	    			bndry,paramName,fileName,mediaType);
+	    str_b.append(disptn);
+	    /**
+	     * WRITE THE FILE CONTENT
+	     */
+	    FileInputStream is;
+	    byte[] buffer = new byte[4096];
+	    int bytes_read;
+	    try {
+	        	is = new FileInputStream(file);
+				while((bytes_read = is.read(buffer)) != -1) {
+				    
+				    str_b.append(new String(buffer, 0, bytes_read));
+				}
+				is.close();
+		} catch (IOException e) {
+			throw e;
+		}
+		/**
+		 * WRITE THE CLOSING BOUNDARY
+		 */
+	    String boundar = String.format("\r\n--%s--",bndry);
+	    str_b.append(boundar); // another 2 new lines
+	    StringRepresentation st_b = new  StringRepresentation(str_b.toString(), type);
+	        //PUT
+	    return st_b;
+	        
+	}	
 }

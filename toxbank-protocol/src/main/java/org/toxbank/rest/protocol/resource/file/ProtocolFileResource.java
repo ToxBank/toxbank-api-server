@@ -45,7 +45,7 @@ public class ProtocolFileResource extends FileResource<IProtocol> {
 	
 		
 		final Object key = request.getAttributes().get(resourceKey);
-		System.out.println(key);
+		//System.out.println(key);
 		File file = new File(String.format("%s%s", directoryPrefix,prefix));
 
 		return new ProtocolsIterator(file,key==null?null:key.toString());

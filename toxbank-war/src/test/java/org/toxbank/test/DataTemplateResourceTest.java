@@ -8,8 +8,10 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.restlet.data.MediaType;
+import org.restlet.representation.Representation;
 import org.toxbank.resource.IProtocol;
 import org.toxbank.resource.ITemplate;
+import org.toxbank.rest.protocol.db.template.ReadDataTemplate;
 
 public class DataTemplateResourceTest extends ResourceTest {
 	
@@ -65,4 +67,14 @@ public class DataTemplateResourceTest extends ResourceTest {
 		}
 		return count==1;
 	}
+	
+	@Override
+	public Object verifyResponseJavaObject(String uri, MediaType media,
+			Representation rep) throws Exception {
+		Object o = super.verifyResponseJavaObject(uri, media, rep);
+		Assert.assertTrue(o instanceof ReadDataTemplate);
+
+		return o;
+	}
+	
 }

@@ -1,14 +1,20 @@
 package org.toxbank.test;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
 import org.restlet.data.MediaType;
+import org.restlet.data.Method;
+import org.restlet.data.Reference;
+import org.restlet.representation.Representation;
 import org.toxbank.resource.IProtocol;
+import org.toxbank.rest.protocol.db.ReadProtocol;
 
 /**
  * test for {@link PropertyResource}
@@ -241,4 +247,55 @@ public class ProtocolResourceTest extends ResourceTest {
 		return o;
 	}
 	*/
+	
+	@Override
+	public Object verifyResponseJavaObject(String uri, MediaType media,
+			Representation rep) throws Exception {
+		Object o = super.verifyResponseJavaObject(uri, media, rep);
+		Assert.assertTrue(o instanceof ReadProtocol);
+
+		return o;
+	}
+	
+	
+	@Test
+	public void testCreateEntryFromMultipartWeb() throws Exception {
+		URL url = getClass().getClassLoader().getResource("org/toxbank/protocol/protocol-sample.pdf");
+		File file = new File(url.getFile());
+		
+		String[] names = new String[ReadProtocol.fields.values().length];
+		String[] values = new String[ReadProtocol.fields.values().length];
+		int i=0;
+		for (ReadProtocol.fields field : ReadProtocol.fields.values()) {
+			if (field.equals(field.identifier)) continue;
+			names[i] = field.name();
+			values[i] = field.name();
+			i++;
+		}
+		Representation rep = getMultipartWebFormRepresentation(names,values,file,MediaType.APPLICATION_PDF.toString());
+		
+/*		
+        IDatabaseConnection c = getConnection();	
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM structure");
+		Assert.assertEquals(5,table.getRowCount());
+		c.close();
+*/
+//curl -H "Content-type:chemical/x-mdl-sdfile/
+		
+		testAsyncPoll(new Reference(String.format("http://localhost:%d%s", port,IProtocol.resource)),
+				MediaType.TEXT_URI_LIST, rep,
+				Method.POST,
+				new Reference(String.format("http://localhost:%d/protocol/P3",port)));
+		/*
+        c = getConnection();	
+		table = 	c.createQueryTable("EXPECTED","SELECT * FROM structure");
+		Assert.assertEquals(12,table.getRowCount());
+		table = 	c.createQueryTable("EXPECTED","SELECT name,title,url,licenseURI FROM src_dataset join catalog_references using(idreference) where name='new-file-name' and id_srcdataset=4");
+		Assert.assertEquals(1,table.getRowCount());
+		Assert.assertEquals("junit test on input.sdf",table.getValue(0,"title"));
+		Assert.assertEquals("http://ambit.sourceforge.net",table.getValue(0,"url"));
+		Assert.assertEquals(ISourceDataset.license.CC0_1_0.getURI(),table.getValue(0,"licenseURI"));
+		c.close();
+		*/
+	}	
 }

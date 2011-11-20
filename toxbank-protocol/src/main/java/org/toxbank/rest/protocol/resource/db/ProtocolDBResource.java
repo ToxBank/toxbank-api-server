@@ -1,5 +1,6 @@
 package org.toxbank.rest.protocol.resource.db;
 
+import java.sql.Connection;
 import java.util.List;
 
 import net.idea.modbcum.i.IQueryRetrieval;
@@ -7,11 +8,15 @@ import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.restnet.c.RepresentationConvertor;
 import net.idea.restnet.c.StringConvertor;
 import net.idea.restnet.c.task.CallableProtectedTask;
-import net.idea.restnet.db.CallableQueryProcessor;
+import net.idea.restnet.c.task.FactoryTaskConvertor;
+import net.idea.restnet.c.task.TaskCreator;
+import net.idea.restnet.db.DBConnection;
 import net.idea.restnet.db.QueryResource;
 import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.db.convertors.OutputWriterConvertor;
 import net.idea.restnet.db.convertors.RDFJenaConvertor;
+import net.idea.restnet.i.task.ITaskStorage;
+import net.idea.restnet.rdf.FactoryTaskConvertorRDF;
 
 import org.apache.commons.fileupload.FileItem;
 import org.restlet.Context;
@@ -26,6 +31,8 @@ import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
 import org.toxbank.resource.IProtocol;
 import org.toxbank.rest.FileResource;
+import org.toxbank.rest.protocol.CallableProtocolUpload;
+import org.toxbank.rest.protocol.ProtocolURIReporter;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 
 /**
@@ -130,13 +137,45 @@ public class ProtocolDBResource	extends QueryResource<ReadProtocol,IProtocol> {
 	@Override
 	protected boolean isAllowedMediaType(MediaType mediaType)
 			throws ResourceException {
-		return MediaType.APPLICATION_PDF.equals(mediaType);
+		return MediaType.MULTIPART_FORM_DATA.equals(mediaType);
 	}
 
 	@Override
 	protected CallableProtectedTask<String> createCallable(Method method,
 			List<FileItem> input, IProtocol item) throws ResourceException {
-		// TODO Auto-generated method stub
-		return super.createCallable(method, input, item);
+		Connection conn = null;
+		try {
+			ProtocolURIReporter r = new ProtocolURIReporter(getRequest(),null);
+			DBConnection dbc = new DBConnection(getApplication().getContext(),getConfigFile());
+			conn = dbc.getConnection(getRequest());
+			return new CallableProtocolUpload(input,conn,r,getToken());
+		} catch (Exception x) {
+			try { conn.close(); } catch (Exception xx) {}
+			throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);
+		}
+
+		/*
+		Form form = new Form();
+		form.add(PageParams.params.resulturi.name(),String.format("%s/ProtocolMockup",getRequest().getResourceRef()));
+		form.add(PageParams.params.delay.name(),"1");
+		return new CallableMockup(form,getToken());
+		*/
+	}
+	
+	@Override
+	protected ReadProtocol createPOSTQuery(Context context, Request request,
+			Response response) throws ResourceException {
+		Object key = request.getAttributes().get(FileResource.resourceKey);		
+		if (key==null) return null;//post allowed only on /protocol level, not on /protocol/id
+		else throw new ResourceException(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+	}
+	@Override
+	protected FactoryTaskConvertor getFactoryTaskConvertor(ITaskStorage storage)
+			throws ResourceException {
+		return new FactoryTaskConvertorRDF(storage);
+	}
+	
+	protected TaskCreator getTaskCreator(Form form, final Method method, boolean async, final Reference reference) throws Exception {
+		throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,"Not multipart web form!");
 	}
 }

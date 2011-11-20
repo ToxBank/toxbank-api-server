@@ -92,9 +92,9 @@ public class DataTemplateHTMLReporter extends QueryHTMLReporter<IProtocol, IQuer
 			
 			String curlHint = String.format("curl -X GET -H 'Accept:%s' -H 'subjectid:%s' %s","SUPPORTED-MEDIA-TYPE","TOKEN",uri);
 
-			output.write(String.format("<table><tr><td>API call</td><td title='How to retrieve a protocol via ToxBank API (cURL example)'><h5>%s</h5></td></tr></table>",
+			output.write(String.format("<table><tr><td>API call</td><td title='How to retrieve a protocol data template via ToxBank API (cURL example)'><h5>%s</h5></td></tr></table>",
 					curlHint));
-			output.write("<br>Download Protocol metadata in supported Media Types:&nbsp;");
+			output.write("<br>Download Protocol data templates in supported Media Types:&nbsp;");
 			//nmimes
 			String paging = "page=0&pagesize=10";
 			MediaType[] mimes = {
@@ -138,14 +138,8 @@ public class DataTemplateHTMLReporter extends QueryHTMLReporter<IProtocol, IQuer
 			//tables
 			
 			w.write("<table bgcolor='EEEEEE' width='99%'>\n");
-			if (collapsed) {
-				output.write("<tr bgcolor='FFFFFF' >\n");	
-				output.write(String.format("<th>%s</th>",fields.identifier.toString()));
-				output.write(String.format("<th>%s</th>","Template"));
-				output.write("</tr>\n");
-			} else {
-				
-			}
+
+			
 		} catch (Exception x) {}
 	}
 	@Override
@@ -153,8 +147,11 @@ public class DataTemplateHTMLReporter extends QueryHTMLReporter<IProtocol, IQuer
 		try {
 			String uri = uriReporter.getURI(protocol);
 			Object value = fields.identifier.getValue(protocol);
-			output.write(String.format("<td><a href='%s'>%s</a></td>",uri,value));
-			output.write(String.format("<td><textarea>%s</textarea></td>",protocol.getTemplate()));
+			output.write(String.format("<tr bgcolor='FFFFFF'><th width='25%%'>Protocol %s</th><td><a href='%s'>%s</a></td></tr>",
+					fields.identifier.toString(),uri.replace(ITemplate.resource, ""),value));
+			output.write(String.format("<tr bgcolor='FFFFFF'><th width='25%%'>%s</th><td><textarea>%s</textarea></td></tr>",
+					"Data template",
+					protocol.getTemplate()));
 
 		} catch (Exception x) {
 			

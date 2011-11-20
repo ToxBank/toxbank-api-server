@@ -60,11 +60,13 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<IProtocol, IQue
 						
 					}
 					
-					output.write("<form method='POST' action=''>");
+					output.write("<form method='POST' action='' ENCTYPE=\"multipart/form-data\">");
 					w.write("<table width='99%'>\n");
 					output.write(String.format("<tr><td>API call</td><td title='How to create a new protocol via ToxBank API (cURL example)'><h5>%s</h5></td></tr>",curlHint));
 					printForm(output,uri.toString(),null,true);
-					output.write("<tr><td>Not implemented yet!</td><td><input type='submit' enabled='false' value='Create new protocol'></td></tr>");
+					
+					
+					output.write("<tr><td></td><td><input type='submit' enabled='false' value='Create new protocol'></td></tr>");
 					w.write("</table>\n");
 					output.write("</form>");
 					output.write("<hr>");	
@@ -184,8 +186,10 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<IProtocol, IQue
 				}	
 				case filename: {
 					if (editable)
-						output.write(String.format("<th>%s</th><td align='left'>%s</td>\n",
-								field.toString(),value));
+					output.write(String.format("<th>%s</th><td align='left'><input type=\"file\" name=\"%s\" title='%s' size=\"60\"></td>",
+							field.toString(),
+							field.name(),
+							"PDF file")); 					
 					else 
 						output.write(String.format("<th>%s</th><td align='left'><a href='%s/file'>Download</a></td>",field.toString(),uri));
 
@@ -223,6 +227,7 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<IProtocol, IQue
 					output.write(String.format("<td>%s</td>",value==null?"":value.toString().length()>40?value.toString().substring(0,40):value.toString()));
 				}
 			}
+			output.write(String.format("<td><a href='%s%s'>Download</a></td>",uri,ITemplate.resource));
 		//	output.write(String.format("<td><a href='%s%s'>Data template</a></td>",uri));
 			output.write("</tr>\n");
 		} catch (Exception x) {} 

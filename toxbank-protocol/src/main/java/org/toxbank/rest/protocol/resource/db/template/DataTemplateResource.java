@@ -4,16 +4,22 @@ import java.util.List;
 
 import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.processors.IProcessor;
+import net.idea.restnet.c.PageParams;
 import net.idea.restnet.c.StringConvertor;
+import net.idea.restnet.c.task.CallableMockup;
 import net.idea.restnet.c.task.CallableProtectedTask;
+import net.idea.restnet.c.task.FactoryTaskConvertor;
 import net.idea.restnet.db.QueryResource;
 import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.db.convertors.OutputWriterConvertor;
+import net.idea.restnet.i.task.ITaskStorage;
+import net.idea.restnet.rdf.FactoryTaskConvertorRDF;
 
 import org.apache.commons.fileupload.FileItem;
 import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
+import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Reference;
@@ -106,9 +112,15 @@ public class DataTemplateResource extends QueryResource<ReadDataTemplate,IProtoc
 	@Override
 	protected CallableProtectedTask<String> createCallable(Method method,
 			List<FileItem> input, IProtocol item) throws ResourceException {
-		// TODO Auto-generated method stub
-		//return super.createCallable(method, input, item);
-		return null;
+		Form form = new Form();
+		form.add(PageParams.params.resulturi.name(),String.format("%s/ProtocolMockup",getRequest().getResourceRef()));
+		form.add(PageParams.params.delay.name(),"1");
+		return new CallableMockup(form,getToken());
 	}	
+	@Override
+	protected FactoryTaskConvertor getFactoryTaskConvertor(ITaskStorage storage)
+			throws ResourceException {
+		return new FactoryTaskConvertorRDF(storage);
+	}
 
 }
