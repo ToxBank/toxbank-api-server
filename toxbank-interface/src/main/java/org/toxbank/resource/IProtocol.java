@@ -52,6 +52,4 @@ public interface IProtocol extends Serializable {
 	public void setDocument(IDocument document);
 	public String getVersion();
 	public void setVersion(String version);
-	public String getFileName();
-	public void setFileName(String name);
 }

@@ -32,7 +32,6 @@ import org.restlet.resource.ResourceException;
 import org.toxbank.resource.IProtocol;
 import org.toxbank.rest.FileResource;
 import org.toxbank.rest.protocol.CallableProtocolUpload;
-import org.toxbank.rest.protocol.ProtocolURIReporter;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 
 /**
@@ -145,7 +144,7 @@ public class ProtocolDBResource	extends QueryResource<ReadProtocol,IProtocol> {
 			List<FileItem> input, IProtocol item) throws ResourceException {
 		Connection conn = null;
 		try {
-			ProtocolURIReporter r = new ProtocolURIReporter(getRequest(),null);
+			ProtocolQueryURIReporter r = new ProtocolQueryURIReporter(getRequest(),"");
 			DBConnection dbc = new DBConnection(getApplication().getContext(),getConfigFile());
 			conn = dbc.getConnection(getRequest());
 			return new CallableProtocolUpload(input,conn,r,getToken());

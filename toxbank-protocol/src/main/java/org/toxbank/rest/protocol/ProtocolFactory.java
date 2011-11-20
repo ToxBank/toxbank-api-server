@@ -33,6 +33,7 @@ public class ProtocolFactory {
 				}
 				if (field==null) continue;
 				switch (field) {
+				case idprotocol: continue;
 				case identifier: {
 					protocol.setIdentifier(fi.getString());
 					break;

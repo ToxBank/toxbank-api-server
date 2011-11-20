@@ -13,14 +13,15 @@ import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
 import org.toxbank.resource.IProtocol;
 import org.toxbank.rest.protocol.db.CreateProtocol;
+import org.toxbank.rest.protocol.resource.db.ProtocolQueryURIReporter;
 
 public class CallableProtocolUpload extends CallableProtectedTask<String> {
 	protected List<FileItem> input;
-	protected ProtocolURIReporter reporter;
+	protected ProtocolQueryURIReporter reporter;
 	protected Connection connection;
 	protected UpdateExecutor exec;
 	
-	public CallableProtocolUpload(List<FileItem> input,Connection connection,ProtocolURIReporter r,String token) {
+	public CallableProtocolUpload(List<FileItem> input,Connection connection,ProtocolQueryURIReporter r,String token) {
 		super(token);
 		this.connection = connection;
 		this.input = input;

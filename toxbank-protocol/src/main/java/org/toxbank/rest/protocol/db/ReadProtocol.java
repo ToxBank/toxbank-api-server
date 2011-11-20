@@ -1,5 +1,6 @@
 package org.toxbank.rest.protocol.db;
 
+import java.net.URI;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,6 +14,9 @@ import net.idea.modbcum.q.query.AbstractQuery;
 
 import org.toxbank.resource.IProtocol;
 import org.toxbank.rest.protocol.Protocol;
+import org.toxbank.rest.protocol.metadata.Author;
+import org.toxbank.rest.protocol.metadata.Document;
+import org.toxbank.rest.protocol.metadata.Project;
 
 /**
  * Retrieve references (by id or all)
@@ -103,7 +107,7 @@ public class ReadProtocol  extends AbstractQuery<String, IProtocol, EQCondition,
 			}
 			@Override
 			public void setParam(IProtocol protocol, ResultSet rs) throws SQLException {
-				
+				protocol.setAuthor(new Author(rs.getString(ordinal()+1)));
 			}		
 			@Override
 			public Object getValue(IProtocol protocol) {
@@ -147,7 +151,7 @@ public class ReadProtocol  extends AbstractQuery<String, IProtocol, EQCondition,
 			}
 			@Override
 			public void setParam(IProtocol protocol, ResultSet rs) throws SQLException {
-				
+				protocol.setProject(new Project(rs.getString(ordinal()+1)));
 			}		
 			@Override
 			public Object getValue(IProtocol protocol) {
@@ -157,15 +161,17 @@ public class ReadProtocol  extends AbstractQuery<String, IProtocol, EQCondition,
 		filename {
 			@Override
 			public QueryParam getParam(IProtocol protocol) {
-				return new QueryParam<String>(String.class, (String)getValue(protocol));
+				return new QueryParam<String>(String.class, getValue(protocol).toString());
 			}			
 			@Override
 			public void setParam(IProtocol protocol, ResultSet rs) throws SQLException {
-				protocol.setFileName(rs.getString(ordinal()+1));
+				try {
+				protocol.setDocument(new Document(new URI(rs.getString(ordinal()+1))));
+				} catch (Exception x) {throw new SQLException(x); }
 			}
 			@Override
 			public Object getValue(IProtocol protocol) {
-				return  protocol==null?null:protocol.getFileName();
+				return  protocol==null?null:protocol.getDocument().getURI();
 			}				
 			public String getHTMLField(IProtocol protocol) {
 				Object value = getValue(protocol);
@@ -183,10 +189,10 @@ public class ReadProtocol  extends AbstractQuery<String, IProtocol, EQCondition,
 			return String.format(" %s = ? ",name());
 		}
 		public QueryParam getParam(IProtocol protocol) {
-			return null;
+			return new QueryParam<String>(String.class,  getValue(protocol).toString());
 		}
 		public Object getValue(IProtocol protocol) {
-			return null;
+			return protocol.getDocument().getURI().toString();
 		}
 		public Class getClassType(IProtocol protocol) {
 			return String.class;
