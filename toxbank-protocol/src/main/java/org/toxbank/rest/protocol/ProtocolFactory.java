@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.fileupload.FileItem;
 import org.restlet.data.Status;
@@ -84,6 +85,7 @@ public class ProtocolFactory {
 			} 
 
 		}
+		if (protocol.getIdentifier()==null) protocol.setIdentifier(String.format("SEURAT-%s",UUID.randomUUID()));
 		return protocol;
 	}
 	
