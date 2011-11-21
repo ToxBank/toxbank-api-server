@@ -46,7 +46,7 @@ import org.toxbank.rest.protocol.db.UpdateProtocol;
 import org.toxbank.rest.protocol.metadata.Document;
 
 public final class Protocol_crud_test  extends CRUDTest<Object,IProtocol>  {
-
+	String file = "http://localhost/1.pdf";
 
 	@Override
 	protected IQueryUpdate<Object,IProtocol> createQuery() throws Exception {
@@ -61,7 +61,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,IProtocol>  {
 			public String toString() { return "project";}
 		});		
 		ref.setSummarySearchable(true);
-		ref.setDocument(new Document(new URI("http://localhost/1.pdf")));
+		ref.setDocument(new Document(new URI(file)));
 		return new CreateProtocol(ref);
 	}
 
@@ -70,7 +70,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,IProtocol>  {
 			throws Exception {
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED",
-				String.format("SELECT idprotocol,summarySearchable FROM protocol where identifier='identifier' and title='title' and abstract='abstract' and author='author' and project='project' and filename='file'"));
+				String.format("SELECT idprotocol,summarySearchable FROM protocol where identifier='identifier' and title='title' and abstract='abstract' and author='author' and project='project' and filename='%s'",file));
 		
 		Assert.assertEquals(1,table.getRowCount());
 		Assert.assertEquals(Boolean.TRUE,table.getValue(0,"summarySearchable"));

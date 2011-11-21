@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
 
 import junit.framework.Assert;
@@ -293,9 +294,10 @@ public class ProtocolResourceTest extends ResourceTest {
 		Assert.assertEquals(3,table.getRowCount());
 		table = 	c.createQueryTable("EXPECTED","SELECT idprotocol,filename from protocol where idprotocol>2");
 		Assert.assertEquals(1,table.getRowCount());
-		File f = new File(table.getValue(0,"filename").toString());
+		File f = new File(new URI(table.getValue(0,"filename").toString()));
 		//System.out.println(f);
 		Assert.assertTrue(f.exists());
+		f.delete();
 
 		c.close();
 
