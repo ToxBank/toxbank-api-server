@@ -30,8 +30,10 @@
 package org.toxbank.rest.protocol.db;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -39,6 +41,8 @@ import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import net.idea.modbcum.i.config.Preferences;
@@ -52,6 +56,8 @@ import net.idea.modbcum.p.AbstractDBProcessor;
  *
  */
 public class DbCreateDatabase extends AbstractDBProcessor<String,String> {
+	
+	public final static String version = "0.1";
 	
     /**
 	 */
@@ -70,11 +76,13 @@ public class DbCreateDatabase extends AbstractDBProcessor<String,String> {
 				throw new AmbitException(
 						String.format("Database `%s` does not exist. \nPlease create the database and grant privileges.",database));
 						
-			int tables = tablesExists(database);
-	        if (tables==0)
+			List<String> tables = tablesExists(database);
+	        if (tables.size()==0)
 	        	createTables(database);
-
-	        else throw new AmbitException(String.format("Empty database `%s` is expected, but it has %d tables!",database,tables));
+	        if (!tables.contains("version")) { //
+	        	dropTables(database,tables);
+	        	createTables(database);
+	        } else throw new AmbitException(String.format("Empty database `%s` is expected, but it has %d tables!",database,tables));
 		} catch (AmbitException x) {
 			throw x;
 		} catch (Exception x) {
@@ -123,10 +131,11 @@ public class DbCreateDatabase extends AbstractDBProcessor<String,String> {
 		}
 		return ok;
 	}	
-	public int tablesExists(String dbname) throws Exception {
+	public List<String> tablesExists(String dbname) throws Exception {
 		int tables = 0;
 		ResultSet rs = null;
 		Statement st = null;
+		List<String> table_names = new ArrayList<String>();
 		try {
 			st = connection.createStatement();
 			rs = st.executeQuery(String.format("Use `%s`",dbname)); //just in case
@@ -141,6 +150,7 @@ public class DbCreateDatabase extends AbstractDBProcessor<String,String> {
 			rs = st.executeQuery("show tables");
 			while (rs.next()) {
 				tables++;
+				table_names.add(rs.getString(1));
 			}
 			
 		} catch (Exception x) {
@@ -149,8 +159,25 @@ public class DbCreateDatabase extends AbstractDBProcessor<String,String> {
 			try {if (rs != null) rs.close();} catch (Exception x) {}
 			try {if (st != null) st.close();} catch (Exception x) {}
 		}
-		return tables;
+		return table_names;
 	}		
+	
+	public void dropTables(String dbname,List<String> table_names) throws Exception {
+		Statement st = null;
+		try {
+			st = connection.createStatement();
+			st.addBatch(String.format("Use `%s`",dbname)); //just in case
+			for (String table : table_names) {
+				st.addBatch(String.format("drop table `%s`",table)); //just in case	
+			}
+			st.executeBatch();
+		} catch (Exception x) {
+			throw x;			
+		} finally {
+			try {if (st != null) st.close();} catch (Exception x) {}
+		}			
+	
+	}			
 	
 	public String getDbVersion(String dbname) throws Exception {
 		String version = null;
@@ -181,32 +208,6 @@ public class DbCreateDatabase extends AbstractDBProcessor<String,String> {
 		}
 		return version;
 	}		
-	/**
-	 * Verifies if the DB has tables, or is freshly created
-	 * @param dbname
-	 * @return
-	 * @throws Exception
-	 */
-	public boolean dbisEmpty(String dbname) throws Exception {
-		boolean ok = false;
-		ResultSet rs = null;
-		Statement st = null;
-		try {
-    	
-			st = connection.createStatement();
-			rs = st.executeQuery(String.format("Use `%s`",dbname));
-			while (rs.next()) {
-				if (dbname.equals(rs.getString(1))) ok = true;
-			}
-			
-		} catch (Exception x) {
-			throw x;
-		} finally {
-			try {if (rs != null) rs.close();} catch (Exception x) {}
-			try {if (st != null) st.close();} catch (Exception x) {}
-		}
-		return ok;
-	}	
     public void createTables(String newDB) throws SQLException, FileNotFoundException {
         try {
         	URL url = this.getClass().getClassLoader().getResource(getSQLFile());
@@ -272,20 +273,7 @@ public class DbCreateDatabase extends AbstractDBProcessor<String,String> {
         return SQLFile;
     }
   
-    protected boolean compareVersions(String dbVersion) throws Exception {
-    	Properties p = new Properties();
-    	
-    	InputStream in = null;
-    	try {
-    		in = getClass().getResourceAsStream("org/toxbank/rest/protocol/db/sql/dbversion.properties");
-    		p.load(in);
-    		return p.get("dbversion").equals(dbVersion);
-    	} catch (Exception x) {
-    		throw x;
-    	} finally {
-    		try {in.close();} catch (Exception x) {}
-    	}
-    	
-    	
+    public boolean isSameVersion(String dbVersion) throws Exception {
+    	return version.equals(dbVersion);
     }
 }

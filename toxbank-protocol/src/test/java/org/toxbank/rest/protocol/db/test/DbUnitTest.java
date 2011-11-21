@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.List;
 import java.util.Properties;
 
 import org.dbunit.database.DatabaseConfig;
@@ -110,8 +111,20 @@ public abstract class DbUnitTest {
 				db.setConnection(conn);
 				if (!db.dbExists(getDatabase())) {
 					db.process(getDatabase());
-				} else if (db.tablesExists(getDatabase())==0) {
-					db.process(getDatabase());
+				} else {
+					List<String> tables = db.tablesExists(getDatabase());
+					if (tables.size()==0)
+						db.process(getDatabase());
+					else if (!tables.contains("version")) {
+						db.dropTables(getDatabase(), tables);
+						db.process(getDatabase());
+					} else {
+						String dbVersion = db.getDbVersion(getDatabase());
+						if (!db.isSameVersion(dbVersion)) {
+							db.dropTables(getDatabase(), tables);
+							db.process(getDatabase());
+						} 
+					}
 				}
 				conn.commit();
 		} catch (Exception x) {
