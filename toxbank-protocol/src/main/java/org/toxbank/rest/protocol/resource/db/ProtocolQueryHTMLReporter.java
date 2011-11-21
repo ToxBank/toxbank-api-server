@@ -22,6 +22,37 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<IProtocol, IQue
 	 * 
 	 */
 	private static final long serialVersionUID = -7959033048710547839L;
+	ReadProtocol.fields[] entryFields = new ReadProtocol.fields[] {
+			ReadProtocol.fields.filename,
+			ReadProtocol.fields.title,
+			ReadProtocol.fields.anabstract,
+			//ReadProtocol.fields.status
+			ReadProtocol.fields.project,
+			ReadProtocol.fields.author,
+			//ReadProtocol.fields.organisation
+			//ReadProtocol.fields.version
+			//ReadProtocol.fields.accesslevel
+			//ReadProtocol.fields.keywords
+			ReadProtocol.fields.summarySearchable
+			
+		};
+	ReadProtocol.fields[] displayFields = new ReadProtocol.fields[] {
+			ReadProtocol.fields.idprotocol,
+			ReadProtocol.fields.identifier,
+			ReadProtocol.fields.filename,
+			ReadProtocol.fields.title,
+			ReadProtocol.fields.anabstract,
+			//ReadProtocol.fields.status
+			ReadProtocol.fields.project,
+			ReadProtocol.fields.author,
+			//ReadProtocol.fields.organisation
+			//ReadProtocol.fields.version
+			//ReadProtocol.fields.accesslevel
+			//ReadProtocol.fields.keywords
+			ReadProtocol.fields.summarySearchable
+			
+		};	
+	
 	protected boolean editable = false;
 	public ProtocolQueryHTMLReporter() {
 		this(null,true,false);
@@ -165,8 +196,8 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<IProtocol, IQue
 	
 	protected void printForm(Writer output, String uri, IProtocol protocol, boolean editable) {
 		try {
-			
-			for (ReadProtocol.fields field : ReadProtocol.fields.values()) {
+			ReadProtocol.fields[] fields = editable?entryFields:displayFields;
+			for (ReadProtocol.fields field : fields) {
 				output.write("<tr bgcolor='FFFFFF'>\n");	
 				Object value = field.getValue(protocol);
 
