@@ -9,10 +9,15 @@ import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.db.convertors.QueryRDFReporter;
 import net.toxbank.client.io.rdf.ProtocolIO;
+import net.toxbank.client.io.rdf.TOXBANK;
 
 import org.restlet.Request;
 import org.restlet.data.MediaType;
 import org.toxbank.rest.protocol.DBProtocol;
+
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.vocabulary.DCTerms;
+import com.hp.hpl.jena.vocabulary.XSD;
 
 public class ProtocolRDFReporter<Q extends IQueryRetrieval<DBProtocol>> extends QueryRDFReporter<DBProtocol, Q> {
 
@@ -28,6 +33,14 @@ public class ProtocolRDFReporter<Q extends IQueryRetrieval<DBProtocol>> extends 
 	@Override
 	protected QueryURIReporter createURIReporter(Request reference,ResourceDoc doc) {
 		return new ProtocolQueryURIReporter(reference);
+	}
+	@Override
+	public void setOutput(Model output) throws AmbitException {
+		this.output = output;
+		
+		output.setNsPrefix("tb", TOXBANK.URI);
+		output.setNsPrefix("dcterms", DCTerms.getURI());
+		output.setNsPrefix("xsd", XSD.getURI());
 	}
 	@Override
 	public Object processItem(DBProtocol item) throws AmbitException {

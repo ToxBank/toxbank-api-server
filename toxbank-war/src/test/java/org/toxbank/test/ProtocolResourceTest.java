@@ -20,6 +20,10 @@ import org.restlet.representation.Representation;
 import org.toxbank.resource.Resources;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+
 /**
  * test for {@link PropertyResource}
  * @author nina
@@ -57,6 +61,20 @@ public class ProtocolResourceTest extends ResourceTest {
 		}
 		return count==1;
 	}	
+	
+	@Test
+	public void testRDF() throws Exception {
+		testGet(getTestURI(),MediaType.APPLICATION_RDF_XML);
+	}
+	
+	@Override
+	public OntModel verifyResponseRDFXML(String uri, MediaType media,
+			InputStream in) throws Exception {
+		OntModel model = ModelFactory.createOntologyModel();
+		model.read(in,null);
+		
+		return model;
+	}
 	
 	/*
 	@Test
