@@ -8,7 +8,6 @@ import java.net.URI;
 import java.net.URL;
 
 import junit.framework.Assert;
-import net.toxbank.client.interfaces.IProtocol;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
@@ -36,7 +35,7 @@ public class ProtocolResourceTest extends ResourceTest {
 	}
 	@Override
 	public String getTestURI() {
-		return String.format("http://localhost:%d%s/P1", port,IProtocol.resource);
+		return String.format("http://localhost:%d%s/P1", port,Resources.protocol);
 	}
 	
 	@Test
@@ -288,7 +287,8 @@ public class ProtocolResourceTest extends ResourceTest {
 		Assert.assertEquals(2,table.getRowCount());
 		c.close();
 
-		RemoteTask task = testAsyncPoll(new Reference(String.format("http://localhost:%d%s", port,IProtocol.resource)),
+		RemoteTask task = testAsyncPoll(new Reference(String.format("http://localhost:%d%s", port,
+				Resources.protocol)),
 				MediaType.TEXT_URI_LIST, rep,
 				Method.POST);
 

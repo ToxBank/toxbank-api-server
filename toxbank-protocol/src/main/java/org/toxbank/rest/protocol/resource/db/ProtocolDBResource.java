@@ -17,6 +17,7 @@ import net.idea.restnet.db.convertors.OutputWriterConvertor;
 import net.idea.restnet.db.convertors.RDFJenaConvertor;
 import net.idea.restnet.i.task.ITaskStorage;
 import net.idea.restnet.rdf.FactoryTaskConvertorRDF;
+import net.toxbank.client.io.rdf.TOXBANK;
 
 import org.apache.commons.fileupload.FileItem;
 import org.restlet.Context;
@@ -72,7 +73,12 @@ public class ProtocolDBResource	extends QueryResource<ReadProtocol,DBProtocol> {
 				return new RDFJenaConvertor<DBProtocol, IQueryRetrieval<DBProtocol>>(
 						new ProtocolRDFReporter<IQueryRetrieval<DBProtocol>>(
 								getRequest(),variant.getMediaType(),getDocumentation())
-						,variant.getMediaType());					
+						,variant.getMediaType()) {
+					@Override
+					protected String getDefaultNameSpace() {
+						return TOXBANK.URI;
+					}					
+				};
 		} else if (variant.getMediaType().equals(MediaType.TEXT_HTML))
 				return new OutputWriterConvertor(
 						new ProtocolQueryHTMLReporter(getRequest(),!singleItem,editable),

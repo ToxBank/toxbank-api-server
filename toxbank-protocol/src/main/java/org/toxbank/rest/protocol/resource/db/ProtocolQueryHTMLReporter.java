@@ -8,7 +8,6 @@ import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.c.html.HTMLBeauty;
 import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.db.convertors.QueryHTMLReporter;
-import net.toxbank.client.interfaces.IProtocol;
 
 import org.restlet.Request;
 import org.restlet.data.MediaType;
@@ -112,9 +111,11 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 		try {
 			if (collapsed) {
 				w.write("<h3>Protocols</h3>");
-				output.write(String.format("<a href='%s%s'>All protocols</a>",uriReporter.getRequest().getRootRef(),IProtocol.resource));
+				output.write(String.format("<a href='%s%s'>All protocols</a>",uriReporter.getRequest().getRootRef(),
+							Resources.protocol));
 				if (!editable)
-					output.write(String.format("&nbsp;<a href='%s%s?new=true'>Create new Protocol</a>",uriReporter.getRequest().getRootRef(),IProtocol.resource));
+					output.write(String.format("&nbsp;<a href='%s%s?new=true'>Create new Protocol</a>",uriReporter.getRequest().getRootRef(),
+								Resources.protocol));
 			} else {
 				w.write("<h3>Protocol</h3>");
 				output.write(String.format("<a href='%s%s'>Back to protocols</a>",

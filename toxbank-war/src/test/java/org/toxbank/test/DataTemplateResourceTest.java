@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import junit.framework.Assert;
-import net.toxbank.client.interfaces.IProtocol;
 
 import org.junit.Test;
 import org.restlet.data.MediaType;
@@ -41,7 +40,7 @@ public class DataTemplateResourceTest extends ResourceTest {
 		int count = 0;
 		while ((line = r.readLine())!= null) {
 			Assert.assertEquals(
-					String.format("http://localhost:%d%s/P1%s",port,IProtocol.resource,Resources.datatemplate)
+					String.format("http://localhost:%d%s/P1%s",port,Resources.protocol,Resources.datatemplate)
 							, line);
 			count++;
 		}
