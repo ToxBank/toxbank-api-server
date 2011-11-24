@@ -18,6 +18,14 @@ CREATE TABLE  `protocol` (
   KEY `Index_3` (`title`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `groups`;
+CREATE TABLE  `groups` (
+  `name` varchar(128) NOT NULL,
+  `ldapgroup` varchar(128) NOT NULL,
+  `grouptype` enum('ORGANISATION','PROJECT','CUSTOM') NOT NULL,
+  PRIMARY KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- Keywords. Want to do full text search, thus MyISAM. Could be changed eventually.
 
 DROP TABLE IF EXISTS `keyword`;
@@ -26,6 +34,7 @@ CREATE TABLE  `keyword` (
   `words` text NOT NULL,
   PRIMARY KEY (`idprotocol`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 
 -- db version
 
@@ -37,4 +46,4 @@ CREATE TABLE  `version` (
   `comment` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`idmajor`,`idminor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-insert into version (idmajor,idminor,comment) values (0,1,"TB Protocol schema");
+insert into version (idmajor,idminor,comment) values (0,2,"TB Protocol schema");
