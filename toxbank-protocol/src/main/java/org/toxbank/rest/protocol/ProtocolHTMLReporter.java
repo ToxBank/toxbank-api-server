@@ -7,8 +7,6 @@ import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.c.html.HTMLBeauty;
 
 import org.restlet.Request;
-import org.restlet.data.MediaType;
-import org.restlet.data.Reference;
 import org.toxbank.resource.IProtocol;
 
 public class ProtocolHTMLReporter  extends ProtocolURIReporter {

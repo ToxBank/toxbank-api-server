@@ -14,9 +14,7 @@ import org.toxbank.resource.IProtocol;
 
 import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.vocabulary.DC;
 import com.hp.hpl.jena.vocabulary.DCTerms;
-import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class ProtocolRDFReporter<Q extends IQueryRetrieval<IProtocol>> extends QueryRDFReporter<IProtocol, Q> {
 
@@ -50,7 +48,7 @@ public class ProtocolRDFReporter<Q extends IQueryRetrieval<IProtocol>> extends Q
 		
 		entry.addProperty(DCTerms.title, item.getTitle());
 		entry.addProperty(DCTerms.identifier, item.getIdentifier());
-		entry.addProperty(DCTerms.abstract_, item.getAnAbstract());
+		entry.addProperty(DCTerms.abstract_, item.getAbstract());
 
 		entry.addProperty(DCTerms.source, String.format("%s/file", uri));
 		//entry.addProperty(RDFS.seeAlso,item.getURL());

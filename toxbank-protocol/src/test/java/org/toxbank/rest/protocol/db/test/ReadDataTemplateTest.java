@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import junit.framework.Assert;
 
 import org.toxbank.resource.IProtocol;
-import org.toxbank.rest.protocol.DataTemplate;
 import org.toxbank.rest.protocol.Protocol;
 import org.toxbank.rest.protocol.db.template.ReadDataTemplate;
 

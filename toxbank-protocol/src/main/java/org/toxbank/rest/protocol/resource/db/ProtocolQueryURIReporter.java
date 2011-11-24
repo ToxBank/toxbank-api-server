@@ -5,7 +5,6 @@ import net.idea.restnet.db.QueryURIReporter;
 
 import org.restlet.Request;
 import org.toxbank.resource.IProtocol;
-import org.toxbank.resource.ITemplate;
 
 /**
  * Generates URI for {@link ReferenceResource}

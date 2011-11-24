@@ -36,9 +36,9 @@ import net.idea.modbcum.i.query.IQueryUpdate;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
-import org.toxbank.resource.IAuthor;
 import org.toxbank.resource.IProject;
 import org.toxbank.resource.IProtocol;
+import org.toxbank.resource.IUser;
 import org.toxbank.rest.protocol.Protocol;
 import org.toxbank.rest.protocol.db.CreateProtocol;
 import org.toxbank.rest.protocol.db.DeleteProtocol;
@@ -53,8 +53,8 @@ public final class Protocol_crud_test  extends CRUDTest<Object,IProtocol>  {
 		IProtocol ref = new Protocol();
 		ref.setIdentifier("identifier");
 		ref.setTitle("title");
-		ref.setAnAbstract("abstract");
-		ref.setAuthor(new IAuthor() {
+		ref.setAbstract("abstract");
+		ref.setAuthor(new IUser() {
 			public String toString() { return "author";}
 		});
 		ref.setProject(new IProject() {
@@ -100,7 +100,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,IProtocol>  {
 	@Override
 	protected IQueryUpdate<Object,IProtocol> updateQuery() throws Exception {
 		IProtocol ref = new Protocol();
-		ref.setAnAbstract("NEW");
+		ref.setAbstract("NEW");
 		ref.setID(2);
 
 		return new UpdateProtocol(ref);

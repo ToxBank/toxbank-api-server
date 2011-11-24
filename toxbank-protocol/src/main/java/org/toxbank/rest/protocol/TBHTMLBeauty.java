@@ -3,13 +3,12 @@ package org.toxbank.rest.protocol;
 import java.io.IOException;
 import java.io.Writer;
 
+import net.idea.restnet.c.ResourceDoc;
+import net.idea.restnet.c.html.HTMLBeauty;
+
 import org.restlet.Request;
 import org.restlet.data.Reference;
 import org.toxbank.resource.IProtocol;
-
-import net.idea.restnet.c.ResourceDoc;
-import net.idea.restnet.c.html.HTMLBeauty;
-import net.idea.restnet.c.resource.TaskResource;
 
 public class TBHTMLBeauty extends HTMLBeauty {
 	public TBHTMLBeauty() {

@@ -21,12 +21,10 @@ public class ProtocolDocumentResource extends QueryResource<ReadProtocol,IProtoc
 	@Override
 	public IProcessor<ReadProtocol, Representation> createConvertor(
 			Variant variant) throws AmbitException, ResourceException {
+		//return new DownloadDocumentConvertor(null
+			//	,MediaType.APPLICATION_PDF
+			//	);
 		return null;
-		/*
-		return new DownloadDocumentConvertor(null)
-				,MediaType.APPLICATION_PDF
-				);
-				*/
 	}
 
 	@Override

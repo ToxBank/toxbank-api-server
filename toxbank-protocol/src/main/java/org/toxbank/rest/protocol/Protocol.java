@@ -1,13 +1,13 @@
 package org.toxbank.rest.protocol;
 
-import java.util.Iterator;
+import java.util.List;
 
-import org.toxbank.resource.IAuthor;
 import org.toxbank.resource.IDocument;
 import org.toxbank.resource.IOrganisation;
 import org.toxbank.resource.IProject;
 import org.toxbank.resource.IProtocol;
 import org.toxbank.resource.ITemplate;
+import org.toxbank.resource.IUser;
 
 public class Protocol implements IProtocol {
 	
@@ -25,8 +25,8 @@ public class Protocol implements IProtocol {
 	protected String title;
 	protected  String identifier;
 	protected String anAbstract;
-	protected IAuthor author;
-	protected Iterator<String> keywords;
+	protected IUser author;
+	protected List<String> keywords;
 	protected IOrganisation owner;
 	protected ITemplate template;
 	boolean isSummarySearchable;
@@ -61,28 +61,35 @@ public class Protocol implements IProtocol {
 	public void setIdentifier(String identifier) {
 		this.identifier = identifier;
 	}
-	public String getAnAbstract() {
+	public String getAbstract() {
 		return anAbstract;
 	}
-	public void setAnAbstract(String anAbstract) {
+	public void setAbstract(String anAbstract) {
 		this.anAbstract = anAbstract;
 	}
-	public IAuthor getAuthor() {
+	public IUser getAuthor() {
 		return author;
 	}
-	public void setAuthor(IAuthor author) {
+	public void setAuthor(IUser author) {
 		this.author = author;
 	}
-	public Iterator<String> getKeywords() {
+	public List<String> getKeywords() {
 		return keywords;
 	}
-	public void setKeywords(Iterator<String> keywords) {
-		this.keywords = keywords;
+	@Override
+	public void addKeyword(String keyword) {
+		keywords.add(keyword);
+		
 	}
-	public IOrganisation getOwner() {
+	@Override
+	public void removeKeyword(String keyword) {
+		keywords.remove(keyword);
+	}
+	public IOrganisation getOrganisation() {
 		return owner;
 	}
-	public void setOwner(IOrganisation owner) {
+
+	public void setOrganisation(IOrganisation owner) {
 		this.owner = owner;
 	}
 	public ITemplate getTemplate() {
@@ -116,6 +123,10 @@ public class Protocol implements IProtocol {
 		this.version = version;
 	}
 
+	@Override
+	public List<IProtocol> listVersions() {
+		return null;
+	}
 	@Override
 	public String toString() {
 		return getIdentifier();

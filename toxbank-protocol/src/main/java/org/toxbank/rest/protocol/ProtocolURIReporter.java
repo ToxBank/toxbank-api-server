@@ -6,7 +6,6 @@ import net.idea.restnet.c.reporters.CatalogURIReporter;
 import org.restlet.Request;
 import org.restlet.data.Reference;
 import org.toxbank.resource.IProtocol;
-import org.toxbank.rest.protocol.resource.file.ProtocolFileResource;
 
 public class ProtocolURIReporter extends CatalogURIReporter<IProtocol> {
 	/**

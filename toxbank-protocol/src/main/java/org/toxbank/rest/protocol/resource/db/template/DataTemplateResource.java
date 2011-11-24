@@ -32,7 +32,6 @@ import org.toxbank.resource.ITemplate;
 import org.toxbank.rest.FileResource;
 import org.toxbank.rest.protocol.Protocol;
 import org.toxbank.rest.protocol.db.template.ReadDataTemplate;
-import org.toxbank.rest.protocol.resource.db.ProtocolQueryHTMLReporter;
 import org.toxbank.rest.protocol.resource.db.ProtocolQueryURIReporter;
 
 public class DataTemplateResource extends QueryResource<ReadDataTemplate,IProtocol> {

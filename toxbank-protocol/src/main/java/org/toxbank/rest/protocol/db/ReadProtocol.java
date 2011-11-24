@@ -82,11 +82,11 @@ public class ReadProtocol  extends AbstractQuery<String, IProtocol, EQCondition,
 			}	
 			@Override
 			public void setParam(IProtocol protocol, ResultSet rs) throws SQLException {
-				protocol.setAnAbstract(rs.getString(ordinal()+1));
+				protocol.setAbstract(rs.getString(ordinal()+1));
 			}		
 			@Override
 			public Object getValue(IProtocol protocol) {
-				return protocol==null?null:protocol.getAnAbstract();
+				return protocol==null?null:protocol.getAbstract();
 			}
 			public String getHTMLField(IProtocol protocol) {
 				Object value = getValue(protocol);

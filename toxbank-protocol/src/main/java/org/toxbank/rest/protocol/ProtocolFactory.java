@@ -40,7 +40,7 @@ public class ProtocolFactory {
 					break;
 				}
 				case anabstract: {
-					protocol.setAnAbstract(fi.getString());
+					protocol.setAbstract(fi.getString());
 					break;
 				}
 				case filename: {

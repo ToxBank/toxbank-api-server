@@ -25,10 +25,10 @@ public class DownloadDocumentConvertor extends   AbstractObjectConvertor<IProtoc
 	private static final long serialVersionUID = 1979008352251532084L;
 
 
-	public Representation proddcess(IProtocol doc) throws AmbitException {
+	public Representation process(IProtocol doc) throws AmbitException {
 		try {
 			if (doc==null) throw new AmbitException("No document!");
-			File file = new File(doc.getFileName());
+			File file = new File(doc.getDocument().getURI());
 			if (!file.exists()) throw new AmbitException("No file!");
 			
 			return new FileRepresentation(file, MediaType.APPLICATION_PDF);
