@@ -37,10 +37,11 @@ public class ProtocolRDFReporter<Q extends IQueryRetrieval<DBProtocol>> extends 
 	@Override
 	public void setOutput(Model output) throws AmbitException {
 		this.output = output;
-		
-		output.setNsPrefix("tb", TOXBANK.URI);
-		output.setNsPrefix("dcterms", DCTerms.getURI());
-		output.setNsPrefix("xsd", XSD.getURI());
+		if (output!=null) {
+			output.setNsPrefix("tb", TOXBANK.URI);
+			output.setNsPrefix("dcterms", DCTerms.getURI());
+			output.setNsPrefix("xsd", XSD.getURI());
+		}
 	}
 	@Override
 	public Object processItem(DBProtocol item) throws AmbitException {
