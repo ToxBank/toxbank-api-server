@@ -8,18 +8,19 @@ import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.c.html.HTMLBeauty;
 import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.db.convertors.QueryHTMLReporter;
+import net.toxbank.client.interfaces.IProtocol;
 
 import org.restlet.Request;
 import org.restlet.data.MediaType;
 import org.restlet.data.Reference;
-import org.toxbank.resource.IProtocol;
-import org.toxbank.resource.ITemplate;
+import org.toxbank.resource.Resources;
+import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.TBHTMLBeauty;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol.fields;
 import org.toxbank.rest.protocol.resource.db.ProtocolQueryURIReporter;
 
-public class DataTemplateHTMLReporter extends QueryHTMLReporter<IProtocol, IQueryRetrieval<IProtocol>> {
+public class DataTemplateHTMLReporter extends QueryHTMLReporter<DBProtocol, IQueryRetrieval<DBProtocol>> {
 	/**
 	 * 
 	 */
@@ -35,10 +36,10 @@ public class DataTemplateHTMLReporter extends QueryHTMLReporter<IProtocol, IQuer
 	}
 	@Override
 	protected QueryURIReporter createURIReporter(Request request, ResourceDoc doc) {
-		return new ProtocolQueryURIReporter<IQueryRetrieval<IProtocol>>(request,ITemplate.resource);
+		return new ProtocolQueryURIReporter<IQueryRetrieval<DBProtocol>>(request,Resources.datatemplate);
 	}
 	@Override
-	public void header(Writer w, IQueryRetrieval<IProtocol> query) {
+	public void header(Writer w, IQueryRetrieval<DBProtocol> query) {
 		super.header(w, query);
 		Reference uri = uriReporter.getRequest().getResourceRef().clone();
 		uri.setQuery(null);
@@ -143,12 +144,12 @@ public class DataTemplateHTMLReporter extends QueryHTMLReporter<IProtocol, IQuer
 		} catch (Exception x) {}
 	}
 	@Override
-	public Object processItem(IProtocol protocol) throws AmbitException  {
+	public Object processItem(DBProtocol protocol) throws AmbitException  {
 		try {
 			String uri = uriReporter.getURI(protocol);
 			Object value = fields.identifier.getValue(protocol);
 			output.write(String.format("<tr bgcolor='FFFFFF'><th width='25%%'>Protocol %s</th><td><a href='%s'>%s</a></td></tr>",
-					fields.identifier.toString(),uri.replace(ITemplate.resource, ""),value));
+					fields.identifier.toString(),uri.replace(Resources.datatemplate, ""),value));
 			output.write(String.format("<tr bgcolor='FFFFFF'><th width='25%%'>%s</th><td><textarea>%s</textarea></td></tr>",
 					"Data template",
 					protocol.getTemplate()));
@@ -160,7 +161,7 @@ public class DataTemplateHTMLReporter extends QueryHTMLReporter<IProtocol, IQuer
 	}
 
 	@Override
-	public void footer(Writer output, IQueryRetrieval<IProtocol> query) {
+	public void footer(Writer output, IQueryRetrieval<DBProtocol> query) {
 		try {
 			output.write("</table>");
 		} catch (Exception x) {}

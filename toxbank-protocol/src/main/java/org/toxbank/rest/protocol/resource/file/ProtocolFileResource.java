@@ -4,21 +4,22 @@ import java.io.File;
 import java.util.Iterator;
 
 import net.idea.modbcum.i.reporter.Reporter;
+import net.toxbank.client.resource.Protocol;
 
 import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.resource.ResourceException;
-import org.toxbank.resource.IProtocol;
+import org.toxbank.resource.Resources;
 import org.toxbank.rest.FileResource;
 import org.toxbank.rest.protocol.ProtocolHTMLReporter;
 import org.toxbank.rest.protocol.ProtocolURIReporter;
 import org.toxbank.rest.protocol.ProtocolsIterator;
 
-public class ProtocolFileResource extends FileResource<IProtocol> {
+public class ProtocolFileResource extends FileResource<Protocol> {
 	
 	public ProtocolFileResource() {
-		super(IProtocol.resource);
+		super(Resources.protocol);
 		try {
 			directoryPrefix =  System.getProperty("java.io.tmpdir");
 
@@ -40,7 +41,7 @@ public class ProtocolFileResource extends FileResource<IProtocol> {
 		return new ProtocolHTMLReporter(getRequest(),getDocumentation());
 	}
 	@Override
-	protected Iterator<IProtocol> createQuery(Context context, Request request,
+	protected Iterator<Protocol> createQuery(Context context, Request request,
 			Response response) throws ResourceException {
 	
 		

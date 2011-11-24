@@ -12,11 +12,11 @@ import org.restlet.data.Status;
 import org.restlet.representation.Representation;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
-import org.toxbank.resource.IProtocol;
 import org.toxbank.rest.FileResource;
+import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 
-public class ProtocolDocumentResource extends QueryResource<ReadProtocol,IProtocol> {
+public class ProtocolDocumentResource extends QueryResource<ReadProtocol,DBProtocol> {
 
 	@Override
 	public IProcessor<ReadProtocol, Representation> createConvertor(

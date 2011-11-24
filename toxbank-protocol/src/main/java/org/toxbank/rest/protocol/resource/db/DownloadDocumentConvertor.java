@@ -10,12 +10,12 @@ import net.idea.restnet.db.convertors.AbstractObjectConvertor;
 import org.restlet.data.MediaType;
 import org.restlet.representation.FileRepresentation;
 import org.restlet.representation.Representation;
-import org.toxbank.resource.IProtocol;
+import org.toxbank.rest.protocol.DBProtocol;
 
-public class DownloadDocumentConvertor extends   AbstractObjectConvertor<IProtocol, IQueryRetrieval<IProtocol>,FileRepresentation> {
+public class DownloadDocumentConvertor extends   AbstractObjectConvertor<DBProtocol, IQueryRetrieval<DBProtocol>,FileRepresentation> {
 
 	public DownloadDocumentConvertor(
-			QueryReporter<IProtocol, IQueryRetrieval<IProtocol>, FileRepresentation> reporter) {
+			QueryReporter<DBProtocol, IQueryRetrieval<DBProtocol>, FileRepresentation> reporter) {
 		super(reporter);
 	}
 
@@ -25,7 +25,7 @@ public class DownloadDocumentConvertor extends   AbstractObjectConvertor<IProtoc
 	private static final long serialVersionUID = 1979008352251532084L;
 
 
-	public Representation process(IProtocol doc) throws AmbitException {
+	public Representation process(DBProtocol doc) throws AmbitException {
 		try {
 			if (doc==null) throw new AmbitException("No document!");
 			File file = new File(doc.getDocument().getURI());
@@ -50,7 +50,7 @@ public class DownloadDocumentConvertor extends   AbstractObjectConvertor<IProtoc
 
 
 	@Override
-	protected FileRepresentation createOutput(IQueryRetrieval<IProtocol> query)
+	protected FileRepresentation createOutput(IQueryRetrieval<DBProtocol> query)
 			throws AmbitException {
 		// TODO Auto-generated method stub
 		return null;

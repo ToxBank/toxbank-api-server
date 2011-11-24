@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 
 import junit.framework.Assert;
 
-import org.toxbank.resource.IProtocol;
+import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 
 public class ReadProtocolTest extends QueryTest<ReadProtocol> {
@@ -18,7 +18,7 @@ public class ReadProtocolTest extends QueryTest<ReadProtocol> {
 	protected void verify(ReadProtocol query, ResultSet rs) throws Exception {
 		int records = 0;
 		while (rs.next()) {
-			IProtocol protocol = query.getObject(rs);
+			DBProtocol protocol = query.getObject(rs);
 			Assert.assertEquals(2,protocol.getID());
 			records++;
 		}

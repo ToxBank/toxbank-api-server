@@ -36,15 +36,15 @@ import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.update.AbstractObjectUpdate;
 
-import org.toxbank.resource.IProtocol;
+import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol.fields;
 
-public class CreateProtocol extends AbstractObjectUpdate<IProtocol>{
+public class CreateProtocol extends AbstractObjectUpdate<DBProtocol>{
 	public static final String[] create_sql = {
 		"insert into protocol (idprotocol,identifier,title,abstract,author,summarySearchable,project,filename) values (?,?,?,?,?,?,?,?)"
 	};
 
-	public CreateProtocol(IProtocol ref) {
+	public CreateProtocol(DBProtocol ref) {
 		super(ref);
 	}
 	public CreateProtocol() {

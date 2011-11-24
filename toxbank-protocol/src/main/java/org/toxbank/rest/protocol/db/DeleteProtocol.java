@@ -35,14 +35,15 @@ import java.util.List;
 import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.update.AbstractObjectUpdate;
+import net.toxbank.client.resource.Protocol;
 
-import org.toxbank.resource.IProtocol;
+import org.toxbank.rest.protocol.DBProtocol;
 
-public class DeleteProtocol extends AbstractObjectUpdate<IProtocol> {
+public class DeleteProtocol extends AbstractObjectUpdate<DBProtocol> {
 
 	public static final String[] delete_sql = {"delete from protocol where idprotocol=?"};
 
-	public DeleteProtocol(IProtocol ref) {
+	public DeleteProtocol(DBProtocol ref) {
 		super(ref);
 	}
 	public DeleteProtocol() {

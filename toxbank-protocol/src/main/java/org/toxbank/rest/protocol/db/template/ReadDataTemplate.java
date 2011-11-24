@@ -10,12 +10,11 @@ import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.conditions.EQCondition;
 import net.idea.modbcum.q.query.AbstractQuery;
 
-import org.toxbank.resource.IProtocol;
+import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.DataTemplate;
-import org.toxbank.rest.protocol.MyProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol.fields;
 
-public class ReadDataTemplate extends AbstractQuery<String, IProtocol, EQCondition, IProtocol>  implements IQueryRetrieval<IProtocol> {
+public class ReadDataTemplate extends AbstractQuery<String, DBProtocol, EQCondition, DBProtocol>  implements IQueryRetrieval<DBProtocol> {
 	/**
 	 * 
 	 */
@@ -24,16 +23,16 @@ public class ReadDataTemplate extends AbstractQuery<String, IProtocol, EQConditi
 	protected static String sql = 
 		"select idprotocol,identifier,uncompress(template) from protocol where idprotocol=?";
 
-	public ReadDataTemplate(MyProtocol protocol) {
+	public ReadDataTemplate(DBProtocol protocol) {
 		super();
 		setValue(protocol);
 	}
 
 	public ReadDataTemplate() {
-		this((MyProtocol)null);
+		this((DBProtocol)null);
 	}
 		
-	public double calculateMetric(IProtocol object) {
+	public double calculateMetric(DBProtocol object) {
 		return 1;
 	}
 
@@ -55,9 +54,9 @@ public class ReadDataTemplate extends AbstractQuery<String, IProtocol, EQConditi
 			
 	}
 
-	public IProtocol getObject(ResultSet rs) throws AmbitException {
+	public DBProtocol getObject(ResultSet rs) throws AmbitException {
 		try {
-			IProtocol protocol =  new MyProtocol();
+			DBProtocol protocol =  new DBProtocol();
 			fields.idprotocol.setParam(protocol, rs);
 			fields.identifier.setParam(protocol, rs);
 			protocol.setTemplate(new DataTemplate(rs.getString(3)));

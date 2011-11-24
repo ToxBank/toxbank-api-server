@@ -6,7 +6,7 @@ import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.r.QueryReporter;
 
-import org.toxbank.resource.IProtocol;
+import org.toxbank.rest.protocol.DBProtocol;
 
 /**
  * Reports template content
@@ -14,21 +14,21 @@ import org.toxbank.resource.IProtocol;
  *
  * @param <Q>
  */
-public class DataTemplateReporter extends QueryReporter<IProtocol,IQueryRetrieval<IProtocol>, Writer> {
+public class DataTemplateReporter extends QueryReporter<DBProtocol,IQueryRetrieval<DBProtocol>, Writer> {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 5846954016565174817L;
 	@Override
-	public void footer(Writer output, IQueryRetrieval<IProtocol> query) {
+	public void footer(Writer output, IQueryRetrieval<DBProtocol> query) {
 	}
 
 	@Override
-	public void header(Writer output, IQueryRetrieval<IProtocol> query) {
+	public void header(Writer output, IQueryRetrieval<DBProtocol> query) {
 	}
 
 	@Override
-	public Object processItem(IProtocol item) throws AmbitException {
+	public Object processItem(DBProtocol item) throws AmbitException {
 		try {
 			output.write(item.getTemplate().toString());
 

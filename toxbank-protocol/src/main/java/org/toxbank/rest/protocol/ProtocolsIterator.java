@@ -3,10 +3,11 @@ package org.toxbank.rest.protocol;
 import java.io.File;
 import java.io.FileFilter;
 
-import org.toxbank.resource.IProtocol;
+import net.toxbank.client.resource.Protocol;
+
 import org.toxbank.rest.FilesIterator;
 
-public class ProtocolsIterator extends FilesIterator<IProtocol> {
+public class ProtocolsIterator extends FilesIterator<Protocol> {
 	protected String key;
 	public ProtocolsIterator(File directory, final String key) {
 		super(directory, new FileFilter() {
@@ -22,8 +23,8 @@ public class ProtocolsIterator extends FilesIterator<IProtocol> {
 	}
 
 	@Override
-	protected IProtocol convert(File directory) {
-		MyProtocol protocol = new MyProtocol();
+	protected Protocol convert(File directory) {
+		Protocol protocol = new Protocol();
 		protocol.setIdentifier(directory.getName());
 		if (key!=null) {
 			

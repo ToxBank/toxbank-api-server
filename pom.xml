@@ -67,6 +67,12 @@
   		<version>2.5</version>
   		<scope>provided</scope>
   	</dependency>   
+  	  	<dependency>
+  		<groupId>net.toxbank</groupId>
+  		<artifactId>toxbank-client-java</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  		<scope>compile</scope>
+  	</dependency>
   </dependencies>
   <repositories>
       <repository>
@@ -188,7 +194,10 @@
   	<module>toxbank-resource</module>
   	<module>toxbank-protocol</module>
   	<module>toxbank-interface</module>
-     </modules>
+<!--
+  	<module>toxbank-study</module>
+-->    
+ </modules>
  
    <distributionManagement>
 

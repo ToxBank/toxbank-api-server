@@ -27,14 +27,13 @@ import org.restlet.data.Status;
 import org.restlet.representation.Representation;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
-import org.toxbank.resource.IProtocol;
-import org.toxbank.resource.ITemplate;
+import org.toxbank.resource.Resources;
 import org.toxbank.rest.FileResource;
-import org.toxbank.rest.protocol.MyProtocol;
+import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.template.ReadDataTemplate;
 import org.toxbank.rest.protocol.resource.db.ProtocolQueryURIReporter;
 
-public class DataTemplateResource extends QueryResource<ReadDataTemplate,IProtocol> {
+public class DataTemplateResource extends QueryResource<ReadDataTemplate,DBProtocol> {
 
 	@Override
 	public IProcessor<ReadDataTemplate, Representation> createConvertor(
@@ -46,7 +45,7 @@ public class DataTemplateResource extends QueryResource<ReadDataTemplate,IProtoc
 			
 		} else	if (variant.getMediaType().equals(MediaType.TEXT_URI_LIST)) {
 				return new StringConvertor(	
-						new ProtocolQueryURIReporter(getRequest(),ITemplate.resource)
+						new ProtocolQueryURIReporter(getRequest(),Resources.datatemplate)
 						,MediaType.TEXT_URI_LIST);
 				
 		} else if (variant.getMediaType().equals(MediaType.APPLICATION_RDF_XML) ||
@@ -76,7 +75,7 @@ public class DataTemplateResource extends QueryResource<ReadDataTemplate,IProtoc
 			}			
 			else {
 				if (key.toString().startsWith("P")) {
-					return new ReadDataTemplate(new MyProtocol(new Integer(Reference.decode(key.toString().substring(1)))));
+					return new ReadDataTemplate(new DBProtocol(new Integer(Reference.decode(key.toString().substring(1)))));
 				} else throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
 			}
 		}catch (ResourceException x) {
@@ -91,9 +90,9 @@ public class DataTemplateResource extends QueryResource<ReadDataTemplate,IProtoc
 	} 
 
 	@Override
-	protected QueryURIReporter<IProtocol, ReadDataTemplate> getURUReporter(
+	protected QueryURIReporter<DBProtocol, ReadDataTemplate> getURUReporter(
 			Request baseReference) throws ResourceException {
-		ProtocolQueryURIReporter q = new ProtocolQueryURIReporter(getRequest(),ITemplate.resource);
+		ProtocolQueryURIReporter q = new ProtocolQueryURIReporter(getRequest(),Resources.datatemplate);
 		return q;
 	}
 
@@ -110,7 +109,7 @@ public class DataTemplateResource extends QueryResource<ReadDataTemplate,IProtoc
 
 	@Override
 	protected CallableProtectedTask<String> createCallable(Method method,
-			List<FileItem> input, IProtocol item) throws ResourceException {
+			List<FileItem> input, DBProtocol item) throws ResourceException {
 		Form form = new Form();
 		form.add(PageParams.params.resulturi.name(),String.format("%s/ProtocolMockup",getRequest().getResourceRef()));
 		form.add(PageParams.params.delay.name(),"1");

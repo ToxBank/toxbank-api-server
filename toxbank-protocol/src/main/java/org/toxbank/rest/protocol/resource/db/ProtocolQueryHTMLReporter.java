@@ -8,16 +8,17 @@ import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.c.html.HTMLBeauty;
 import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.db.convertors.QueryHTMLReporter;
+import net.toxbank.client.interfaces.IProtocol;
 
 import org.restlet.Request;
 import org.restlet.data.MediaType;
 import org.restlet.data.Reference;
-import org.toxbank.resource.IProtocol;
-import org.toxbank.resource.ITemplate;
+import org.toxbank.resource.Resources;
+import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.TBHTMLBeauty;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 
-public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<IProtocol, IQueryRetrieval<IProtocol>> {
+public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQueryRetrieval<DBProtocol>> {
 	/**
 	 * 
 	 */
@@ -64,10 +65,10 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<IProtocol, IQue
 	}
 	@Override
 	protected QueryURIReporter createURIReporter(Request request, ResourceDoc doc) {
-		return new ProtocolQueryURIReporter<IQueryRetrieval<IProtocol>>(request);
+		return new ProtocolQueryURIReporter<IQueryRetrieval<DBProtocol>>(request);
 	}
 	@Override
-	public void header(Writer w, IQueryRetrieval<IProtocol> query) {
+	public void header(Writer w, IQueryRetrieval<DBProtocol> query) {
 		super.header(w, query);
 		Reference uri = uriReporter.getRequest().getResourceRef().clone();
 		uri.setQuery(null);
@@ -117,7 +118,7 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<IProtocol, IQue
 			} else {
 				w.write("<h3>Protocol</h3>");
 				output.write(String.format("<a href='%s%s'>Back to protocols</a>",
-					uriReporter.getRequest().getRootRef(),IProtocol.resource));
+					uriReporter.getRequest().getRootRef(),Resources.protocol));
 			}
 			
 			String curlHint = String.format("curl -X GET -H 'Accept:%s' -H 'subjectid:%s' %s","SUPPORTED-MEDIA-TYPE","TOKEN",uri);
@@ -181,7 +182,7 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<IProtocol, IQue
 		} catch (Exception x) {}
 	}
 	@Override
-	public Object processItem(IProtocol protocol) throws AmbitException  {
+	public Object processItem(DBProtocol protocol) throws AmbitException  {
 		try {
 			String uri = uriReporter.getURI(protocol);
 			if (collapsed) 
@@ -194,7 +195,7 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<IProtocol, IQue
 		return null;
 	}
 	
-	protected void printForm(Writer output, String uri, IProtocol protocol, boolean editable) {
+	protected void printForm(Writer output, String uri, DBProtocol protocol, boolean editable) {
 		try {
 			ReadProtocol.fields[] fields = editable?entryFields:displayFields;
 			for (ReadProtocol.fields field : fields) {
@@ -234,12 +235,12 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<IProtocol, IQue
 				output.write("</tr>\n");				
 			}
 			output.write("<tr bgcolor='FFFFFF'>\n");
-			output.write(String.format("<th>%s</th><td align='left'><a href='%s%s'>Data template</a></td>","Data template",uri,ITemplate.resource));
+			output.write(String.format("<th>%s</th><td align='left'><a href='%s%s'>Data template</a></td>","Data template",uri,Resources.datatemplate));
 			output.write("</tr>\n");
 			output.flush();
 		} catch (Exception x) {x.printStackTrace();} 
 	}	
-	protected void printTable(Writer output, String uri, IProtocol protocol) {
+	protected void printTable(Writer output, String uri, DBProtocol protocol) {
 		try {
 			output.write("<tr bgcolor='FFFFFF'>\n");			
 			for (ReadProtocol.fields field : ReadProtocol.fields.values()) {
@@ -258,13 +259,13 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<IProtocol, IQue
 					output.write(String.format("<td>%s</td>",value==null?"":value.toString().length()>40?value.toString().substring(0,40):value.toString()));
 				}
 			}
-			output.write(String.format("<td><a href='%s%s'>Download</a></td>",uri,ITemplate.resource));
+			output.write(String.format("<td><a href='%s%s'>Download</a></td>",uri,Resources.datatemplate));
 		//	output.write(String.format("<td><a href='%s%s'>Data template</a></td>",uri));
 			output.write("</tr>\n");
 		} catch (Exception x) {} 
 	}
 	@Override
-	public void footer(Writer output, IQueryRetrieval<IProtocol> query) {
+	public void footer(Writer output, IQueryRetrieval<DBProtocol> query) {
 		try {
 			output.write("</table>");
 		} catch (Exception x) {}

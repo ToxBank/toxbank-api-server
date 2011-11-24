@@ -5,20 +5,19 @@ import net.idea.modbcum.i.query.IQueryUpdate;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
-import org.toxbank.resource.IProtocol;
+import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.DataTemplate;
-import org.toxbank.rest.protocol.MyProtocol;
 import org.toxbank.rest.protocol.db.template.UpdateDataTemplate;
 
-public class DataTemplate_crud_test  extends CRUDTest<Object,IProtocol> {
+public class DataTemplate_crud_test  extends CRUDTest<Object,DBProtocol> {
 
 	@Override
-	protected IQueryUpdate<Object,IProtocol> createQuery() throws Exception {
+	protected IQueryUpdate<Object,DBProtocol> createQuery() throws Exception {
 		return null;
 	}
 
 	@Override
-	protected void createVerify(IQueryUpdate<Object,IProtocol> query)
+	protected void createVerify(IQueryUpdate<Object,DBProtocol> query)
 			throws Exception {
 
 	}
@@ -34,14 +33,14 @@ public class DataTemplate_crud_test  extends CRUDTest<Object,IProtocol> {
 
 	
 	@Override
-	protected IQueryUpdate<Object,IProtocol> updateQuery() throws Exception {
-		MyProtocol protocol = new MyProtocol(1);
+	protected IQueryUpdate<Object,DBProtocol> updateQuery() throws Exception {
+		DBProtocol protocol = new DBProtocol(1);
 		protocol.setTemplate(new DataTemplate("ABCDEFGH"));
 		return new UpdateDataTemplate(protocol);
 	}
 
 	@Override
-	protected void updateVerify(IQueryUpdate<Object,IProtocol> query)
+	protected void updateVerify(IQueryUpdate<Object,DBProtocol> query)
 			throws Exception {
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED",
@@ -54,14 +53,14 @@ public class DataTemplate_crud_test  extends CRUDTest<Object,IProtocol> {
 	}
 
 	@Override
-	protected IQueryUpdate<Object, IProtocol> createQueryNew()
+	protected IQueryUpdate<Object, DBProtocol> createQueryNew()
 			throws Exception {
 
 		return null;
 	}
 
 	@Override
-	protected void createVerifyNew(IQueryUpdate<Object, IProtocol> query)
+	protected void createVerifyNew(IQueryUpdate<Object, DBProtocol> query)
 			throws Exception {
 		
 		
@@ -71,13 +70,13 @@ public class DataTemplate_crud_test  extends CRUDTest<Object,IProtocol> {
 	}
 
 	@Override
-	protected IQueryUpdate<Object, IProtocol> deleteQuery() throws Exception {
+	protected IQueryUpdate<Object, DBProtocol> deleteQuery() throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected void deleteVerify(IQueryUpdate<Object, IProtocol> query)
+	protected void deleteVerify(IQueryUpdate<Object, DBProtocol> query)
 			throws Exception {
 		// TODO Auto-generated method stub
 		

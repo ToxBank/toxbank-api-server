@@ -42,7 +42,7 @@ import org.restlet.security.Enroler;
 import org.restlet.security.Verifier;
 import org.restlet.service.TunnelService;
 import org.restlet.util.RouteList;
-import org.toxbank.resource.IProtocol;
+import org.toxbank.resource.Resources;
 import org.toxbank.rest.protocol.ProtocolRouter;
 
 
@@ -133,7 +133,7 @@ public class TBApplication extends TaskApplication<String> {
 		router.attach(TaskResource.resource, new TaskRouter(getContext()));
 
 		/**  /protocol  */
-		router.attach(IProtocol.resource, new ProtocolRouter(getContext()));
+		router.attach(Resources.protocol, new ProtocolRouter(getContext()));
 		
 		/**
 		 * Queries

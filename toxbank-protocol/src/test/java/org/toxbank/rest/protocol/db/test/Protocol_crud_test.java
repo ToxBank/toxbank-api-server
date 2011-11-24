@@ -30,47 +30,44 @@
 package org.toxbank.rest.protocol.db.test;
 
 import java.net.URI;
+import java.net.URL;
 
 import junit.framework.Assert;
 import net.idea.modbcum.i.query.IQueryUpdate;
+import net.toxbank.client.resource.User;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
-import org.toxbank.resource.IProject;
-import org.toxbank.resource.IProtocol;
-import org.toxbank.resource.IUser;
-import org.toxbank.rest.protocol.MyProtocol;
+import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.CreateProtocol;
 import org.toxbank.rest.protocol.db.DeleteProtocol;
 import org.toxbank.rest.protocol.db.UpdateProtocol;
 import org.toxbank.rest.protocol.metadata.Document;
 
-public final class Protocol_crud_test  extends CRUDTest<Object,IProtocol>  {
+public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 	String file = "http://localhost/1.pdf";
 
 	@Override
-	protected IQueryUpdate<Object,IProtocol> createQuery() throws Exception {
-		IProtocol ref = new MyProtocol();
+	protected IQueryUpdate<Object,DBProtocol> createQuery() throws Exception {
+		DBProtocol ref = new DBProtocol();
 		ref.setIdentifier("identifier");
 		ref.setTitle("title");
 		ref.setAbstract("abstract");
-		ref.setAuthor(new IUser() {
+		ref.setAuthor(new User() {
 			public String toString() { return "author";}
 		});
-		ref.setProject(new IProject() {
-			public String toString() { return "project";}
-		});		
+		ref.setProject(new URL("http://example.com/project"));		
 		ref.setSummarySearchable(true);
 		ref.setDocument(new Document(new URI(file)));
 		return new CreateProtocol(ref);
 	}
 
 	@Override
-	protected void createVerify(IQueryUpdate<Object,IProtocol> query)
+	protected void createVerify(IQueryUpdate<Object,DBProtocol> query)
 			throws Exception {
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED",
-				String.format("SELECT idprotocol,summarySearchable FROM protocol where identifier='identifier' and title='title' and abstract='abstract' and author='author' and project='project' and filename='%s'",file));
+				String.format("SELECT idprotocol,summarySearchable FROM protocol where identifier='identifier' and title='title' and abstract='abstract' and author='author' and project='http://example.com/project' and filename='%s'",file));
 		
 		Assert.assertEquals(1,table.getRowCount());
 		Assert.assertEquals(Boolean.TRUE,table.getValue(0,"summarySearchable"));
@@ -78,13 +75,13 @@ public final class Protocol_crud_test  extends CRUDTest<Object,IProtocol>  {
 	}
 
 	@Override
-	protected IQueryUpdate<Object,IProtocol> deleteQuery() throws Exception {
-		IProtocol ref = new MyProtocol(2);
+	protected IQueryUpdate<Object,DBProtocol> deleteQuery() throws Exception {
+		DBProtocol ref = new DBProtocol(2);
 		return new DeleteProtocol(ref);
 	}
 
 	@Override
-	protected void deleteVerify(IQueryUpdate<Object,IProtocol> query)
+	protected void deleteVerify(IQueryUpdate<Object,DBProtocol> query)
 			throws Exception {
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED","SELECT idprotocol FROM protocol where idprotocol=2");
@@ -98,8 +95,8 @@ public final class Protocol_crud_test  extends CRUDTest<Object,IProtocol>  {
 		//TODO Not iplemented
 	}
 	@Override
-	protected IQueryUpdate<Object,IProtocol> updateQuery() throws Exception {
-		IProtocol ref = new MyProtocol();
+	protected IQueryUpdate<Object,DBProtocol> updateQuery() throws Exception {
+		DBProtocol ref = new DBProtocol();
 		ref.setAbstract("NEW");
 		ref.setID(2);
 
@@ -107,7 +104,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,IProtocol>  {
 	}
 
 	@Override
-	protected void updateVerify(IQueryUpdate<Object,IProtocol> query)
+	protected void updateVerify(IQueryUpdate<Object,DBProtocol> query)
 			throws Exception {
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED","SELECT abstract FROM protocol where idprotocol=2");
@@ -120,14 +117,14 @@ public final class Protocol_crud_test  extends CRUDTest<Object,IProtocol>  {
 	}
 
 	@Override
-	protected IQueryUpdate<Object, IProtocol> createQueryNew()
+	protected IQueryUpdate<Object, DBProtocol> createQueryNew()
 			throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected void createVerifyNew(IQueryUpdate<Object, IProtocol> query)
+	protected void createVerifyNew(IQueryUpdate<Object, DBProtocol> query)
 			throws Exception {
 		
 		

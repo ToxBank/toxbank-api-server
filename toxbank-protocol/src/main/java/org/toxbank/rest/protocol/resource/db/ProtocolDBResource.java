@@ -29,9 +29,9 @@ import org.restlet.data.Reference;
 import org.restlet.data.Status;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
-import org.toxbank.resource.IProtocol;
 import org.toxbank.rest.FileResource;
 import org.toxbank.rest.protocol.CallableProtocolUpload;
+import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 
 /**
@@ -40,7 +40,7 @@ import org.toxbank.rest.protocol.db.ReadProtocol;
  *
  * @param <Q>
  */
-public class ProtocolDBResource	extends QueryResource<ReadProtocol,IProtocol> {
+public class ProtocolDBResource	extends QueryResource<ReadProtocol,DBProtocol> {
 
 	
 	protected boolean singleItem = false;
@@ -69,8 +69,8 @@ public class ProtocolDBResource	extends QueryResource<ReadProtocol,IProtocol> {
 					variant.getMediaType().equals(MediaType.TEXT_CSV) 
 					
 					) {
-				return new RDFJenaConvertor<IProtocol, IQueryRetrieval<IProtocol>>(
-						new ProtocolRDFReporter<IQueryRetrieval<IProtocol>>(
+				return new RDFJenaConvertor<DBProtocol, IQueryRetrieval<DBProtocol>>(
+						new ProtocolRDFReporter<IQueryRetrieval<DBProtocol>>(
 								getRequest(),variant.getMediaType(),getDocumentation())
 						,variant.getMediaType());					
 		} else if (variant.getMediaType().equals(MediaType.TEXT_HTML))
@@ -123,7 +123,7 @@ public class ProtocolDBResource	extends QueryResource<ReadProtocol,IProtocol> {
 	} 
 
 	@Override
-	protected QueryURIReporter<IProtocol, ReadProtocol> getURUReporter(
+	protected QueryURIReporter<DBProtocol, ReadProtocol> getURUReporter(
 			Request baseReference) throws ResourceException {
 		return new ProtocolQueryURIReporter(getRequest());
 	}
@@ -141,7 +141,7 @@ public class ProtocolDBResource	extends QueryResource<ReadProtocol,IProtocol> {
 
 	@Override
 	protected CallableProtectedTask<String> createCallable(Method method,
-			List<FileItem> input, IProtocol item) throws ResourceException {
+			List<FileItem> input, DBProtocol item) throws ResourceException {
 		Connection conn = null;
 		try {
 			ProtocolQueryURIReporter r = new ProtocolQueryURIReporter(getRequest(),"");

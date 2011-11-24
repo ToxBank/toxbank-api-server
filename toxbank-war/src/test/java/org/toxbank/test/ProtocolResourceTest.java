@@ -8,6 +8,7 @@ import java.net.URI;
 import java.net.URL;
 
 import junit.framework.Assert;
+import net.toxbank.client.interfaces.IProtocol;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
@@ -17,7 +18,7 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Reference;
 import org.restlet.representation.Representation;
-import org.toxbank.resource.IProtocol;
+import org.toxbank.resource.Resources;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 
 /**
@@ -51,7 +52,7 @@ public class ProtocolResourceTest extends ResourceTest {
 		int count = 0;
 		while ((line = r.readLine())!= null) {
 			Assert.assertEquals(
-					String.format("http://localhost:%d%s/P1",port,IProtocol.resource)
+					String.format("http://localhost:%d%s/P1",port,Resources.protocol)
 							, line);
 			count++;
 		}
@@ -272,8 +273,12 @@ public class ProtocolResourceTest extends ResourceTest {
 		for (ReadProtocol.fields field : ReadProtocol.fields.values()) {
 			if (field.equals(field.idprotocol)) continue;
 			if (field.equals(field.filename)) continue;
+			if (field.equals(field.author) || field.equals(field.project)) 
+				values[i] = String.format("http://example.com/user/%s",field.name());
+			else values[i] = field.name();
+			
 			names[i] = field.name();
-			values[i] = field.name();
+			
 			i++;
 		}
 		Representation rep = getMultipartWebFormRepresentation(names,values,file,MediaType.APPLICATION_PDF.toString());

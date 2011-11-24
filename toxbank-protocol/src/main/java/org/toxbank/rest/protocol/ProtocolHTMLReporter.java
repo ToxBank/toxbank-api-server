@@ -7,7 +7,7 @@ import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.c.html.HTMLBeauty;
 
 import org.restlet.Request;
-import org.toxbank.resource.IProtocol;
+import org.restlet.data.Protocol;
 
 public class ProtocolHTMLReporter  extends ProtocolURIReporter {
 
@@ -28,7 +28,7 @@ public class ProtocolHTMLReporter  extends ProtocolURIReporter {
 	}
 	
 	@Override
-	public void header(Writer output, Iterator<IProtocol> query) {
+	public void header(Writer output, Iterator<Protocol> query) {
 		try {
 			if (htmlBeauty==null) htmlBeauty = new HTMLBeauty();
 			
@@ -40,7 +40,7 @@ public class ProtocolHTMLReporter  extends ProtocolURIReporter {
 			
 		}
 	}
-	public void processItem(IProtocol item, Writer output) {
+	public void processItem(Protocol item, Writer output) {
 		try {
 			String t = super.getURI(item);
 			output.write(String.format("<a href='%s'>%s</a><br>", t,item.toString()));
@@ -49,7 +49,7 @@ public class ProtocolHTMLReporter  extends ProtocolURIReporter {
 		}
 	};
 	@Override
-	public void footer(Writer output, Iterator<IProtocol> query) {
+	public void footer(Writer output, Iterator<Protocol> query) {
 		try {
 			if (htmlBeauty == null) htmlBeauty = new HTMLBeauty();
 			htmlBeauty.writeHTMLFooter(output, "", getRequest());

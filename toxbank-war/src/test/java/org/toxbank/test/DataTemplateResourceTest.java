@@ -5,12 +5,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import junit.framework.Assert;
+import net.toxbank.client.interfaces.IProtocol;
 
 import org.junit.Test;
 import org.restlet.data.MediaType;
 import org.restlet.representation.Representation;
-import org.toxbank.resource.IProtocol;
-import org.toxbank.resource.ITemplate;
+import org.toxbank.resource.Resources;
 import org.toxbank.rest.protocol.db.template.ReadDataTemplate;
 
 public class DataTemplateResourceTest extends ResourceTest {
@@ -23,7 +23,7 @@ public class DataTemplateResourceTest extends ResourceTest {
 	}
 	@Override
 	public String getTestURI() {
-		return String.format("http://localhost:%d%s/P1%s", port,IProtocol.resource,ITemplate.resource);
+		return String.format("http://localhost:%d%s/P1%s", port,Resources.protocol,Resources.datatemplate);
 	}
 	
 	@Test
@@ -41,7 +41,7 @@ public class DataTemplateResourceTest extends ResourceTest {
 		int count = 0;
 		while ((line = r.readLine())!= null) {
 			Assert.assertEquals(
-					String.format("http://localhost:%d%s/P1%s",port,IProtocol.resource,ITemplate.resource)
+					String.format("http://localhost:%d%s/P1%s",port,IProtocol.resource,Resources.datatemplate)
 							, line);
 			count++;
 		}

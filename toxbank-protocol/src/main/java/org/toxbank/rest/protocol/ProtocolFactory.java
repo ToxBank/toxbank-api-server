@@ -2,24 +2,24 @@ package org.toxbank.rest.protocol;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import net.toxbank.client.resource.User;
+
 import org.apache.commons.fileupload.FileItem;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
-import org.toxbank.resource.IProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
-import org.toxbank.rest.protocol.metadata.Author;
 import org.toxbank.rest.protocol.metadata.Document;
-import org.toxbank.rest.protocol.metadata.Project;
 
 public class ProtocolFactory {
 	
-	public static IProtocol getProtocol(List<FileItem> items, long maxSize) throws ResourceException {
+	public static DBProtocol getProtocol(List<FileItem> items, long maxSize) throws ResourceException {
 		
-		MyProtocol protocol = new MyProtocol();
+		DBProtocol protocol = new DBProtocol();
 		for (final Iterator<FileItem> it = items.iterator(); it.hasNext();) {
 			FileItem fi = it.next();
 		//	System.out.println(String.format("%s\t%s", fi.getFieldName(),fi.getString()));
@@ -62,7 +62,7 @@ public class ProtocolFactory {
 			        break;
 				}
 				case project: {
-					protocol.setProject(new Project(fi.getString()));
+					protocol.setProject(new URL(fi.getString()));
 					break;					
 				}
 				case title: {
@@ -70,7 +70,7 @@ public class ProtocolFactory {
 					break;
 				}
 				case author: {
-					protocol.setAuthor(new Author(fi.getString()));
+					protocol.setAuthor(new User(new URL(fi.getString())));
 					break;
 				}
 				case summarySearchable: {

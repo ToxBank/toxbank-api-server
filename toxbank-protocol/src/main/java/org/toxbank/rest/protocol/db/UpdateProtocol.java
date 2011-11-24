@@ -35,15 +35,15 @@ import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.update.AbstractObjectUpdate;
 
-import org.toxbank.resource.IProtocol;
+import org.toxbank.rest.protocol.DBProtocol;
 
-public class UpdateProtocol extends AbstractObjectUpdate<IProtocol>{
+public class UpdateProtocol extends AbstractObjectUpdate<DBProtocol>{
 
 	public static final String[] update_sql = {
 		//"update catalog_references set title=?, url=?, type=? where idreference=?"
 		};
 
-	public UpdateProtocol(IProtocol ref) {
+	public UpdateProtocol(DBProtocol ref) {
 		super(ref);
 	}
 	public UpdateProtocol() {

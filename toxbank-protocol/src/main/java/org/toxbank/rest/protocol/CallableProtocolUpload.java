@@ -11,7 +11,6 @@ import net.idea.restnet.i.task.TaskResult;
 import org.apache.commons.fileupload.FileItem;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
-import org.toxbank.resource.IProtocol;
 import org.toxbank.rest.protocol.db.CreateProtocol;
 import org.toxbank.rest.protocol.resource.db.ProtocolQueryURIReporter;
 
@@ -32,7 +31,7 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 	@Override
 	public TaskResult doCall() throws Exception {
 		try {
-			IProtocol protocol = ProtocolFactory.getProtocol(input, 10000000);
+			DBProtocol protocol = ProtocolFactory.getProtocol(input, 10000000);
 			exec = new UpdateExecutor<IQueryUpdate>();
 			exec.setConnection(connection);
 			CreateProtocol q = new CreateProtocol(protocol);

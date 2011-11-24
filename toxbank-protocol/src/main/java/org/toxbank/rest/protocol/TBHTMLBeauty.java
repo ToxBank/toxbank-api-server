@@ -8,7 +8,7 @@ import net.idea.restnet.c.html.HTMLBeauty;
 
 import org.restlet.Request;
 import org.restlet.data.Reference;
-import org.toxbank.resource.IProtocol;
+import org.toxbank.resource.Resources;
 
 public class TBHTMLBeauty extends HTMLBeauty {
 	public TBHTMLBeauty() {
@@ -29,7 +29,7 @@ public class TBHTMLBeauty extends HTMLBeauty {
 			return "ToxBank protocol web service";
 		}
 		public void writeTopLinks(Writer w,String title,Request request,String meta,ResourceDoc doc, Reference baseReference) throws IOException {
-			w.write(String.format("<a href='%s%s'>Protocols</a>&nbsp;",baseReference,IProtocol.resource));
+			w.write(String.format("<a href='%s%s'>Protocols</a>&nbsp;",baseReference,Resources.protocol));
 		}
 	
 		
