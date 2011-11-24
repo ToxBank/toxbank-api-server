@@ -13,7 +13,7 @@ import net.idea.modbcum.q.conditions.EQCondition;
 import net.idea.modbcum.q.query.AbstractQuery;
 
 import org.toxbank.resource.IProtocol;
-import org.toxbank.rest.protocol.Protocol;
+import org.toxbank.rest.protocol.MyProtocol;
 import org.toxbank.rest.protocol.metadata.Author;
 import org.toxbank.rest.protocol.metadata.Document;
 import org.toxbank.rest.protocol.metadata.Project;
@@ -221,7 +221,7 @@ public class ReadProtocol  extends AbstractQuery<String, IProtocol, EQCondition,
 
 	public ReadProtocol(Integer id) {
 		super();
-		setValue(id==null?null:new Protocol(id));
+		setValue(id==null?null:new MyProtocol(id));
 	}
 	public ReadProtocol() {
 		this(null);
@@ -254,7 +254,7 @@ public class ReadProtocol  extends AbstractQuery<String, IProtocol, EQCondition,
 
 	public IProtocol getObject(ResultSet rs) throws AmbitException {
 		try {
-			IProtocol p =  new Protocol();
+			IProtocol p =  new MyProtocol();
 			for (fields field:fields.values()) try {
 				field.setParam(p,rs);
 				

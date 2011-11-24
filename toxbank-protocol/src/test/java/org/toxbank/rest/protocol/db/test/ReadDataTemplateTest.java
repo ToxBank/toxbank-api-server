@@ -5,14 +5,14 @@ import java.sql.ResultSet;
 import junit.framework.Assert;
 
 import org.toxbank.resource.IProtocol;
-import org.toxbank.rest.protocol.Protocol;
+import org.toxbank.rest.protocol.MyProtocol;
 import org.toxbank.rest.protocol.db.template.ReadDataTemplate;
 
 public class ReadDataTemplateTest  extends QueryTest<ReadDataTemplate> {
 
 	@Override
 	protected ReadDataTemplate createQuery() throws Exception {
-		Protocol protocol = new Protocol(1);
+		MyProtocol protocol = new MyProtocol(1);
 		return new ReadDataTemplate(protocol);
 	}
 

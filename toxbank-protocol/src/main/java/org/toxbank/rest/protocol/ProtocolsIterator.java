@@ -23,7 +23,7 @@ public class ProtocolsIterator extends FilesIterator<IProtocol> {
 
 	@Override
 	protected IProtocol convert(File directory) {
-		Protocol protocol = new Protocol();
+		MyProtocol protocol = new MyProtocol();
 		protocol.setIdentifier(directory.getName());
 		if (key!=null) {
 			

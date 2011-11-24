@@ -36,6 +36,10 @@ public class ProtocolRDFReporter<Q extends IQueryRetrieval<IProtocol>> extends Q
 	}
 	public static Individual addToModel(OntModel jenaModel,IProtocol item, 
 				QueryURIReporter<IProtocol, IQueryRetrieval<IProtocol>> uriReporter) {
+		
+		
+
+		
 		Individual entry = null;
 		String uri = uriReporter.getURI(item);
 		

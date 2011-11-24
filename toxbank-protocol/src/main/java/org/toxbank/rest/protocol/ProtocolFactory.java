@@ -19,7 +19,7 @@ public class ProtocolFactory {
 	
 	public static IProtocol getProtocol(List<FileItem> items, long maxSize) throws ResourceException {
 		
-		Protocol protocol = new Protocol();
+		MyProtocol protocol = new MyProtocol();
 		for (final Iterator<FileItem> it = items.iterator(); it.hasNext();) {
 			FileItem fi = it.next();
 		//	System.out.println(String.format("%s\t%s", fi.getFieldName(),fi.getString()));

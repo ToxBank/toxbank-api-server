@@ -7,7 +7,7 @@ import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
 import org.toxbank.resource.IProtocol;
 import org.toxbank.rest.protocol.DataTemplate;
-import org.toxbank.rest.protocol.Protocol;
+import org.toxbank.rest.protocol.MyProtocol;
 import org.toxbank.rest.protocol.db.template.UpdateDataTemplate;
 
 public class DataTemplate_crud_test  extends CRUDTest<Object,IProtocol> {
@@ -35,7 +35,7 @@ public class DataTemplate_crud_test  extends CRUDTest<Object,IProtocol> {
 	
 	@Override
 	protected IQueryUpdate<Object,IProtocol> updateQuery() throws Exception {
-		Protocol protocol = new Protocol(1);
+		MyProtocol protocol = new MyProtocol(1);
 		protocol.setTemplate(new DataTemplate("ABCDEFGH"));
 		return new UpdateDataTemplate(protocol);
 	}

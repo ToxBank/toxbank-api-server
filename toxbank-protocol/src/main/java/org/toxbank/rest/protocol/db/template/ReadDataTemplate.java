@@ -12,7 +12,7 @@ import net.idea.modbcum.q.query.AbstractQuery;
 
 import org.toxbank.resource.IProtocol;
 import org.toxbank.rest.protocol.DataTemplate;
-import org.toxbank.rest.protocol.Protocol;
+import org.toxbank.rest.protocol.MyProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol.fields;
 
 public class ReadDataTemplate extends AbstractQuery<String, IProtocol, EQCondition, IProtocol>  implements IQueryRetrieval<IProtocol> {
@@ -24,13 +24,13 @@ public class ReadDataTemplate extends AbstractQuery<String, IProtocol, EQConditi
 	protected static String sql = 
 		"select idprotocol,identifier,uncompress(template) from protocol where idprotocol=?";
 
-	public ReadDataTemplate(Protocol protocol) {
+	public ReadDataTemplate(MyProtocol protocol) {
 		super();
 		setValue(protocol);
 	}
 
 	public ReadDataTemplate() {
-		this((Protocol)null);
+		this((MyProtocol)null);
 	}
 		
 	public double calculateMetric(IProtocol object) {
@@ -57,7 +57,7 @@ public class ReadDataTemplate extends AbstractQuery<String, IProtocol, EQConditi
 
 	public IProtocol getObject(ResultSet rs) throws AmbitException {
 		try {
-			IProtocol protocol =  new Protocol();
+			IProtocol protocol =  new MyProtocol();
 			fields.idprotocol.setParam(protocol, rs);
 			fields.identifier.setParam(protocol, rs);
 			protocol.setTemplate(new DataTemplate(rs.getString(3)));

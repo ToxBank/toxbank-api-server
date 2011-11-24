@@ -9,7 +9,7 @@ import org.toxbank.resource.IProtocol;
 import org.toxbank.resource.ITemplate;
 import org.toxbank.resource.IUser;
 
-public class Protocol implements IProtocol {
+public class MyProtocol implements IProtocol {
 	
 	/**
 	 * 
@@ -35,11 +35,11 @@ public class Protocol implements IProtocol {
 	protected String version;
 	protected String fileName;
 	
-	public Protocol() {
+	public MyProtocol() {
 	
 	}
 	
-	public Protocol(int id) {
+	public MyProtocol(int id) {
 		setID(id);
 	}
 	

@@ -39,7 +39,7 @@ import org.dbunit.dataset.ITable;
 import org.toxbank.resource.IProject;
 import org.toxbank.resource.IProtocol;
 import org.toxbank.resource.IUser;
-import org.toxbank.rest.protocol.Protocol;
+import org.toxbank.rest.protocol.MyProtocol;
 import org.toxbank.rest.protocol.db.CreateProtocol;
 import org.toxbank.rest.protocol.db.DeleteProtocol;
 import org.toxbank.rest.protocol.db.UpdateProtocol;
@@ -50,7 +50,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,IProtocol>  {
 
 	@Override
 	protected IQueryUpdate<Object,IProtocol> createQuery() throws Exception {
-		IProtocol ref = new Protocol();
+		IProtocol ref = new MyProtocol();
 		ref.setIdentifier("identifier");
 		ref.setTitle("title");
 		ref.setAbstract("abstract");
@@ -79,7 +79,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,IProtocol>  {
 
 	@Override
 	protected IQueryUpdate<Object,IProtocol> deleteQuery() throws Exception {
-		IProtocol ref = new Protocol(2);
+		IProtocol ref = new MyProtocol(2);
 		return new DeleteProtocol(ref);
 	}
 
@@ -99,7 +99,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,IProtocol>  {
 	}
 	@Override
 	protected IQueryUpdate<Object,IProtocol> updateQuery() throws Exception {
-		IProtocol ref = new Protocol();
+		IProtocol ref = new MyProtocol();
 		ref.setAbstract("NEW");
 		ref.setID(2);
 
