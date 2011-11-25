@@ -10,10 +10,9 @@ import org.junit.Test;
 import org.restlet.data.MediaType;
 import org.restlet.representation.Representation;
 import org.toxbank.resource.Resources;
-import org.toxbank.rest.groups.db.ReadOrganisation;
-import org.toxbank.rest.protocol.db.template.ReadDataTemplate;
+import org.toxbank.rest.groups.db.ReadProject;
 
-public class OrganisationResourceTest extends ResourceTest {
+public class ProjectResourceTest  extends ResourceTest {
 	
 	@Override
 	public void setUp() throws Exception {
@@ -23,7 +22,7 @@ public class OrganisationResourceTest extends ResourceTest {
 	}
 	@Override
 	public String getTestURI() {
-		return String.format("http://localhost:%d%s", port,Resources.organisation);
+		return String.format("http://localhost:%d%s", port,Resources.project);
 	}
 	
 	@Test
@@ -40,7 +39,7 @@ public class OrganisationResourceTest extends ResourceTest {
 		String line = null;
 		int count = 0;
 		while ((line = r.readLine())!= null) {
-			Assert.assertTrue(line.startsWith(String.format("http://localhost:%d%s/G",port,Resources.organisation)));
+			Assert.assertTrue(line.startsWith(String.format("http://localhost:%d%s/G",port,Resources.project)));
 			count++;
 		}
 		return count==2;
@@ -70,7 +69,7 @@ public class OrganisationResourceTest extends ResourceTest {
 	public Object verifyResponseJavaObject(String uri, MediaType media,
 			Representation rep) throws Exception {
 		Object o = super.verifyResponseJavaObject(uri, media, rep);
-		Assert.assertTrue(o instanceof ReadOrganisation);
+		Assert.assertTrue(o instanceof ReadProject);
 
 		return o;
 	}

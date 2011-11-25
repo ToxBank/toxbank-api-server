@@ -41,7 +41,8 @@ import org.toxbank.rest.protocol.db.ReadProtocol.fields;
 
 public class CreateProtocol extends AbstractObjectUpdate<DBProtocol>{
 	public static final String[] create_sql = {
-		"insert into protocol (idprotocol,identifier,title,abstract,author,summarySearchable,project,filename) values (?,?,?,?,?,?,?,?)"
+		"insert into protocol (idprotocol,version,identifier,title,abstract,author,summarySearchable,idproject,idorganisation,filename) " +
+		"values (?,?,?,?,?,?,?,?,?,?)"
 	};
 
 	public CreateProtocol(DBProtocol ref) {
@@ -52,7 +53,19 @@ public class CreateProtocol extends AbstractObjectUpdate<DBProtocol>{
 	}		
 	public List<QueryParam> getParameters(int index) throws AmbitException {
 		List<QueryParam> params1 = new ArrayList<QueryParam>();
-		for (ReadProtocol.fields field: fields.values()) 
+		ReadProtocol.fields[] f = new ReadProtocol.fields[] {
+				ReadProtocol.fields.idprotocol,
+				ReadProtocol.fields.version,
+				ReadProtocol.fields.identifier,
+				ReadProtocol.fields.title,
+				ReadProtocol.fields.anabstract,
+				ReadProtocol.fields.author,
+				ReadProtocol.fields.summarySearchable,
+				ReadProtocol.fields.idproject,
+				ReadProtocol.fields.idorganisation,
+				ReadProtocol.fields.filename
+		};
+		for (ReadProtocol.fields field: f) 
 			params1.add(field.getParam(getObject()));
 		
 		return params1;

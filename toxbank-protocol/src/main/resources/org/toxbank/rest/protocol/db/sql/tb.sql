@@ -26,7 +26,7 @@ CREATE TABLE  `project` (
 DROP TABLE IF EXISTS `protocol`;
 CREATE TABLE  `protocol` (
   `idprotocol` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `version` int(10) unsigned NOT NULL COMMENT 'Version',
+  `version` int(10) unsigned NOT NULL COMMENT 'Version' DEFAULT '1', 
   `identifier` varchar(45) DEFAULT NULL COMMENT 'Unique human readable ID',
   `title` varchar(45) NOT NULL COMMENT 'Title',
   `abstract` text,

@@ -12,6 +12,8 @@ import net.toxbank.client.resource.User;
 import org.apache.commons.fileupload.FileItem;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
+import org.toxbank.rest.groups.DBOrganisation;
+import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 import org.toxbank.rest.protocol.metadata.Document;
 
@@ -62,9 +64,21 @@ public class ProtocolFactory {
 			        break;
 				}
 				case project: {
-					protocol.setProject(new URL(fi.getString()));
+					DBProject p = protocol.getDbProject();
+					if (p==null) { p = new DBProject(); protocol.setDbProject(p);}
+					if (fi.getString().startsWith("http"))
+						p.setResourceURL(new URL(fi.getString()));
+					else p.setName(fi.getString());
 					break;					
 				}
+				case organisation: {
+					DBOrganisation p = protocol.getDbOrganisation();
+					if (p==null) { p = new DBOrganisation(); protocol.setDbOrganisation(p);}
+					if (fi.getString().startsWith("http"))
+						p.setResourceURL(new URL(fi.getString()));
+					else p.setName(fi.getString());
+					break;					
+				}				
 				case title: {
 					protocol.setTitle(fi.getString());
 					break;

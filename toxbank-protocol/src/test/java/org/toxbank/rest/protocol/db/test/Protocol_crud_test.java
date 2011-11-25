@@ -38,6 +38,8 @@ import net.toxbank.client.resource.User;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
+import org.toxbank.rest.groups.DBOrganisation;
+import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.CreateProtocol;
 import org.toxbank.rest.protocol.db.DeleteProtocol;
@@ -56,7 +58,8 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 		ref.setAuthor(new User() {
 			public String toString() { return "author";}
 		});
-		ref.setProject(new URL("http://example.com/project"));		
+		ref.setDbProject(new DBProject(1));	
+		ref.setDbOrganisation(new DBOrganisation(1));
 		ref.setSummarySearchable(true);
 		ref.setDocument(new Document(new URI(file)));
 		return new CreateProtocol(ref);
@@ -67,7 +70,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 			throws Exception {
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED",
-				String.format("SELECT idprotocol,summarySearchable FROM protocol where identifier='identifier' and title='title' and abstract='abstract' and author='author' and project='http://example.com/project' and filename='%s'",file));
+				String.format("SELECT idprotocol,summarySearchable FROM protocol where identifier='identifier' and title='title' and abstract='abstract' and author='author' and idproject=1 and idorganisation=1 and filename='%s'",file));
 		
 		Assert.assertEquals(1,table.getRowCount());
 		Assert.assertEquals(Boolean.TRUE,table.getValue(0,"summarySearchable"));

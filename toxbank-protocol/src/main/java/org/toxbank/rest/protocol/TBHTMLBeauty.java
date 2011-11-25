@@ -30,6 +30,8 @@ public class TBHTMLBeauty extends HTMLBeauty {
 		}
 		public void writeTopLinks(Writer w,String title,Request request,String meta,ResourceDoc doc, Reference baseReference) throws IOException {
 			w.write(String.format("<a href='%s%s'>Protocols</a>&nbsp;",baseReference,Resources.protocol));
+			w.write(String.format("<a href='%s%s'>Organisations</a>&nbsp;",baseReference,Resources.organisation));
+			w.write(String.format("<a href='%s%s'>Projects</a>&nbsp;",baseReference,Resources.project));
 		}
 	
 		

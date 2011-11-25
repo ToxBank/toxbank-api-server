@@ -8,8 +8,13 @@ public class DBOrganisation extends Organisation implements IDBGroup {
 	 */
 	private static final long serialVersionUID = 6081839402557578567L;
 	protected DBGroup group;
+	
 	public DBOrganisation() {
+		this(null);
+	}
+	public DBOrganisation(Integer id) {
 		group = new DBGroup(GroupType.ORGANISATION);
+		if (id!=null) setID(id);
 	}
 	public GroupType getGroupType() {
 		return group.getGroupType();
@@ -37,5 +42,9 @@ public class DBOrganisation extends Organisation implements IDBGroup {
 	public void setID(int iD) {
 		group.setID(iD);
 		
+	}
+	@Override
+	public String toString() {
+		return getName();
 	}
 }

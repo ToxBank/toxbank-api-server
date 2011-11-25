@@ -35,8 +35,6 @@ import org.toxbank.rest.protocol.CallableProtocolUpload;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 
-import com.hp.hpl.jena.rdf.model.Model;
-
 /**
  * Protocol resource
  * @author nina

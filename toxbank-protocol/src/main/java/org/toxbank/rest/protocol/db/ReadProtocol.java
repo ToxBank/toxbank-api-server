@@ -14,6 +14,8 @@ import net.idea.modbcum.q.conditions.EQCondition;
 import net.idea.modbcum.q.query.AbstractQuery;
 import net.toxbank.client.resource.User;
 
+import org.toxbank.rest.groups.DBOrganisation;
+import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.metadata.Document;
 
@@ -39,13 +41,31 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			}	
 			@Override
 			public Object getValue(DBProtocol protocol) {
-				return protocol==null?null:protocol.getID();
+				return protocol==null?null:protocol.getID()>0?protocol.getID():null;
 			}
 			@Override
 			public String toString() {
 				return "URI";
 			}
 		},
+		version {
+			@Override
+			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
+				protocol.setVersion(rs.getString(name()));
+			}
+			@Override
+			public QueryParam getParam(DBProtocol protocol) {
+				return new QueryParam<Integer>(Integer.class, (Integer)getValue(protocol));
+			}	
+			@Override
+			public Object getValue(DBProtocol protocol) {
+				return protocol==null?1:protocol.getVersion()==null?1:protocol.getVersion();
+			}
+			@Override
+			public String toString() {
+				return "Version";
+			}
+		},		
 		identifier {
 			@Override
 			public QueryParam getParam(DBProtocol protocol) {
@@ -146,25 +166,91 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 				return "Is summary searchable";
 			}
 		},
-		project {
+		idproject {
 			@Override
 			public QueryParam getParam(DBProtocol protocol) {
-				Object project = getValue(protocol);
-				return new QueryParam<String>(String.class, project==null?null:project.toString());
+				DBProject project = (DBProject) getValue(protocol);
+				return new QueryParam<Integer>(Integer.class, project==null?null:project.getID());
 			}
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
 				try {
-					protocol.setProject(new URL(rs.getString(name())));
+					DBProject p = protocol.getDbProject();
+					if (p==null) {p = new DBProject(); protocol.setDbProject(p);};
+					p.setID(rs.getInt(name()));
+					
 				} catch (Exception x) {
 					throw new SQLException(x);
 				}
 			}		
 			@Override
 			public Object getValue(DBProtocol protocol) {
-				return  protocol==null?null:protocol.getProject();
+				return  protocol==null?null:protocol.getDbProject();
 			}			
 		},
+		project {
+			@Override
+			public QueryParam getParam(DBProtocol protocol) {
+				return null;
+			}
+			@Override
+			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
+				try {
+					DBProject p = protocol.getDbProject();
+					if (p==null) {p = new DBProject(); protocol.setDbProject(p);};
+					p.setName(rs.getString(name()));
+					
+				} catch (Exception x) {
+					throw new SQLException(x);
+				}
+			}		
+			@Override
+			public Object getValue(DBProtocol protocol) {
+				return  protocol==null?null:protocol.getDbOrganisation();
+			}			
+		},
+		idorganisation {
+			@Override
+			public QueryParam getParam(DBProtocol protocol) {
+				DBOrganisation project = (DBOrganisation) getValue(protocol);
+				return new QueryParam<Integer>(Integer.class, project==null?null:project.getID());
+			}
+			@Override
+			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
+				try {
+					DBOrganisation p = protocol.getDbOrganisation();
+					if (p==null) {p = new DBOrganisation(); protocol.setDbOrganisation(p);};
+					p.setID(rs.getInt(name()));
+				} catch (Exception x) {
+					throw new SQLException(x);
+				}
+			}		
+			@Override
+			public Object getValue(DBProtocol protocol) {
+				return  protocol==null?null:protocol.getDbOrganisation();
+			}			
+		},	
+		organisation {
+			@Override
+			public QueryParam getParam(DBProtocol protocol) {
+				return null;
+			}
+			@Override
+			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
+				try {
+					DBOrganisation p = protocol.getDbOrganisation();
+					if (p==null) {p = new DBOrganisation(); protocol.setDbOrganisation(p);};
+					p.setName(rs.getString(name()));
+					
+				} catch (Exception x) {
+					throw new SQLException(x);
+				}
+			}		
+			@Override
+			public Object getValue(DBProtocol protocol) {
+				return  protocol==null?null:protocol.getDbOrganisation();
+			}			
+		},		
 		filename {
 			@Override
 			public QueryParam getParam(DBProtocol protocol) {
@@ -223,7 +309,8 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 	}
 	
 	protected static String sql = 
-		"select idprotocol,identifier,title,abstract as anabstract,author,summarySearchable,project.name as project,filename " +
+		"select idprotocol,version,identifier,title,abstract as anabstract,author,summarySearchable," +
+		"idproject,project.name as project,idorganisation,organisation.name as organisation,filename " +
 		"from protocol join organisation using(idorganisation) join project using(idproject) %s %s ";
 
 

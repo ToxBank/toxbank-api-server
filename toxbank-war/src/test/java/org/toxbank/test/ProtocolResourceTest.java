@@ -298,12 +298,25 @@ public class ProtocolResourceTest extends ResourceTest {
 		String[] values = new String[ReadProtocol.fields.values().length];
 		int i=0;
 		for (ReadProtocol.fields field : ReadProtocol.fields.values()) {
-			if (field.equals(field.idprotocol)) continue;
-			if (field.equals(field.filename)) continue;
-			if (field.equals(field.author) || field.equals(field.project)) 
+			switch (field) {
+			case idprotocol: continue;
+			case filename: continue;
+			case author: { 
 				values[i] = String.format("http://example.com/user/%s",field.name());
-			else values[i] = field.name();
-			
+				break;
+			}
+			case project: {
+				values[i] = String.format("http://localhost:%d%s/%s",port,Resources.project,"G1");
+				break;
+			}
+			case organisation: {
+				values[i] = String.format("http://localhost:%d%s/%s",port,Resources.organisation,"G2");
+				break;
+			}
+			default: {
+				values[i] = field.name();
+			}
+			}
 			names[i] = field.name();
 			
 			i++;
