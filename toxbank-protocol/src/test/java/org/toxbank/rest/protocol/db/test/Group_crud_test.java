@@ -6,24 +6,26 @@ import net.idea.modbcum.i.query.IQueryUpdate;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
 import org.toxbank.rest.groups.DBGroup;
-import org.toxbank.rest.groups.DBGroup.GroupType;
+import org.toxbank.rest.groups.DBProject;
+import org.toxbank.rest.groups.GroupType;
+import org.toxbank.rest.groups.IDBGroup;
 import org.toxbank.rest.groups.db.CreateGroup;
 import org.toxbank.rest.groups.db.DeleteGroup;
 import org.toxbank.rest.groups.db.UpdateGroup;
 
-public class Group_crud_test  extends CRUDTest<Object,DBGroup>  {
+public class Group_crud_test  extends CRUDTest<Object,IDBGroup>  {
 	String file = "http://localhost/1.pdf";
 
 	@Override
-	protected IQueryUpdate<Object,DBGroup> createQuery() throws Exception {
-		DBGroup ref = new DBGroup(GroupType.PROJECT);
+	protected IQueryUpdate<Object,IDBGroup> createQuery() throws Exception {
+		DBProject ref = new DBProject();
 		ref.setLdapgroup("opentox");
 		ref.setName("OpenTox");
 		return new CreateGroup(ref);
 	}
 
 	@Override
-	protected void createVerify(IQueryUpdate<Object,DBGroup> query)
+	protected void createVerify(IQueryUpdate<Object,IDBGroup> query)
 			throws Exception {
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED",
@@ -36,14 +38,14 @@ public class Group_crud_test  extends CRUDTest<Object,DBGroup>  {
 	}
 
 	@Override
-	protected IQueryUpdate<Object,DBGroup> deleteQuery() throws Exception {
-		DBGroup ref = new DBGroup(GroupType.PROJECT);
+	protected IQueryUpdate<Object,IDBGroup> deleteQuery() throws Exception {
+		DBProject ref = new DBProject();
 		ref.setID(3);
 		return new DeleteGroup(ref);
 	}
 
 	@Override
-	protected void deleteVerify(IQueryUpdate<Object,DBGroup> query)
+	protected void deleteVerify(IQueryUpdate<Object,IDBGroup> query)
 			throws Exception {
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED","SELECT idproject FROM project where idproject=3");
@@ -57,8 +59,8 @@ public class Group_crud_test  extends CRUDTest<Object,DBGroup>  {
 		//TODO Not iplemented
 	}
 	@Override
-	protected IQueryUpdate<Object,DBGroup> updateQuery() throws Exception {
-		DBGroup ref = new DBGroup(GroupType.PROJECT);
+	protected IQueryUpdate<Object,IDBGroup> updateQuery() throws Exception {
+		DBProject ref = new DBProject();
 
 		ref.setID(2);
 
@@ -66,7 +68,7 @@ public class Group_crud_test  extends CRUDTest<Object,DBGroup>  {
 	}
 
 	@Override
-	protected void updateVerify(IQueryUpdate<Object,DBGroup> query)
+	protected void updateVerify(IQueryUpdate<Object,IDBGroup> query)
 			throws Exception {
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED","SELECT abstract FROM protocol where idprotocol=2");
@@ -79,14 +81,14 @@ public class Group_crud_test  extends CRUDTest<Object,DBGroup>  {
 	}
 
 	@Override
-	protected IQueryUpdate<Object, DBGroup> createQueryNew()
+	protected IQueryUpdate<Object, IDBGroup> createQueryNew()
 			throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected void createVerifyNew(IQueryUpdate<Object, DBGroup> query)
+	protected void createVerifyNew(IQueryUpdate<Object, IDBGroup> query)
 			throws Exception {
 		
 		

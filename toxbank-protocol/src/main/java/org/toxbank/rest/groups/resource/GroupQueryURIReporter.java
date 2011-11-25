@@ -1,11 +1,10 @@
-package org.toxbank.rest.protocol.resource.db;
+package org.toxbank.rest.groups.resource;
 
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.restnet.db.QueryURIReporter;
 
 import org.restlet.Request;
-import org.toxbank.resource.Resources;
-import org.toxbank.rest.protocol.DBProtocol;
+import org.toxbank.rest.groups.IDBGroup;
 
 /**
  * Generates URI for {@link ReferenceResource}
@@ -13,7 +12,7 @@ import org.toxbank.rest.protocol.DBProtocol;
  *
  * @param <Q>
  */
-public class ProtocolQueryURIReporter <Q extends IQueryRetrieval<DBProtocol>> extends QueryURIReporter<DBProtocol, Q> {
+public class GroupQueryURIReporter <Q extends IQueryRetrieval<IDBGroup>> extends QueryURIReporter<IDBGroup, Q> {
 	String suffix = "";
 	
 
@@ -28,21 +27,21 @@ public class ProtocolQueryURIReporter <Q extends IQueryRetrieval<DBProtocol>> ex
 	 * 
 	 */
 	private static final long serialVersionUID = 8868430033131766579L;
-	public ProtocolQueryURIReporter(Request baseRef,String suffix) {
+	public GroupQueryURIReporter(Request baseRef,String suffix) {
 		super(baseRef,null);	
 		this.suffix = suffix;
 	}
-	public ProtocolQueryURIReporter(Request baseRef) {
+	public GroupQueryURIReporter(Request baseRef) {
 		this(baseRef,"");
 	}
-	public ProtocolQueryURIReporter() {
+	public GroupQueryURIReporter() {
 		this(null);
 	}	
 
 	@Override
-	public String getURI(String ref, DBProtocol item) {
+	public String getURI(String ref, IDBGroup item) {
 
-		return String.format("%s%s/P%d%s\n",ref,Resources.protocol,item.getID(),suffix);
+		return String.format("%s/%s/G%d%s\n",ref,item.getGroupType().name().toLowerCase(),item.getID(),suffix);
 	}
 
 }

@@ -7,13 +7,11 @@ import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.update.AbstractObjectUpdate;
 
-import org.toxbank.rest.groups.DBGroup;
-import org.toxbank.rest.protocol.db.ReadProtocol;
-import org.toxbank.rest.protocol.db.ReadProtocol.fields;
+import org.toxbank.rest.groups.IDBGroup;
 
-public class CreateGroup extends AbstractObjectUpdate<DBGroup>{
+public class CreateGroup extends AbstractObjectUpdate<IDBGroup>{
 
-	public CreateGroup(DBGroup group) {
+	public CreateGroup(IDBGroup group) {
 		setObject(group);
 	}
 	@Override

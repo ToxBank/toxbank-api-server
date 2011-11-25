@@ -7,16 +7,16 @@ import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.update.AbstractObjectUpdate;
 
-import org.toxbank.rest.groups.DBGroup;
+import org.toxbank.rest.groups.IDBGroup;
 
 /**
  * Delete a group (project or organisation)
  * @author nina
  *
  */
-public class DeleteGroup extends AbstractObjectUpdate<DBGroup> {
+public class DeleteGroup extends AbstractObjectUpdate<IDBGroup> {
 
-	public DeleteGroup(DBGroup ref) {
+	public DeleteGroup(IDBGroup ref) {
 		super(ref);
 	}
 	public DeleteGroup() {

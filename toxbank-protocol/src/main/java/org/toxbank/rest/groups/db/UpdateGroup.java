@@ -6,13 +6,13 @@ import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.update.AbstractObjectUpdate;
 
-import org.toxbank.rest.groups.DBGroup;
+import org.toxbank.rest.groups.IDBGroup;
 
 
 
-public class UpdateGroup extends AbstractObjectUpdate<DBGroup>{
+public class UpdateGroup extends AbstractObjectUpdate<IDBGroup>{
 
-	public UpdateGroup(DBGroup ref) {
+	public UpdateGroup(IDBGroup ref) {
 		super(ref);
 	}
 	public UpdateGroup() {

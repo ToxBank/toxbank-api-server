@@ -11,9 +11,10 @@ import net.idea.modbcum.q.conditions.EQCondition;
 import net.idea.modbcum.q.query.AbstractQuery;
 
 import org.toxbank.rest.groups.DBGroup;
-import org.toxbank.rest.groups.DBGroup.GroupType;
+import org.toxbank.rest.groups.GroupType;
+import org.toxbank.rest.groups.IDBGroup;
 
-public class ReadGroup extends AbstractQuery<GroupType, DBGroup, EQCondition, DBGroup>  implements IQueryRetrieval<DBGroup> {
+public abstract class ReadGroup<G extends IDBGroup> extends AbstractQuery<GroupType, G, EQCondition, G>  implements IQueryRetrieval<G> {
 	
 
 	protected static String sql = "select %s,name,ldapgroup from %s %s";
@@ -22,12 +23,10 @@ public class ReadGroup extends AbstractQuery<GroupType, DBGroup, EQCondition, DB
 	 * 
 	 */
 	private static final long serialVersionUID = 888018870900333768L;
-	public ReadGroup(GroupType groupType,Integer id) {
+
+	public ReadGroup(G group) {
 		super();
-		setValue(id==null?null:new DBGroup(groupType,id));
-	}
-	public ReadGroup(DBGroup group) {
-		super();
+		setValue(group);
 	}
 	@Override
 	public String getSQL() throws AmbitException {
@@ -46,10 +45,12 @@ public class ReadGroup extends AbstractQuery<GroupType, DBGroup, EQCondition, DB
 		return params;
 	}
 
+	public abstract G createObject();
+	//new DBGroup(getValue().getGroupType());
 	@Override
-	public DBGroup getObject(ResultSet rs) throws AmbitException {
+	public G getObject(ResultSet rs) throws AmbitException {
 		try {
-			DBGroup group = new DBGroup(getValue().getGroupType());
+			G group = createObject();
 			group.setID(rs.getInt(1));
 			group.setName(rs.getString(2));
 			group.setLdapgroup(rs.getString(3));
@@ -65,7 +66,7 @@ public class ReadGroup extends AbstractQuery<GroupType, DBGroup, EQCondition, DB
 	}
 
 	@Override
-	public double calculateMetric(DBGroup object) {
+	public double calculateMetric(G object) {
 		return 1;
 	}
 

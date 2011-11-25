@@ -4,22 +4,23 @@ import java.sql.ResultSet;
 
 import junit.framework.Assert;
 
-import org.toxbank.rest.groups.DBGroup;
-import org.toxbank.rest.groups.DBGroup.GroupType;
-import org.toxbank.rest.groups.db.ReadGroup;
+import org.toxbank.rest.groups.DBProject;
+import org.toxbank.rest.groups.db.ReadProject;
 
-public class ReadProjectTest  extends QueryTest<ReadGroup> {
+public class ReadProjectTest  extends QueryTest<ReadProject> {
 
 	@Override
-	protected ReadGroup createQuery() throws Exception {
-		return new ReadGroup(GroupType.PROJECT,new Integer(2));
+	protected ReadProject createQuery() throws Exception {
+		DBProject p = new DBProject();
+		p.setID(2);
+		return new ReadProject(p);
 	}
 
 	@Override
-	protected void verify(ReadGroup query, ResultSet rs) throws Exception {
+	protected void verify(ReadProject query, ResultSet rs) throws Exception {
 		int records = 0;
 		while (rs.next()) {
-			DBGroup group = query.getObject(rs);
+			DBProject group = query.getObject(rs);
 			Assert.assertEquals(2,group.getID());
 			records++;
 		}

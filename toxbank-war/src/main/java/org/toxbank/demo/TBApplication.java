@@ -43,6 +43,8 @@ import org.restlet.security.Verifier;
 import org.restlet.service.TunnelService;
 import org.restlet.util.RouteList;
 import org.toxbank.resource.Resources;
+import org.toxbank.rest.groups.OrganisationRouter;
+import org.toxbank.rest.groups.ProjectRouter;
 import org.toxbank.rest.protocol.ProtocolRouter;
 
 
@@ -134,6 +136,10 @@ public class TBApplication extends TaskApplication<String> {
 
 		/**  /protocol  */
 		router.attach(Resources.protocol, new ProtocolRouter(getContext()));
+		
+		router.attach(Resources.project, new ProjectRouter(getContext()));
+		
+		router.attach(Resources.organisation, new OrganisationRouter(getContext()));
 		
 		/**
 		 * Queries

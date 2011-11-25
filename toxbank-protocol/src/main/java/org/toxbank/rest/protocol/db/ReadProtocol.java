@@ -31,7 +31,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 		idprotocol {
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
-				protocol.setID(rs.getInt(ordinal()+1));
+				protocol.setID(rs.getInt(name()));
 			}
 			@Override
 			public QueryParam getParam(DBProtocol protocol) {
@@ -53,7 +53,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			}
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
-				protocol.setIdentifier(rs.getString(ordinal()+1));
+				protocol.setIdentifier(rs.getString(name()));
 			}
 			@Override
 			public Object getValue(DBProtocol protocol) {
@@ -67,7 +67,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			}			
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
-				protocol.setTitle(rs.getString(ordinal()+1));
+				protocol.setTitle(rs.getString(name()));
 			}		
 			@Override
 			public Object getValue(DBProtocol protocol) {
@@ -81,7 +81,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			}	
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
-				protocol.setAbstract(rs.getString(ordinal()+1));
+				protocol.setAbstract(rs.getString(name()));
 			}		
 			@Override
 			public Object getValue(DBProtocol protocol) {
@@ -107,7 +107,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
 				try {
-					protocol.setAuthor(new User(new URL(rs.getString(ordinal()+1))));
+					protocol.setAuthor(new User(new URL(rs.getString(name()))));
 				} catch (Exception x) {
 					throw new SQLException(x);
 				}
@@ -124,7 +124,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			}		
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
-				protocol.setSummarySearchable(rs.getBoolean(ordinal()+1));
+				protocol.setSummarySearchable(rs.getBoolean(name()));
 			}
 			@Override
 			public Object getValue(DBProtocol protocol) {
@@ -155,7 +155,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
 				try {
-					protocol.setProject(new URL(rs.getString(ordinal()+1)));
+					protocol.setProject(new URL(rs.getString(name())));
 				} catch (Exception x) {
 					throw new SQLException(x);
 				}
@@ -173,7 +173,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
 				try {
-				protocol.setDocument(new Document(new URI(rs.getString(ordinal()+1))));
+				protocol.setDocument(new Document(new URI(rs.getString(name()))));
 				} catch (Exception x) {throw new SQLException(x); }
 			}
 			@Override
@@ -223,7 +223,8 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 	}
 	
 	protected static String sql = 
-		"select idprotocol,identifier,title,abstract as anabstract,author,summarySearchable,project,filename from protocol %s %s";
+		"select idprotocol,identifier,title,abstract as anabstract,author,summarySearchable,project.name as project,filename " +
+		"from protocol join organisation using(idorganisation) join project using(idproject) %s %s ";
 
 
 	public ReadProtocol(Integer id) {
@@ -266,6 +267,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 				field.setParam(p,rs);
 				
 			} catch (Exception x) {
+				System.err.println(field);
 				x.printStackTrace();
 			}
 			return p;
