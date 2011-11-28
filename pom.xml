@@ -69,7 +69,7 @@
   	</dependency>   
   	  	<dependency>
   		<groupId>net.toxbank</groupId>
-  		<artifactId>toxbank-client-java</artifactId>
+  		<artifactId>toxbank-api-beans</artifactId>
   		<version>0.0.1-SNAPSHOT</version>
   		<scope>compile</scope>
   	</dependency>
