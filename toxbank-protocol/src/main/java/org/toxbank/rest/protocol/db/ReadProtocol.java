@@ -1,7 +1,6 @@
 package org.toxbank.rest.protocol.db;
 
 import java.net.URI;
-import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -12,12 +11,14 @@ import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.conditions.EQCondition;
 import net.idea.modbcum.q.query.AbstractQuery;
-import net.toxbank.client.resource.User;
+import net.toxbank.client.resource.Organisation;
+import net.toxbank.client.resource.Project;
 
 import org.toxbank.rest.groups.DBOrganisation;
 import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.metadata.Document;
+import org.toxbank.rest.user.DBUser;
 
 /**
  * Retrieve references (by id or all)
@@ -117,24 +118,26 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 				return "Abstract";
 			}
 		},
-		author {
+		iduser {
 
 			@Override
 			public QueryParam getParam(DBProtocol protocol) {
 				Object project = getValue(protocol);
-				return new QueryParam<String>(String.class, project==null?null:project.toString());
+				return new QueryParam<Integer>(Integer.class, project==null?null:((DBUser) protocol.getOwner()).getID());
 			}
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
 				try {
-					protocol.setAuthor(new User(new URL(rs.getString(name()))));
+					DBUser user = new DBUser();
+					user.setID(rs.getInt(name()));
+					protocol.setOwner(user);
 				} catch (Exception x) {
 					throw new SQLException(x);
 				}
 			}		
 			@Override
 			public Object getValue(DBProtocol protocol) {
-				return  protocol==null?null:protocol.getAuthor();
+				return  protocol==null?null:((DBUser) protocol.getOwner()).getID();
 			}			
 		},			
 		summarySearchable {
@@ -175,38 +178,50 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
 				try {
-					DBProject p = protocol.getDbProject();
-					if (p==null) {p = new DBProject(); protocol.setDbProject(p);};
-					p.setID(rs.getInt(name()));
-					
+					Project p = protocol.getProject();
+					if (p==null) { 
+						DBProject dbp = new DBProject(); 
+						protocol.setProject(dbp);
+						dbp.setID(rs.getInt(name()));
+					} else if (p instanceof DBProject) {
+						((DBProject)p).setID(rs.getInt(name()));
+					}
 				} catch (Exception x) {
 					throw new SQLException(x);
 				}
 			}		
 			@Override
 			public Object getValue(DBProtocol protocol) {
-				return  protocol==null?null:protocol.getDbProject();
+				return  protocol==null?null:protocol.getProject();
 			}			
 		},
 		project {
 			@Override
 			public QueryParam getParam(DBProtocol protocol) {
+				/*
+				DBProject project = (DBProject) getValue(protocol);
+				return new QueryParam<Integer>(Integer.class, project==null?null:project.getID());
+				*/
 				return null;
 			}
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
 				try {
-					DBProject p = protocol.getDbProject();
-					if (p==null) {p = new DBProject(); protocol.setDbProject(p);};
-					p.setName(rs.getString(name()));
-					
+					Project p = protocol.getProject();
+					if (p==null) { 
+						DBProject dbp = new DBProject(); 
+						protocol.setProject(dbp);
+						dbp.setTitle(rs.getString(name()));
+					} else if (p instanceof DBProject) {
+						((DBProject)p).setTitle(rs.getString(name()));
+					}
 				} catch (Exception x) {
 					throw new SQLException(x);
 				}
 			}		
 			@Override
 			public Object getValue(DBProtocol protocol) {
-				return  protocol==null?null:protocol.getDbOrganisation();
+				return  protocol==null?null:protocol.getProject();
 			}			
 		},
 		idorganisation {
@@ -218,16 +233,21 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
 				try {
-					DBOrganisation p = protocol.getDbOrganisation();
-					if (p==null) {p = new DBOrganisation(); protocol.setDbOrganisation(p);};
-					p.setID(rs.getInt(name()));
+					Organisation p = protocol.getOrganisation();
+					if (p==null) { 
+						DBOrganisation dbp = new DBOrganisation(); 
+						protocol.setOrganisation(dbp);
+						dbp.setID(rs.getInt(name()));
+					} else if (p instanceof DBOrganisation) {
+						((DBOrganisation)p).setID(rs.getInt(name()));
+					}
 				} catch (Exception x) {
 					throw new SQLException(x);
 				}
 			}		
 			@Override
 			public Object getValue(DBProtocol protocol) {
-				return  protocol==null?null:protocol.getDbOrganisation();
+				return  protocol==null?null:protocol.getOrganisation();
 			}			
 		},	
 		organisation {
@@ -238,17 +258,21 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
 				try {
-					DBOrganisation p = protocol.getDbOrganisation();
-					if (p==null) {p = new DBOrganisation(); protocol.setDbOrganisation(p);};
-					p.setName(rs.getString(name()));
-					
+					Organisation p = protocol.getOrganisation();
+					if (p==null) { 
+						DBOrganisation dbp = new DBOrganisation(); 
+						protocol.setOrganisation(dbp);
+						dbp.setTitle(rs.getString(name()));
+					} else if (p instanceof DBOrganisation) {
+						((DBOrganisation)p).setTitle(rs.getString(name()));
+					}
 				} catch (Exception x) {
 					throw new SQLException(x);
 				}
 			}		
 			@Override
 			public Object getValue(DBProtocol protocol) {
-				return  protocol==null?null:protocol.getDbOrganisation();
+				return  protocol==null?null:protocol.getOrganisation();
 			}			
 		},		
 		filename {
@@ -309,7 +333,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 	}
 	
 	protected static String sql = 
-		"select idprotocol,version,identifier,title,abstract as anabstract,author,summarySearchable," +
+		"select idprotocol,version,identifier,title,abstract as anabstract,iduser,summarySearchable," +
 		"idproject,project.name as project,idorganisation,organisation.name as organisation,filename " +
 		"from protocol join organisation using(idorganisation) join project using(idproject) %s %s ";
 

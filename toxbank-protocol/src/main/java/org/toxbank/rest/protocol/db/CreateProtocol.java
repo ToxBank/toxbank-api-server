@@ -37,11 +37,10 @@ import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.update.AbstractObjectUpdate;
 
 import org.toxbank.rest.protocol.DBProtocol;
-import org.toxbank.rest.protocol.db.ReadProtocol.fields;
 
 public class CreateProtocol extends AbstractObjectUpdate<DBProtocol>{
 	public static final String[] create_sql = {
-		"insert into protocol (idprotocol,version,identifier,title,abstract,author,summarySearchable,idproject,idorganisation,filename) " +
+		"insert into protocol (idprotocol,version,identifier,title,abstract,iduser,summarySearchable,idproject,idorganisation,filename) " +
 		"values (?,?,?,?,?,?,?,?,?,?)"
 	};
 
@@ -59,7 +58,7 @@ public class CreateProtocol extends AbstractObjectUpdate<DBProtocol>{
 				ReadProtocol.fields.identifier,
 				ReadProtocol.fields.title,
 				ReadProtocol.fields.anabstract,
-				ReadProtocol.fields.author,
+				ReadProtocol.fields.iduser,
 				ReadProtocol.fields.summarySearchable,
 				ReadProtocol.fields.idproject,
 				ReadProtocol.fields.idorganisation,

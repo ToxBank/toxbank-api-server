@@ -1,6 +1,10 @@
 package org.toxbank.rest.groups;
 
 public class DBGroup implements IDBGroup {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4896116442610216840L;
 	protected GroupType groupType = GroupType.PROJECT;
 	
 	protected DBGroup(GroupType groupType,Integer id) {
@@ -20,20 +24,25 @@ public class DBGroup implements IDBGroup {
 	
 	protected int ID;
 	protected String name;
+	protected String groupName;
+	public String getGroupName() {
+		return groupName;
+	}
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
-		this.name = name;
+	@Override
+	public void setTitle(String title) {
+		this.name = title;
 	}
-	protected String ldapgroup;
+	@Override
+	public String getTitle() {
+		return name;
+	}
 	
-	public String getLdapgroup() {
-		return ldapgroup;
-	}
-	public void setLdapgroup(String ldapgroup) {
-		this.ldapgroup = ldapgroup;
-	}
 	public int getID() {
 		return ID;
 	}

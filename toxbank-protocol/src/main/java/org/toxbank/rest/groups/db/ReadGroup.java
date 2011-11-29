@@ -52,8 +52,8 @@ public abstract class ReadGroup<G extends IDBGroup> extends AbstractQuery<GroupT
 		try {
 			G group = createObject();
 			group.setID(rs.getInt(1));
-			group.setName(rs.getString(2));
-			group.setLdapgroup(rs.getString(3));
+			group.setTitle(rs.getString(2));
+			group.setGroupName(rs.getString(3));
 			return group;
 		} catch (Exception x) {
 			throw new AmbitException(x);

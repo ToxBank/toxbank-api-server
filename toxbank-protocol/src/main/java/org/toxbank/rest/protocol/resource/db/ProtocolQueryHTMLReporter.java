@@ -28,7 +28,7 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 			ReadProtocol.fields.anabstract,
 			//ReadProtocol.fields.status
 			ReadProtocol.fields.project,
-			ReadProtocol.fields.author,
+			ReadProtocol.fields.iduser,
 			//ReadProtocol.fields.organisation
 			//ReadProtocol.fields.version
 			//ReadProtocol.fields.accesslevel
@@ -44,7 +44,7 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 			ReadProtocol.fields.anabstract,
 			//ReadProtocol.fields.status
 			ReadProtocol.fields.project,
-			ReadProtocol.fields.author,
+			ReadProtocol.fields.iduser,
 			//ReadProtocol.fields.organisation
 			//ReadProtocol.fields.version
 			//ReadProtocol.fields.accesslevel

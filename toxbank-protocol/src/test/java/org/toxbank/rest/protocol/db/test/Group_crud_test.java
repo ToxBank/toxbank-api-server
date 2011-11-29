@@ -19,8 +19,8 @@ public class Group_crud_test  extends CRUDTest<Object,IDBGroup>  {
 	@Override
 	protected IQueryUpdate<Object,IDBGroup> createQuery() throws Exception {
 		DBProject ref = new DBProject();
-		ref.setLdapgroup("opentox");
-		ref.setName("OpenTox");
+		ref.setGroupName("opentox");
+		ref.setTitle("OpenTox");
 		return new CreateGroup(ref);
 	}
 

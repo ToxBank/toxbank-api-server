@@ -7,7 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-import net.toxbank.client.resource.User;
+import net.toxbank.client.resource.Organisation;
+import net.toxbank.client.resource.Project;
 
 import org.apache.commons.fileupload.FileItem;
 import org.restlet.data.Status;
@@ -16,6 +17,7 @@ import org.toxbank.rest.groups.DBOrganisation;
 import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 import org.toxbank.rest.protocol.metadata.Document;
+import org.toxbank.rest.user.DBUser;
 
 public class ProtocolFactory {
 	
@@ -64,27 +66,31 @@ public class ProtocolFactory {
 			        break;
 				}
 				case project: {
-					DBProject p = protocol.getDbProject();
-					if (p==null) { p = new DBProject(); protocol.setDbProject(p);}
+					Project p = protocol.getProject();
+					if (p==null) { p = new DBProject(); protocol.setProject(p);}
 					if (fi.getString().startsWith("http"))
 						p.setResourceURL(new URL(fi.getString()));
-					else p.setName(fi.getString());
+					else p.setTitle(fi.getString());
 					break;					
 				}
 				case organisation: {
-					DBOrganisation p = protocol.getDbOrganisation();
-					if (p==null) { p = new DBOrganisation(); protocol.setDbOrganisation(p);}
+					Organisation p = protocol.getOrganisation();
+					if (p==null) { p = new DBOrganisation(); protocol.setOrganisation(p);}
 					if (fi.getString().startsWith("http"))
 						p.setResourceURL(new URL(fi.getString()));
-					else p.setName(fi.getString());
+					else p.setTitle(fi.getString());
 					break;					
 				}				
 				case title: {
 					protocol.setTitle(fi.getString());
 					break;
 				}
-				case author: {
-					protocol.setAuthor(new User(new URL(fi.getString())));
+				case iduser: {
+					DBUser user = new DBUser();
+					if (fi.getString().startsWith("http"))
+						user.setResourceURL(new URL(fi.getString()));
+					else user.setTitle(fi.getString());
+					protocol.setOwner(user);
 					break;
 				}
 				case summarySearchable: {

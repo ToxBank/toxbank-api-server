@@ -153,7 +153,7 @@ public class ProtocolDBResource	extends QueryResource<ReadProtocol,DBProtocol> {
 			ProtocolQueryURIReporter r = new ProtocolQueryURIReporter(getRequest(),"");
 			DBConnection dbc = new DBConnection(getApplication().getContext(),getConfigFile());
 			conn = dbc.getConnection(getRequest());
-			return new CallableProtocolUpload(input,conn,r,getToken());
+			return new CallableProtocolUpload(input,conn,r,getToken(),getRequest().getRootRef().toString());
 		} catch (Exception x) {
 			try { conn.close(); } catch (Exception xx) {}
 			throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);

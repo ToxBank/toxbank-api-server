@@ -30,11 +30,9 @@
 package org.toxbank.rest.protocol.db.test;
 
 import java.net.URI;
-import java.net.URL;
 
 import junit.framework.Assert;
 import net.idea.modbcum.i.query.IQueryUpdate;
-import net.toxbank.client.resource.User;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
@@ -45,6 +43,7 @@ import org.toxbank.rest.protocol.db.CreateProtocol;
 import org.toxbank.rest.protocol.db.DeleteProtocol;
 import org.toxbank.rest.protocol.db.UpdateProtocol;
 import org.toxbank.rest.protocol.metadata.Document;
+import org.toxbank.rest.user.DBUser;
 
 public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 	String file = "http://localhost/1.pdf";
@@ -55,11 +54,11 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 		ref.setIdentifier("identifier");
 		ref.setTitle("title");
 		ref.setAbstract("abstract");
-		ref.setAuthor(new User() {
-			public String toString() { return "author";}
-		});
-		ref.setDbProject(new DBProject(1));	
-		ref.setDbOrganisation(new DBOrganisation(1));
+		DBUser user = new DBUser();
+		user.setID(1);
+		ref.setOwner(user);
+		ref.setProject(new DBProject(1));	
+		ref.setOrganisation(new DBOrganisation(1));
 		ref.setSummarySearchable(true);
 		ref.setDocument(new Document(new URI(file)));
 		return new CreateProtocol(ref);
@@ -70,7 +69,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 			throws Exception {
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED",
-				String.format("SELECT idprotocol,summarySearchable FROM protocol where identifier='identifier' and title='title' and abstract='abstract' and author='author' and idproject=1 and idorganisation=1 and filename='%s'",file));
+				String.format("SELECT idprotocol,summarySearchable FROM protocol where identifier='identifier' and title='title' and abstract='abstract' and iduser='1' and idproject=1 and idorganisation=1 and filename='%s'",file));
 		
 		Assert.assertEquals(1,table.getRowCount());
 		Assert.assertEquals(Boolean.TRUE,table.getValue(0,"summarySearchable"));

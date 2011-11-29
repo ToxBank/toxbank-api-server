@@ -229,8 +229,8 @@ public abstract class GroupHTMLReporter extends QueryHTMLReporter<IDBGroup, IQue
 		try {
 			output.write("<tr bgcolor='FFFFFF'>\n");		
 			output.write(String.format("<td><a href='%s'>%s</a></td>",uri,uri));
-			output.write(String.format("<td>%s</td>",item.getName()));
-			output.write(String.format("<td>%s</td>",item.getLdapgroup()));
+			output.write(String.format("<td>%s</td>",item.getTitle()));
+			output.write(String.format("<td>%s</td>",item.getGroupName()));
 			output.write("</tr>\n");
 		} catch (Exception x) {} 
 	}

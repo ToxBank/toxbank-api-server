@@ -23,8 +23,8 @@ public class CreateGroup extends AbstractObjectUpdate<IDBGroup>{
 	public List<QueryParam> getParameters(int index) throws AmbitException {
 		List<QueryParam> params1 = new ArrayList<QueryParam>();
 		params1.add(new QueryParam<Integer>(Integer.class,  null));
-		params1.add(new QueryParam<String>(String.class,  getObject().getName()));
-		params1.add(new QueryParam<String>(String.class,  getObject().getLdapgroup()));
+		params1.add(new QueryParam<String>(String.class,  getObject().getTitle()));
+		params1.add(new QueryParam<String>(String.class,  getObject().getGroupName()));
 		return params1;
 	}
 
