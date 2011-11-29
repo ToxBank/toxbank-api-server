@@ -46,6 +46,7 @@ import org.toxbank.resource.Resources;
 import org.toxbank.rest.groups.OrganisationRouter;
 import org.toxbank.rest.groups.ProjectRouter;
 import org.toxbank.rest.protocol.ProtocolRouter;
+import org.toxbank.rest.user.UserRouter;
 
 
 /**
@@ -140,6 +141,8 @@ public class TBApplication extends TaskApplication<String> {
 		router.attach(Resources.project, new ProjectRouter(getContext()));
 		
 		router.attach(Resources.organisation, new OrganisationRouter(getContext()));
+		
+		router.attach(Resources.user, new UserRouter(getContext()));
 		
 		/**
 		 * Queries

@@ -42,7 +42,7 @@ public class ProjectResourceTest  extends ResourceTest {
 			Assert.assertTrue(line.startsWith(String.format("http://localhost:%d%s/G",port,Resources.project)));
 			count++;
 		}
-		return count==2;
+		return count==3;
 	}	
 	
 	

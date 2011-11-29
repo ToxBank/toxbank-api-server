@@ -3,23 +3,51 @@ package org.toxbank.rest.user;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.toxbank.client.resource.User;
+
 import org.restlet.routing.Template;
 import org.toxbank.resource.Resources;
 import org.toxbank.rest.FileResource;
 
-import net.toxbank.client.resource.Project;
-import net.toxbank.client.resource.User;
-
 public class DBUser extends User {
 	public enum fields {
-		iduser,
-		username,
+		iduser {
+			@Override
+			public Object getValue(DBUser user) {
+				return user.getID();
+			}
+		},
+		username {
+			@Override
+			public Object getValue(DBUser user) {
+				return user.getUserName();
+			}
+		},
 		title,
-		firstname,
-		lastname,
+		firstname {
+			@Override
+			public Object getValue(DBUser user) {
+				return user.getFirstname();
+			}			
+		},
+		lastname {
+			@Override
+			public Object getValue(DBUser user) {
+				return user.getLastname();
+			}
+		},
 		institute,
 		weblog,
-		homepage		
+		homepage;
+		public String getHTMLField(DBUser protocol) {
+			Object value = getValue(protocol);
+			return String.format("<input name='%s' type='text' size='40' value='%s'>\n",
+					name(),getDescription(),value==null?"":value.toString());
+		}
+		public String getDescription() { return toString();}
+		public Object getValue(DBUser user) {
+			return null;
+		}
 	}
 	protected int id=-1;
 	public int getID() {

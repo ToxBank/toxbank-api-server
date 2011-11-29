@@ -301,8 +301,8 @@ public class ProtocolResourceTest extends ResourceTest {
 			switch (field) {
 			case idprotocol: continue;
 			case filename: continue;
-			case author: { 
-				values[i] = String.format("http://example.com/user/%s",field.name());
+			case iduser: { 
+				values[i] = String.format("http://localhost:%d%s/%s",port,Resources.user,"U1");
 				break;
 			}
 			case project: {

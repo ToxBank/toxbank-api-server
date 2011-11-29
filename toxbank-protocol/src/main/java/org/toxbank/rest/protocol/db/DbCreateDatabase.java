@@ -77,7 +77,16 @@ public class DbCreateDatabase extends AbstractDBProcessor<String,String> {
 	        if (tables.size()==0)
 	        	createTables(database);
 	        if (!tables.contains("version")) { //
-	        	dropTables(database,tables);
+	        	//have to be in the right order
+	        	String[] tb = {
+	        			"user",
+	        			"keyword",
+	        			"organisation",
+	        			"project",
+	        			"protocol",
+	        			"version"
+	        	};
+	        	dropTables(database,tb);
 	        	createTables(database);
 	        } else throw new AmbitException(String.format("Empty database `%s` is expected, but it has %d tables!",database,tables));
 		} catch (AmbitException x) {
@@ -158,8 +167,10 @@ public class DbCreateDatabase extends AbstractDBProcessor<String,String> {
 		}
 		return table_names;
 	}		
-	
 	public void dropTables(String dbname,List<String> table_names) throws Exception {
+			dropTables(dbname, table_names.toArray(new String[table_names.size()]));
+	}
+	public void dropTables(String dbname,String[] table_names) throws Exception {
 		Statement st = null;
 		try {
 			st = connection.createStatement();

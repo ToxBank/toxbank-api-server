@@ -32,6 +32,7 @@ public class TBHTMLBeauty extends HTMLBeauty {
 			w.write(String.format("<a href='%s%s'>Protocols</a>&nbsp;",baseReference,Resources.protocol));
 			w.write(String.format("<a href='%s%s'>Organisations</a>&nbsp;",baseReference,Resources.organisation));
 			w.write(String.format("<a href='%s%s'>Projects</a>&nbsp;",baseReference,Resources.project));
+			w.write(String.format("<a href='%s%s'>Users</a>&nbsp;",baseReference,Resources.user));
 		}
 	
 		
