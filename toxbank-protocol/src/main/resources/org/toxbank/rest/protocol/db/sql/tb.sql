@@ -1,5 +1,21 @@
 -- CREATE DATABASE `tb` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
+-- Users. If registered, have OpenAM user name
+
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE  `user` (
+  `iduser` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(45) DEFAULT NULL COMMENT 'OpenAM user name',
+  `title` varchar(45) DEFAULT NULL,
+  `firstname` varchar(45) NOT NULL,
+  `lastname` varchar(45) NOT NULL,
+  `institute` varchar(45) DEFAULT NULL,
+  `weblog` varchar(45) DEFAULT NULL,
+  `homepage` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`iduser`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 -- Organisation, project, linked to ldap groups
 
 DROP TABLE IF EXISTS `organisation`;
@@ -22,16 +38,15 @@ CREATE TABLE  `project` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Protocols metadata & placeholder for data templates. Versioning to be added.
-
 DROP TABLE IF EXISTS `protocol`;
 CREATE TABLE  `protocol` (
   `idprotocol` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `version` int(10) unsigned NOT NULL COMMENT 'Version' DEFAULT '1', 
+  `version` int(10) unsigned NOT NULL DEFAULT '1' COMMENT 'Version',
   `identifier` varchar(45) DEFAULT NULL COMMENT 'Unique human readable ID',
   `title` varchar(45) NOT NULL COMMENT 'Title',
   `abstract` text,
   `summarySearchable` tinyint(1) NOT NULL DEFAULT '1',
-  `author` varchar(45) NOT NULL COMMENT 'Username@domain',
+  `iduser` int(10) unsigned NOT NULL COMMENT 'Link to user table',
   `idproject` int(10) unsigned NOT NULL COMMENT 'Link to projects table',
   `idorganisation` int(10) unsigned NOT NULL COMMENT 'Link to org table',
   `filename` text COMMENT 'Path to file name',
@@ -41,10 +56,11 @@ CREATE TABLE  `protocol` (
   KEY `Index_3` (`title`),
   KEY `FK_protocol_1` (`idproject`),
   KEY `FK_protocol_2` (`idorganisation`),
+  KEY `FK_protocol_3` (`iduser`),
+  CONSTRAINT `FK_protocol_3` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`),
   CONSTRAINT `FK_protocol_1` FOREIGN KEY (`idproject`) REFERENCES `project` (`idproject`),
   CONSTRAINT `FK_protocol_2` FOREIGN KEY (`idorganisation`) REFERENCES `organisation` (`idorganisation`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 -- Keywords. Want to do full text search, thus MyISAM. Could be changed eventually.
 
@@ -66,4 +82,4 @@ CREATE TABLE  `version` (
   `comment` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`idmajor`,`idminor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-insert into version (idmajor,idminor,comment) values (0,3,"TB Protocol schema");
+insert into version (idmajor,idminor,comment) values (0,4,"TB Protocol schema");
