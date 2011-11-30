@@ -407,7 +407,7 @@
 			<!-- Not used in TB so far -->
 			<aa.admin>false</aa.admin>
 			<!-- Not used in TB so far -->
-			<toxbank.db.create.allow>false</toxbank.db.create.allow>						
+			<toxbank.db.create.allow>true</toxbank.db.create.allow>						
 		<!-- Used in surefire tests only-->
 			<!-- Database for tests -->
 			<toxbank.db.test>tb-test</toxbank.db.test>

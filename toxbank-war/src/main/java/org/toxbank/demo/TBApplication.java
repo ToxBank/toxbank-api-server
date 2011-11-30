@@ -43,6 +43,7 @@ import org.restlet.security.Verifier;
 import org.restlet.service.TunnelService;
 import org.restlet.util.RouteList;
 import org.toxbank.resource.Resources;
+import org.toxbank.rest.db.DatabaseResource;
 import org.toxbank.rest.groups.OrganisationRouter;
 import org.toxbank.rest.groups.ProjectRouter;
 import org.toxbank.rest.protocol.ProtocolRouter;
@@ -178,11 +179,11 @@ public class TBApplication extends TaskApplication<String> {
 
 	     router.setDefaultMatchingMode(Template.MODE_STARTS_WITH); 
 	     router.setRoutingMode(Router.MODE_BEST_MATCH); 
-	     /*
+	     
 	     StringWriter w = new StringWriter();
 	     TBApplication.printRoutes(router,">",w);
 	     System.out.println(w.toString());
-		  */
+		 
 		 return router;
 	}
 	
@@ -308,6 +309,7 @@ public class TBApplication extends TaskApplication<String> {
 		//DBCreateAllowedGuard dbguard = new DBCreateAllowedGuard();
 		//dbguard.setNext(adminRouter);
 		//return dbguard;
+		adminRouter.attach(String.format("/%s",DatabaseResource.resource),DatabaseResource.class);
 		return adminRouter;
 	}
 	/**

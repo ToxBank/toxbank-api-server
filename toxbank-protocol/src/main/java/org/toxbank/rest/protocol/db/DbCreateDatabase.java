@@ -30,12 +30,10 @@
 package org.toxbank.rest.protocol.db;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -76,7 +74,7 @@ public class DbCreateDatabase extends AbstractDBProcessor<String,String> {
 			List<String> tables = tablesExists(database);
 	        if (tables.size()==0)
 	        	createTables(database);
-	        if (!tables.contains("version")) { //
+	        else if (!tables.contains("version")) { //
 	        	dropTables(database,tables);
 	        	createTables(database);
 	        } else throw new AmbitException(String.format("Empty database `%s` is expected, but it has %d tables!",database,tables));
@@ -169,8 +167,7 @@ public class DbCreateDatabase extends AbstractDBProcessor<String,String> {
 			st.addBatch("SET FOREIGN_KEY_CHECKS = 0");
 			for (String table : table_names) {
 				String sql = String.format("drop table `%s`",table);
-				st.addBatch(sql); //just in case
-				System.out.println(sql);
+				st.addBatch(sql); 
 			}
 			st.addBatch("SET FOREIGN_KEY_CHECKS = 1");
 			st.executeBatch();
@@ -213,10 +210,10 @@ public class DbCreateDatabase extends AbstractDBProcessor<String,String> {
 	}		
     public void createTables(String newDB) throws SQLException, FileNotFoundException {
         try {
-        	URL url = this.getClass().getClassLoader().getResource(getSQLFile());
-        	if (url ==null) throw new FileNotFoundException(String.format("Can't find %s!",url.getFile()));
+        	//URL url = this.getClass().getClassLoader().getResource(getSQLFile());
+        	//if (url ==null) throw new FileNotFoundException(String.format("Can't find %s!",url.getFile()));
         	
-            InputStream in = new FileInputStream(url.getFile());
+            InputStream in = this.getClass().getClassLoader().getResourceAsStream(getSQLFile());
                   
             if (in == null) throw new FileNotFoundException(String.format("Can't find %s!",getSQLFile()));
             
