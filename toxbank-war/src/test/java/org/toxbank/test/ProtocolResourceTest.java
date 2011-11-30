@@ -332,7 +332,12 @@ public class ProtocolResourceTest extends ResourceTest {
 				Resources.protocol)),
 				MediaType.TEXT_URI_LIST, rep,
 				Method.POST);
-
+		//wait to complete
+		while (!task.isDone()) {
+			task.poll();
+			Thread.sleep(100);
+			Thread.yield();
+		}
 		Assert.assertTrue(task.getResult().toString().startsWith(String.format("http://localhost:%d/protocol/P",port)));
 
         c = getConnection();	
