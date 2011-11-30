@@ -77,16 +77,7 @@ public class DbCreateDatabase extends AbstractDBProcessor<String,String> {
 	        if (tables.size()==0)
 	        	createTables(database);
 	        if (!tables.contains("version")) { //
-	        	//have to be in the right order
-	        	String[] tb = {
-	        			"user",
-	        			"keyword",
-	        			"organisation",
-	        			"project",
-	        			"protocol",
-	        			"version"
-	        	};
-	        	dropTables(database,tb);
+	        	dropTables(database,tables);
 	        	createTables(database);
 	        } else throw new AmbitException(String.format("Empty database `%s` is expected, but it has %d tables!",database,tables));
 		} catch (AmbitException x) {
@@ -175,9 +166,13 @@ public class DbCreateDatabase extends AbstractDBProcessor<String,String> {
 		try {
 			st = connection.createStatement();
 			st.addBatch(String.format("Use `%s`",dbname)); //just in case
+			st.addBatch("SET FOREIGN_KEY_CHECKS = 0");
 			for (String table : table_names) {
-				st.addBatch(String.format("drop table `%s`",table)); //just in case	
+				String sql = String.format("drop table `%s`",table);
+				st.addBatch(sql); //just in case
+				System.out.println(sql);
 			}
+			st.addBatch("SET FOREIGN_KEY_CHECKS = 1");
 			st.executeBatch();
 		} catch (Exception x) {
 			throw x;			
