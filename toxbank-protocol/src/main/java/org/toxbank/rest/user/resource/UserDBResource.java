@@ -31,8 +31,6 @@ import org.restlet.data.Status;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
 import org.toxbank.rest.FileResource;
-import org.toxbank.rest.protocol.DBProtocol;
-import org.toxbank.rest.protocol.resource.db.ProtocolQueryURIReporter;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.db.ReadUser;
 
@@ -60,7 +58,7 @@ public class UserDBResource	extends QueryResource<ReadUser,DBUser> {
 		*/ 
 		if (variant.getMediaType().equals(MediaType.TEXT_URI_LIST)) {
 				return new StringConvertor(	
-						new ProtocolQueryURIReporter(getRequest())
+						new UserURIReporter<IQueryRetrieval<DBUser>>(getRequest())
 						,MediaType.TEXT_URI_LIST);
 				
 		} else if (variant.getMediaType().equals(MediaType.APPLICATION_RDF_XML) ||
