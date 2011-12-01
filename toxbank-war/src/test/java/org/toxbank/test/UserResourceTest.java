@@ -1,19 +1,26 @@
 package org.toxbank.test;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.List;
 
 import junit.framework.Assert;
 import net.toxbank.client.io.rdf.UserIO;
 import net.toxbank.client.resource.User;
 
+import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.ITable;
 import org.junit.Test;
+import org.opentox.dsl.task.RemoteTask;
+import org.restlet.data.Form;
 import org.restlet.data.MediaType;
+import org.restlet.data.Method;
+import org.restlet.data.Reference;
 import org.restlet.representation.Representation;
 import org.toxbank.resource.Resources;
-import org.toxbank.rest.groups.db.ReadProject;
 import org.toxbank.rest.user.db.ReadUser;
 
 import com.hp.hpl.jena.ontology.OntModel;
@@ -87,4 +94,41 @@ public class UserResourceTest extends ResourceTest {
 		return o;
 	}
 	
+	@Test
+	public void testCreateEntryFromWebForm() throws Exception {
+		Form form = new Form();
+		for (ReadUser.fields field : ReadUser.fields.values()) {
+			switch (field) {
+			case iduser: continue;
+			default: {
+				form.add(field.name(),field.name());
+			}
+			}
+		}
+
+        IDatabaseConnection c = getConnection();	
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM user");
+		Assert.assertEquals(3,table.getRowCount());
+		c.close();
+
+		RemoteTask task = testAsyncPoll(new Reference(String.format("http://localhost:%d%s", port,
+				Resources.user)),
+				MediaType.TEXT_URI_LIST, form.getWebRepresentation(),
+				Method.POST);
+		//wait to complete
+		while (!task.isDone()) {
+			task.poll();
+			Thread.sleep(100);
+			Thread.yield();
+		}
+		Assert.assertTrue(task.getResult().toString().startsWith(String.format("http://localhost:%d/user/U",port)));
+
+        c = getConnection();	
+		table = 	c.createQueryTable("EXPECTED","SELECT * FROM user");
+		Assert.assertEquals(4,table.getRowCount());
+		table = 	c.createQueryTable("EXPECTED","SELECT iduser,title from user where iduser>3 and username='username'");
+		Assert.assertEquals(1,table.getRowCount());
+		c.close();
+
+	}	
 }

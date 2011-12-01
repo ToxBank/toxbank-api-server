@@ -1,10 +1,10 @@
 package org.toxbank.rest.user.resource;
 
 import java.sql.Connection;
-import java.util.List;
 
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
+import net.idea.restnet.c.PageParams;
 import net.idea.restnet.c.RepresentationConvertor;
 import net.idea.restnet.c.StringConvertor;
 import net.idea.restnet.c.task.CallableProtectedTask;
@@ -19,7 +19,6 @@ import net.idea.restnet.i.task.ITaskStorage;
 import net.idea.restnet.rdf.FactoryTaskConvertorRDF;
 import net.toxbank.client.io.rdf.TOXBANK;
 
-import org.apache.commons.fileupload.FileItem;
 import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
@@ -31,6 +30,7 @@ import org.restlet.data.Status;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
 import org.toxbank.rest.FileResource;
+import org.toxbank.rest.user.CallableUserCreator;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.db.ReadUser;
 
@@ -139,32 +139,22 @@ public class UserDBResource	extends QueryResource<ReadUser,DBUser> {
 	}
 	
 	@Override
-	protected boolean isAllowedMediaType(MediaType mediaType)
-			throws ResourceException {
-		return MediaType.MULTIPART_FORM_DATA.equals(mediaType);
-	}
-
-	@Override
 	protected CallableProtectedTask<String> createCallable(Method method,
-			List<FileItem> input, DBUser item) throws ResourceException {
+			Form form, DBUser item) throws ResourceException {
 		Connection conn = null;
 		try {
-			UserURIReporter r = new UserURIReporter(getRequest(),"");
+			UserURIReporter reporter = new UserURIReporter(getRequest(),"");
 			DBConnection dbc = new DBConnection(getApplication().getContext(),getConfigFile());
 			conn = dbc.getConnection(getRequest());
-			//return new CallableUserUpload(input,conn,r,getToken(),getRequest().getRootRef().toString());
-			return null;
+			return new CallableUserCreator(reporter, form,conn,getToken());
 		} catch (Exception x) {
 			try { conn.close(); } catch (Exception xx) {}
 			throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);
 		}
+	}
 
-		/*
-		Form form = new Form();
-		form.add(PageParams.params.resulturi.name(),String.format("%s/ProtocolMockup",getRequest().getResourceRef()));
-		form.add(PageParams.params.delay.name(),"1");
-		return new CallableMockup(form,getToken());
-		*/
+	protected String getObjectURI(Form queryForm) throws ResourceException {
+		return null;		
 	}
 	
 	@Override
@@ -180,7 +170,10 @@ public class UserDBResource	extends QueryResource<ReadUser,DBUser> {
 		return new FactoryTaskConvertorRDF(storage);
 	}
 	
-	protected TaskCreator getTaskCreator(Form form, final Method method, boolean async, final Reference reference) throws Exception {
-		throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,"Not multipart web form!");
+	
+	@Override
+	protected boolean isAllowedMediaType(MediaType mediaType)
+			throws ResourceException {
+		return MediaType.APPLICATION_WWW_FORM.equals(mediaType);
 	}
 }
