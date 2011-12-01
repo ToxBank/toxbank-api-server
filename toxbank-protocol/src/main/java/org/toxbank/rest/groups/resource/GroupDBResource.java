@@ -1,16 +1,10 @@
 package org.toxbank.rest.groups.resource;
 
-import java.sql.Connection;
-import java.util.List;
-
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.restnet.c.RepresentationConvertor;
 import net.idea.restnet.c.StringConvertor;
-import net.idea.restnet.c.task.CallableProtectedTask;
 import net.idea.restnet.c.task.FactoryTaskConvertor;
-import net.idea.restnet.c.task.TaskCreator;
-import net.idea.restnet.db.DBConnection;
 import net.idea.restnet.db.QueryResource;
 import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.db.convertors.OutputWriterConvertor;
@@ -19,13 +13,11 @@ import net.idea.restnet.i.task.ITaskStorage;
 import net.idea.restnet.rdf.FactoryTaskConvertorRDF;
 import net.toxbank.client.io.rdf.TOXBANK;
 
-import org.apache.commons.fileupload.FileItem;
 import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
-import org.restlet.data.Method;
 import org.restlet.data.Reference;
 import org.restlet.data.Status;
 import org.restlet.representation.Variant;
@@ -90,6 +82,9 @@ public abstract class GroupDBResource<G extends IDBGroup>	extends QueryResource<
 	public abstract String getGroupBackLink();
 	public abstract String getGroupTitle();
 
+	protected String getObjectURI(Form queryForm) throws ResourceException {
+		return null;		
+	}
 	@Override
 	protected ReadGroup<G> createQuery(Context context, Request request, Response response)
 			throws ResourceException {
@@ -148,34 +143,12 @@ public abstract class GroupDBResource<G extends IDBGroup>	extends QueryResource<
 		return MediaType.MULTIPART_FORM_DATA.equals(mediaType);
 	}
 
-	@Override
-	protected CallableProtectedTask<String> createCallable(Method method,
-			List<FileItem> input, G item) throws ResourceException {
-		Connection conn = null;
-		try {
-			GroupQueryURIReporter r = new GroupQueryURIReporter(getRequest(),"");
-			DBConnection dbc = new DBConnection(getApplication().getContext(),getConfigFile());
-			conn = dbc.getConnection(getRequest());
-			throw new ResourceException(Status.SERVER_ERROR_NOT_IMPLEMENTED);
-			//return new CallableProtocolUpload(input,conn,r,getToken());
-		} catch (Exception x) {
-			try { conn.close(); } catch (Exception xx) {}
-			throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);
-		}
-
-		/*
-		Form form = new Form();
-		form.add(PageParams.params.resulturi.name(),String.format("%s/ProtocolMockup",getRequest().getResourceRef()));
-		form.add(PageParams.params.delay.name(),"1");
-		return new CallableMockup(form,getToken());
-		*/
-	}
 	
 	@Override
 	protected ReadGroup<G> createPOSTQuery(Context context, Request request,
 			Response response) throws ResourceException {
 		Object key = request.getAttributes().get(FileResource.resourceKey);		
-		if (key==null) return null;//post allowed only on /protocol level, not on /protocol/id
+		if (key==null) return null;//post allowed only on /group level, not on /group/id
 		else throw new ResourceException(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
 	}
 	@Override
@@ -183,8 +156,5 @@ public abstract class GroupDBResource<G extends IDBGroup>	extends QueryResource<
 			throws ResourceException {
 		return new FactoryTaskConvertorRDF(storage);
 	}
-	
-	protected TaskCreator getTaskCreator(Form form, final Method method, boolean async, final Reference reference) throws Exception {
-		throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,"Not multipart web form!");
-	}
+
 }

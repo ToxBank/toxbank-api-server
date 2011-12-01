@@ -9,8 +9,14 @@ import junit.framework.Assert;
 import net.toxbank.client.io.rdf.ProjectIO;
 import net.toxbank.client.resource.Project;
 
+import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.ITable;
 import org.junit.Test;
+import org.opentox.dsl.task.RemoteTask;
+import org.restlet.data.Form;
 import org.restlet.data.MediaType;
+import org.restlet.data.Method;
+import org.restlet.data.Reference;
 import org.restlet.representation.Representation;
 import org.toxbank.resource.Resources;
 import org.toxbank.rest.groups.db.ReadProject;
@@ -102,4 +108,34 @@ public class ProjectResourceTest  extends ResourceTest {
 		return o;
 	}
 	
+	@Test
+	public void testCreateEntryFromWebForm() throws Exception {
+		Form form = new Form();
+		form.add("name", "project");
+
+        IDatabaseConnection c = getConnection();	
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM organisation");
+		Assert.assertEquals(2,table.getRowCount());
+		c.close();
+
+		RemoteTask task = testAsyncPoll(new Reference(String.format("http://localhost:%d%s", port,
+				Resources.project)),
+				MediaType.TEXT_URI_LIST, form.getWebRepresentation(),
+				Method.POST);
+		//wait to complete
+		while (!task.isDone()) {
+			task.poll();
+			Thread.sleep(100);
+			Thread.yield();
+		}
+		Assert.assertTrue(task.getResult().toString().startsWith(String.format("http://localhost:%d/project/G",port)));
+
+        c = getConnection();	
+		table = 	c.createQueryTable("EXPECTED","SELECT * FROM project");
+		Assert.assertEquals(4,table.getRowCount());
+		table = 	c.createQueryTable("EXPECTED","SELECT idproject,name,ldapgroup from project where idproject>3");
+		Assert.assertEquals(1,table.getRowCount());
+		c.close();
+
+	}	
 }
