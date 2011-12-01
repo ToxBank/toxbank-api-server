@@ -32,7 +32,7 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 			//ReadProtocol.fields.organisation
 			//ReadProtocol.fields.version
 			//ReadProtocol.fields.accesslevel
-			//ReadProtocol.fields.keywords
+			ReadProtocol.fields.keywords,
 			ReadProtocol.fields.summarySearchable
 			
 		};
@@ -48,7 +48,7 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 			//ReadProtocol.fields.organisation
 			//ReadProtocol.fields.version
 			//ReadProtocol.fields.accesslevel
-			//ReadProtocol.fields.keywords
+			ReadProtocol.fields.keywords,
 			ReadProtocol.fields.summarySearchable
 			
 		};	

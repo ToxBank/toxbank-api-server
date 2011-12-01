@@ -16,6 +16,7 @@ import org.toxbank.rest.groups.DBOrganisation;
 import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.groups.db.CreateGroup;
 import org.toxbank.rest.protocol.db.CreateProtocol;
+import org.toxbank.rest.protocol.db.UpdateKeywords;
 import org.toxbank.rest.protocol.resource.db.ProtocolQueryURIReporter;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.db.CreateUser;
@@ -76,6 +77,12 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 			exec.process(q);
 			
 			String uri = reporter.getURI(protocol);
+			
+			if (protocol.getKeywords().size()>0) {
+				UpdateKeywords k = new UpdateKeywords(protocol);
+				exec.process(k);
+			}
+			
 			return new TaskResult(uri,true);
 		} catch (ProcessorException x) {
 			x.printStackTrace();

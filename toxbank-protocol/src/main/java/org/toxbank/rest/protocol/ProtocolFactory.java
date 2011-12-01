@@ -100,6 +100,12 @@ public class ProtocolFactory {
 					} catch (Exception x) { protocol.setSummarySearchable(false);}
 					break;					
 				}
+				case keywords: {
+					try {
+						protocol.addKeyword(fi.getString().trim());
+						} catch (Exception x) { }
+						break;	
+				}
 				} //switch
 			} catch (Exception x) {
 				throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);

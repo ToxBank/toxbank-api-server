@@ -64,10 +64,10 @@ CREATE TABLE  `protocol` (
 
 -- Keywords. Want to do full text search, thus MyISAM. Could be changed eventually.
 
-DROP TABLE IF EXISTS `keyword`;
-CREATE TABLE  `keyword` (
+DROP TABLE IF EXISTS `keywords`;
+CREATE TABLE  `keywords` (
   `idprotocol` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `words` text NOT NULL,
+  `keywords` text NOT NULL COMMENT 'All keywords semicolon delimited',
   PRIMARY KEY (`idprotocol`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -82,4 +82,4 @@ CREATE TABLE  `version` (
   `comment` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`idmajor`,`idminor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-insert into version (idmajor,idminor,comment) values (0,4,"TB Protocol schema");
+insert into version (idmajor,idminor,comment) values (0,5,"TB Protocol schema");

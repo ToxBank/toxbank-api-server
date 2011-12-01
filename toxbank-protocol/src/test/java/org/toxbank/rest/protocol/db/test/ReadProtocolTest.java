@@ -20,6 +20,10 @@ public class ReadProtocolTest extends QueryTest<ReadProtocol> {
 		while (rs.next()) {
 			DBProtocol protocol = query.getObject(rs);
 			Assert.assertEquals(2,protocol.getID());
+			Assert.assertNotNull(protocol.getKeywords());
+			Assert.assertEquals(3,protocol.getKeywords().size());
+			Assert.assertNotNull(protocol.getOwner());
+			//Assert.assertNotNull(protocol.getOwner().getFirstname());
 			records++;
 		}
 		Assert.assertEquals(1,records);

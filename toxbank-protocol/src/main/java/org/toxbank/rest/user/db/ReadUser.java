@@ -1,5 +1,6 @@
 package org.toxbank.rest.user.db;
 
+import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -45,10 +46,6 @@ public class ReadUser  extends AbstractQuery<String, DBUser, EQCondition, DBUser
 	
 		username {
 			@Override
-			public QueryParam getParam(DBUser protocol) {
-				return new QueryParam<String>(String.class, (String)getValue(protocol));
-			}
-			@Override
 			public void setParam(DBUser protocol, ResultSet rs) throws SQLException {
 				protocol.setUserName(rs.getString(name()));
 			}
@@ -58,10 +55,6 @@ public class ReadUser  extends AbstractQuery<String, DBUser, EQCondition, DBUser
 			}
 		},
 		title {
-			@Override
-			public QueryParam getParam(DBUser protocol) {
-				return new QueryParam<String>(String.class, (String)getValue(protocol));
-			}			
 			@Override
 			public void setParam(DBUser protocol, ResultSet rs) throws SQLException {
 				protocol.setTitle(rs.getString(name()));
@@ -73,10 +66,6 @@ public class ReadUser  extends AbstractQuery<String, DBUser, EQCondition, DBUser
 		},
 		firstname {
 			@Override
-			public QueryParam getParam(DBUser protocol) {
-				return new QueryParam<String>(String.class, (String)getValue(protocol));
-			}			
-			@Override
 			public void setParam(DBUser protocol, ResultSet rs) throws SQLException {
 				protocol.setFirstname(rs.getString(name()));
 			}		
@@ -87,10 +76,6 @@ public class ReadUser  extends AbstractQuery<String, DBUser, EQCondition, DBUser
 		},
 		lastname {
 			@Override
-			public QueryParam getParam(DBUser protocol) {
-				return new QueryParam<String>(String.class, (String)getValue(protocol));
-			}			
-			@Override
 			public void setParam(DBUser protocol, ResultSet rs) throws SQLException {
 				protocol.setLastname(rs.getString(name()));
 			}		
@@ -98,8 +83,34 @@ public class ReadUser  extends AbstractQuery<String, DBUser, EQCondition, DBUser
 			public Object getValue(DBUser protocol) {
 				return protocol==null?null:protocol.getLastname();
 			}
-		},		
-			
+		},	
+		weblog {
+			@Override
+			public void setParam(DBUser user, ResultSet rs) throws SQLException {
+				try {
+					String n = rs.getString(name());
+					user.setWeblog(n==null?null:new URL(n));}
+				catch (Exception x) {throw new SQLException(x);}
+			}		
+			@Override
+			public Object getValue(DBUser protocol) {
+				return protocol==null?null:protocol.getWeblog();
+			}			
+		},
+		homepage {
+			@Override
+			public void setParam(DBUser user, ResultSet rs) throws SQLException {
+				try {
+					String n = rs.getString(name());
+					user.setHomepage(n==null?null:new URL(n));
+				} catch (Exception x) {throw new SQLException(x);}
+			}		
+			@Override
+			public Object getValue(DBUser protocol) {
+				return protocol==null?null:protocol.getHomepage();
+			}				
+		},
+
 		;
 		public String getCondition() {
 			return String.format(" %s = ? ",name());
@@ -107,11 +118,15 @@ public class ReadUser  extends AbstractQuery<String, DBUser, EQCondition, DBUser
 		public QueryParam getParam(DBUser protocol) {
 			return new QueryParam<String>(String.class,  getValue(protocol).toString());
 		}
-		public abstract Object getValue(DBUser user);
 		public Class getClassType(DBUser user) {
 			return String.class;
 		}
-		public void setParam(DBUser user,ResultSet rs) throws SQLException {}
+		public void setParam(DBUser protocol, ResultSet rs) throws SQLException {
+			protocol.setLastname(rs.getString(name()));
+		}		
+		public Object getValue(DBUser protocol) {
+			return protocol==null?null:protocol.getLastname();
+		}
 		
 		public String getHTMLField(DBUser user) {
 			Object value = getValue(user);

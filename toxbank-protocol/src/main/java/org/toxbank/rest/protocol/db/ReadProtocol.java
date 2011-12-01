@@ -49,6 +49,37 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 				return "URI";
 			}
 		},
+		keywords {
+			@Override
+			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
+				try {
+				String[] keywords = rs.getString(name()).split(";");
+				for (String keyword:keywords)
+					if (!protocol.getKeywords().contains(keyword))
+						protocol.addKeyword(keyword);
+				} catch (Exception x) {
+					throw new SQLException(x);
+				}
+			}
+			@Override
+			public QueryParam getParam(DBProtocol protocol) {
+				return new QueryParam<String>(String.class, (String)getValue(protocol));
+			}	
+			@Override
+			public Object getValue(DBProtocol protocol) {
+				if (protocol == null) return null;
+				StringBuilder b = new StringBuilder();
+				for (String keyword: protocol.getKeywords()) { 
+					b.append(keyword);
+					b.append(";");
+				}
+				return b.toString();
+			}
+			@Override
+			public String toString() {
+				return "Keywords";
+			}
+		},			
 		version {
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
@@ -333,9 +364,11 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 	}
 	
 	protected static String sql = 
-		"select idprotocol,version,identifier,title,abstract as anabstract,iduser,summarySearchable," +
-		"idproject,project.name as project,idorganisation,organisation.name as organisation,filename " +
-		"from protocol join organisation using(idorganisation) join project using(idproject) %s %s ";
+		"select idprotocol,version,identifier,protocol.title,abstract as anabstract,iduser,summarySearchable," +
+		"idproject,project.name as project,idorganisation,organisation.name as organisation,filename,keywords\n" +
+		"from protocol join organisation using(idorganisation)\n" +
+		"join project using(idproject)\n" +
+		"left join keywords using(idprotocol) %s %s ";
 
 
 	public ReadProtocol(Integer id) {
