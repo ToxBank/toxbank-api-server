@@ -130,7 +130,7 @@ public class ReadUser  extends AbstractQuery<String, DBUser, EQCondition, DBUser
 	}
 	
 	protected static String sql = 
-		"SELECT iduser,username,title,firstname,lastname,institute,weblog,homepage from user where iduser=?";
+		"SELECT iduser,username,title,firstname,lastname,institute,weblog,homepage from user %s %s";
 
 
 	public ReadUser(DBUser user) {
@@ -166,7 +166,7 @@ public class ReadUser  extends AbstractQuery<String, DBUser, EQCondition, DBUser
 
 	public String getSQL() throws AmbitException {
 		if ((getValue()!=null) && (getValue().getID()>0))
-			return String.format(sql,"where",fields.iduser.getCondition());
+			return String.format(sql,"where ",fields.iduser.getCondition());
 		else 
 			return String.format(sql,"","");
 			
