@@ -83,6 +83,11 @@ public class ProtocolResourceTest extends ResourceTest {
 		Assert.assertEquals("SEURAT-234", protocols.get(0).getIdentifier());
 		Assert.assertEquals("Very important protocol", protocols.get(0).getTitle());
 		Assert.assertNotNull(protocols.get(0).getAbstract());
+		
+		Assert.assertNotNull(protocols.get(0).getOwner());
+		Assert.assertEquals(String.format("http://localhost:%d%s/U1",port,Resources.user),
+				protocols.get(0).getOwner().getResourceURL().toString());
+		Assert.assertEquals("abcdef", protocols.get(0).getOwner().getFirstname());
 		return model;
 	}
 	

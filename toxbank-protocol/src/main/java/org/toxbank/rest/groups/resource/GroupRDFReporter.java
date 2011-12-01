@@ -8,9 +8,12 @@ import net.idea.modbcum.i.exceptions.DbAmbitException;
 import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.db.convertors.QueryRDFReporter;
-import net.toxbank.client.io.rdf.IOClass;
+import net.toxbank.client.io.rdf.OrganisationIO;
+import net.toxbank.client.io.rdf.ProjectIO;
 import net.toxbank.client.io.rdf.TOXBANK;
 import net.toxbank.client.resource.IToxBankResource;
+import net.toxbank.client.resource.Organisation;
+import net.toxbank.client.resource.Project;
 
 import org.restlet.Request;
 import org.restlet.data.MediaType;
@@ -31,7 +34,8 @@ public class GroupRDFReporter<Q extends IQueryRetrieval<IDBGroup>> extends Query
 	 * 
 	 */
 	private static final long serialVersionUID = -8857789530109166243L;
-	protected IOClass ioClass;
+	protected OrganisationIO oIOClass;
+	protected ProjectIO pIOClass;
 	
 	public GroupRDFReporter(Request request,MediaType mediaType,ResourceDoc doc) {
 		super(request,mediaType,doc);
@@ -54,17 +58,29 @@ public class GroupRDFReporter<Q extends IQueryRetrieval<IDBGroup>> extends Query
 		try {
 			if (item instanceof IToxBankResource) {
 				((IToxBankResource) item).setResourceURL(new URL(uriReporter.getURI(item)));
-				throw new AmbitException("Not implemented");
-				/*
-				if (ioClass==null)
-					if (item instanceof Organisation) ioClass = new Orga
-					ioClass
+				
+				switch (item.getGroupType()) {
+				case ORGANISATION: {
+					if (oIOClass==null) oIOClass = new OrganisationIO();
+						oIOClass.toJena(
+							getJenaModel(),
+							(Organisation)item
+						);					
+					break;
 				}
-				ioClass.toJena(
-					getJenaModel(), // create a new class
-					item
-				);
-				*/
+				case PROJECT: {
+					if (pIOClass==null) pIOClass = new ProjectIO();
+						pIOClass.toJena(
+							getJenaModel(), 
+							(Project)item
+						);					
+					break;
+				}
+				default: {
+					
+				}
+				}
+
 			}
 			return item;
 		} catch (Exception x) {

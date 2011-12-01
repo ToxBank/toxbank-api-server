@@ -3,15 +3,20 @@ package org.toxbank.test;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 
 import junit.framework.Assert;
+import net.toxbank.client.io.rdf.OrganisationIO;
+import net.toxbank.client.resource.Organisation;
 
 import org.junit.Test;
 import org.restlet.data.MediaType;
 import org.restlet.representation.Representation;
 import org.toxbank.resource.Resources;
 import org.toxbank.rest.groups.db.ReadOrganisation;
-import org.toxbank.rest.protocol.db.template.ReadDataTemplate;
+
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public class OrganisationResourceTest extends ResourceTest {
 	
@@ -66,6 +71,27 @@ public class OrganisationResourceTest extends ResourceTest {
 		return count==1;
 	}
 	
+	@Test
+	public void testRDF() throws Exception {
+		testGet(String.format("http://localhost:%d%s/G1", port,Resources.organisation),MediaType.APPLICATION_RDF_XML);
+	}
+	
+	@Override
+	public OntModel verifyResponseRDFXML(String uri, MediaType media,
+			InputStream in) throws Exception {
+		
+		OntModel model = ModelFactory.createOntologyModel();
+		model.read(in,null);
+		
+		OrganisationIO ioClass = new OrganisationIO();
+		List<Organisation> orgs = ioClass.fromJena(model);
+		Assert.assertEquals(1,orgs.size());
+		Assert.assertEquals(String.format("http://localhost:%d%s/G1",port,Resources.organisation),
+													orgs.get(0).getResourceURL().toString());
+		Assert.assertEquals("DC", orgs.get(0).getTitle());
+		//Assert.assertEquals("toxbank", orgs.get(0).getGroupName());
+		return model;
+	}	
 	@Override
 	public Object verifyResponseJavaObject(String uri, MediaType media,
 			Representation rep) throws Exception {

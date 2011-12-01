@@ -13,7 +13,14 @@ import net.toxbank.client.io.rdf.TOXBANK;
 
 import org.restlet.Request;
 import org.restlet.data.MediaType;
+import org.toxbank.rest.groups.DBOrganisation;
+import org.toxbank.rest.groups.DBProject;
+import org.toxbank.rest.groups.IDBGroup;
+import org.toxbank.rest.groups.resource.GroupQueryURIReporter;
 import org.toxbank.rest.protocol.DBProtocol;
+import org.toxbank.rest.user.DBUser;
+import org.toxbank.rest.user.resource.UserRDFReporter;
+import org.toxbank.rest.user.resource.UserURIReporter;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.vocabulary.DCTerms;
@@ -26,9 +33,13 @@ public class ProtocolRDFReporter<Q extends IQueryRetrieval<DBProtocol>> extends 
 	 */
 	private static final long serialVersionUID = -8857789530109166243L;
 	protected ProtocolIO ioClass = new ProtocolIO();
+	protected GroupQueryURIReporter<IQueryRetrieval<IDBGroup>> groupReporter;
+	protected UserURIReporter<IQueryRetrieval<DBUser>> userReporter;
 	
 	public ProtocolRDFReporter(Request request,MediaType mediaType,ResourceDoc doc) {
 		super(request,mediaType,doc);
+		groupReporter = new GroupQueryURIReporter<IQueryRetrieval<IDBGroup>>(request);
+		userReporter = new UserURIReporter<IQueryRetrieval<DBUser>>(request);
 	}
 	@Override
 	protected QueryURIReporter createURIReporter(Request reference,ResourceDoc doc) {
@@ -46,6 +57,13 @@ public class ProtocolRDFReporter<Q extends IQueryRetrieval<DBProtocol>> extends 
 	@Override
 	public Object processItem(DBProtocol item) throws AmbitException {
 		try {
+			if ((item.getProject()!=null) && (item.getProject().getResourceURL()==null))
+				item.getProject().setResourceURL(new URL(groupReporter.getURI((DBProject)item.getProject())));
+			if ((item.getOrganisation()!=null) && (item.getOrganisation().getResourceURL()==null))
+				item.getOrganisation().setResourceURL(new URL(groupReporter.getURI((DBOrganisation)item.getOrganisation())));
+			if ((item.getOwner()!=null) && (item.getOwner().getResourceURL()==null))
+				item.getOwner().setResourceURL(new URL(userReporter.getURI((DBUser)item.getOwner())));
+						
 			item.setResourceURL(new URL(uriReporter.getURI(item)));
 			ioClass.toJena(
 				getJenaModel(), // create a new class
