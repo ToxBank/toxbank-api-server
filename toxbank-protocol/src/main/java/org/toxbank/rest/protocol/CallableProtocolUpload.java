@@ -75,7 +75,8 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 			CreateProtocol q = new CreateProtocol(protocol);
 			exec.process(q);
 			
-			return new TaskResult(reporter.getURI(protocol),true);
+			String uri = reporter.getURI(protocol);
+			return new TaskResult(uri,true);
 		} catch (ProcessorException x) {
 			x.printStackTrace();
 			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);

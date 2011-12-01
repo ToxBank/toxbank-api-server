@@ -41,7 +41,7 @@ public class GroupQueryURIReporter <Q extends IQueryRetrieval<IDBGroup>> extends
 	@Override
 	public String getURI(String ref, IDBGroup item) {
 
-		return String.format("%s/%s/G%d%s\n",ref,item.getGroupType().name().toLowerCase(),item.getID(),suffix);
+		return String.format("%s/%s/G%d%s",ref,item.getGroupType().name().toLowerCase(),item.getID(),suffix);
 	}
 
 }

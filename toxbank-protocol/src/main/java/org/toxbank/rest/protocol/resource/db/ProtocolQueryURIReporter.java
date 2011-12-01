@@ -42,7 +42,7 @@ public class ProtocolQueryURIReporter <Q extends IQueryRetrieval<DBProtocol>> ex
 	@Override
 	public String getURI(String ref, DBProtocol item) {
 
-		return String.format("%s%s/P%d%s\n",ref,Resources.protocol,item.getID(),suffix);
+		return String.format("%s%s/P%d%s",ref,Resources.protocol,item.getID(),suffix);
 	}
 
 }

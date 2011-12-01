@@ -30,10 +30,11 @@ public class ProtocolFactory {
 			try {
 				ReadProtocol.fields field  = null;
 				try { 
-					field = ReadProtocol.fields.valueOf(fi.getFieldName());
+					String fname = fi.getFieldName();
+					if (fname!=null)
+						field = ReadProtocol.fields.valueOf(fname);
 					
 				} catch (Exception x) {
-					x.printStackTrace();
 					continue;
 				}
 				if (field==null) continue;

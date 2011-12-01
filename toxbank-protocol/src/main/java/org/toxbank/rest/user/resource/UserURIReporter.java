@@ -42,7 +42,7 @@ public class UserURIReporter <Q extends IQueryRetrieval<DBUser>> extends QueryUR
 	@Override
 	public String getURI(String ref, DBUser item) {
 
-		return String.format("%s%s/U%d%s\n",ref,Resources.user,item.getID(),suffix);
+		return String.format("%s%s/U%d%s",ref,Resources.user,item.getID(),suffix);
 	}
 
 }
