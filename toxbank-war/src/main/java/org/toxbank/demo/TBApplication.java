@@ -9,14 +9,10 @@ import net.idea.restnet.aa.opensso.OpenSSOVerifierSetUser;
 import net.idea.restnet.aa.opensso.policy.CallablePolicyCreator;
 import net.idea.restnet.aa.opensso.policy.PolicyProtectedTask;
 import net.idea.restnet.aa.opensso.users.OpenSSOUserResource;
-import net.idea.restnet.aa.resource.AdminResource;
-import net.idea.restnet.aa.resource.AdminRouter;
 import net.idea.restnet.aa.resource.PolicyResource;
 import net.idea.restnet.c.ChemicalMediaType;
 import net.idea.restnet.c.TaskApplication;
-import net.idea.restnet.c.resource.TaskResource;
 import net.idea.restnet.c.routers.MyRouter;
-import net.idea.restnet.c.routers.TaskRouter;
 import net.idea.restnet.c.task.TaskStorage;
 import net.idea.restnet.i.task.ICallableTask;
 import net.idea.restnet.i.task.Task;
@@ -42,6 +38,11 @@ import org.restlet.security.Enroler;
 import org.restlet.security.Verifier;
 import org.restlet.service.TunnelService;
 import org.restlet.util.RouteList;
+import org.toxbank.demo.aa.TBLoginResource;
+import org.toxbank.demo.task.TBAdminResource;
+import org.toxbank.demo.task.TBAdminRouter;
+import org.toxbank.demo.task.TBTaskResource;
+import org.toxbank.demo.task.TBTaskRouter;
 import org.toxbank.resource.Resources;
 import org.toxbank.rest.db.DatabaseResource;
 import org.toxbank.rest.groups.OrganisationRouter;
@@ -106,8 +107,8 @@ public class TBApplication extends TaskApplication<String> {
 		Router router = new MyRouter(this.getContext());
 		//router.attach("/help", AmbitResource.class);
 		
-		router.attach("/", OpenSSOUserResource.class);
-		router.attach("", OpenSSOUserResource.class);
+		router.attach("/", TBLoginResource.class);
+		router.attach("", TBLoginResource.class);
 
 		/**
 		 *  Points to the Ontology service
@@ -119,7 +120,7 @@ public class TBApplication extends TaskApplication<String> {
 		 *  Various admin tasks, like database creation
 		 */
 		
-		router.attach(String.format("/%s",AdminResource.resource),createProtectedResource(createAdminRouter(),"admin"));
+		router.attach(String.format("/%s",TBAdminResource.resource),createProtectedResource(createAdminRouter(),"admin"));
 
 		/** /policy - used for testing only  */
 		router.attach(String.format("/%s",PolicyResource.resource),PolicyResource.class);		
@@ -134,7 +135,7 @@ public class TBApplication extends TaskApplication<String> {
 		router.attach(DatasetsResource.datasets, createProtectedResource(allDatasetsRouter,"datasets"));		
  */
 		/**  /task  */
-		router.attach(TaskResource.resource, new TaskRouter(getContext()));
+		router.attach(TBTaskResource.resource, new TBTaskRouter(getContext()));
 
 		/**  /protocol  */
 		router.attach(Resources.protocol, new ProtocolRouter(getContext()));
@@ -189,7 +190,7 @@ public class TBApplication extends TaskApplication<String> {
 	
 	protected Restlet createOpenSSOLoginRouter() {
 		Filter userAuthn = new OpenSSOAuthenticator(getContext(),true,"opentox.org",new OpenSSOVerifierSetUser(false));
-		userAuthn.setNext(OpenSSOUserResource.class);
+		userAuthn.setNext(TBLoginResource.class);
 		return userAuthn;
 	}
 
@@ -283,6 +284,7 @@ public class TBApplication extends TaskApplication<String> {
 					}
 				};
 			}
+
 		};
 	}
 
@@ -305,12 +307,10 @@ public class TBApplication extends TaskApplication<String> {
 	 * @return
 	 */
 	protected Restlet createAdminRouter() {
-		AdminRouter adminRouter = new AdminRouter(getContext());
+		return new TBAdminRouter(getContext());
 		//DBCreateAllowedGuard dbguard = new DBCreateAllowedGuard();
 		//dbguard.setNext(adminRouter);
 		//return dbguard;
-		adminRouter.attach(String.format("/%s",DatabaseResource.resource),DatabaseResource.class);
-		return adminRouter;
 	}
 	/**
 	 *  /ontology RDF playground, not used currently

@@ -3,6 +3,7 @@ package org.toxbank.rest.db;
 import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.exceptions.DbAmbitException;
 import net.idea.restnet.c.ResourceDoc;
+import net.idea.restnet.c.html.HTMLBeauty;
 import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.db.convertors.QueryHTMLReporter;
 
@@ -28,9 +29,9 @@ public class DBHtmlReporter extends QueryHTMLReporter<DBVersion,DBVersionQuery> 
 	 */
 	private static final long serialVersionUID = -5343958374065342370L;
 
-	public DBHtmlReporter(Request baseRef) {
-		super(baseRef,false,null);
-
+	public DBHtmlReporter(Request baseRef,HTMLBeauty htmlbeauty) {
+		super(baseRef,false,null);	
+		this.htmlBeauty = htmlbeauty;
 	}
 	
 	@Override

@@ -14,6 +14,7 @@ import net.idea.modbcum.i.exceptions.NotFoundException;
 import net.idea.modbcum.i.processors.IProcessor;
 import net.idea.modbcum.p.ProcessorException;
 import net.idea.restnet.c.StringConvertor;
+import net.idea.restnet.c.html.HTMLBeauty;
 import net.idea.restnet.db.DBConnection;
 import net.idea.restnet.db.QueryResource;
 
@@ -29,6 +30,7 @@ import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
+import org.toxbank.rest.protocol.TBHTMLBeauty;
 import org.toxbank.rest.protocol.db.DbCreateDatabase;
 
 /**
@@ -65,15 +67,16 @@ public class DatabaseResource  extends QueryResource<DBVersionQuery,DBVersion> {
 		if (variant.getMediaType().equals(MediaType.TEXT_PLAIN)) {
 			return new StringConvertor(new DBTextReporter(),MediaType.TEXT_PLAIN);
 		} if (variant.getMediaType().equals(MediaType.TEXT_HTML)) {
-			return new StringConvertor(new DBHtmlReporter(getRequest()),MediaType.TEXT_HTML);
+			return new StringConvertor(new DBHtmlReporter(getRequest(),getHTMLBeauty()),MediaType.TEXT_HTML);
 			/*} 
 		
 		
 			*/
 		} else //html 	
-			return new StringConvertor(new DBHtmlReporter(getRequest()),MediaType.TEXT_HTML);
+			return new StringConvertor(new DBHtmlReporter(getRequest(),getHTMLBeauty()),MediaType.TEXT_HTML);
 		
 	}	
+
 
 	@Override
 	protected Representation processNotFound(NotFoundException x, int retry)
@@ -260,7 +263,7 @@ public class DatabaseResource  extends QueryResource<DBVersionQuery,DBVersion> {
 			 throws Exception {
 		try {
 			Writer writer = new StringWriter();
-			DBHtmlReporter reporter = new DBHtmlReporter(getRequest());
+			DBHtmlReporter reporter = new DBHtmlReporter(getRequest(),getHTMLBeauty());
 			reporter.setCreate(create);
 			reporter.setOutput(writer);
 			reporter.header(writer, null);
@@ -282,5 +285,9 @@ public class DatabaseResource  extends QueryResource<DBVersionQuery,DBVersion> {
 	@Override
 	public String getConfigFile() {
 		return "conf/tbprotocol-db.pref";
+	}
+	@Override
+	protected HTMLBeauty getHTMLBeauty() {
+		return new TBHTMLBeauty();
 	}
 }
