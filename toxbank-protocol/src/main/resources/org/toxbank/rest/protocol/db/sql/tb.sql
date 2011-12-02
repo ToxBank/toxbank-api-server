@@ -12,9 +12,10 @@ CREATE TABLE  `user` (
   `institute` varchar(45) DEFAULT NULL,
   `weblog` varchar(45) DEFAULT NULL,
   `homepage` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`iduser`)
+  PRIMARY KEY (`iduser`),
+  UNIQUE KEY `Index_2` (`username`),
+  KEY `Index_3` (`lastname`,`firstname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 -- Organisation, project, linked to ldap groups
 
@@ -82,4 +83,4 @@ CREATE TABLE  `version` (
   `comment` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`idmajor`,`idminor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-insert into version (idmajor,idminor,comment) values (0,6,"TB Protocol schema");
+insert into version (idmajor,idminor,comment) values (0,7,"TB Protocol schema");

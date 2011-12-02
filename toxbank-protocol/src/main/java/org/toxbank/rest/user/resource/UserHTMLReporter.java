@@ -23,20 +23,8 @@ public class UserHTMLReporter extends QueryHTMLReporter<DBUser, IQueryRetrieval<
 	 * 
 	 */
 	private static final long serialVersionUID = -7959033048710547839L;
-	DBUser.fields[] entryFields = new DBUser.fields[] {
-			DBUser.fields.firstname,
-			DBUser.fields.lastname,
-
-			
-		};
-	DBUser.fields[] displayFields = new DBUser.fields[] {
-			DBUser.fields.iduser,
-			DBUser.fields.username,
-			DBUser.fields.firstname,
-			DBUser.fields.lastname,
-			
-			
-		};	
+	DBUser.fields[] entryFields = DBUser.fields.values();
+	DBUser.fields[] displayFields = DBUser.fields.values();
 	
 	protected boolean editable = false;
 	public UserHTMLReporter() {
@@ -60,12 +48,12 @@ public class UserHTMLReporter extends QueryHTMLReporter<DBUser, IQueryRetrieval<
 		try {
 			//
 			if (collapsed) { 
-
-				
+			
 				if (editable) {
 					w.write("<h3>Create new User</h3>");
 					StringBuilder curlHint = new StringBuilder();
 					curlHint.append("curl -X POST -H 'subjectid:TOKEN'");
+					curlHint.append(String.format(" Content-Type:%s",MediaType.APPLICATION_WWW_FORM.getName()));
 					for (DBUser.fields field : DBUser.fields.values()) {
 						switch (field) {
 						case iduser: continue;
@@ -82,7 +70,7 @@ public class UserHTMLReporter extends QueryHTMLReporter<DBUser, IQueryRetrieval<
 					printForm(output,uri.toString(),null,true);
 					
 					
-					output.write("<tr><td></td><td><input type='submit' enabled='false' value='Create new protocol'></td></tr>");
+					output.write("<tr><td></td><td><input type='submit' enabled='false' value='Create new User'></td></tr>");
 					w.write("</table>\n");
 					output.write("</form>");
 					output.write("<hr>");	
@@ -140,6 +128,7 @@ public class UserHTMLReporter extends QueryHTMLReporter<DBUser, IQueryRetrieval<
 				curlHint = String.format("curl -X GET -H 'Accept:%s' -H 'subjectid:%s' %s",mime,
 						"TOKEN",
 						uri);
+
 				output.write(String.format(
 						"\n<a href=\"%s%s?media=%s&%s\"  ><img src=\"%s/images/%s\" alt=\"%s\" title=\"%s\" border=\"0\"/></a>\n",
 						uriReporter.getRequest().getResourceRef(),
@@ -185,7 +174,7 @@ public class UserHTMLReporter extends QueryHTMLReporter<DBUser, IQueryRetrieval<
 			DBUser.fields[] fields = editable?entryFields:displayFields;
 			for (DBUser.fields field : fields) {
 				output.write("<tr bgcolor='FFFFFF'>\n");	
-				Object value = field.getValue(user);
+				Object value = user==null?null:field.getValue(user);
 
 				if (editable) {
 					value = field.getHTMLField(user);
@@ -209,17 +198,16 @@ public class UserHTMLReporter extends QueryHTMLReporter<DBUser, IQueryRetrieval<
 				output.write("</tr>\n");				
 			}
 			output.write("<tr bgcolor='FFFFFF'>\n");
-			output.write(String.format("<th>%s</th><td align='left'><a href='%s%s'>Data template</a></td>","Data template",uri,Resources.datatemplate));
 			output.write("</tr>\n");
 			output.flush();
 		} catch (Exception x) {x.printStackTrace();} 
 	}	
-	protected void printTable(Writer output, String uri, DBUser protocol) {
+	protected void printTable(Writer output, String uri, DBUser user) {
 		try {
 			output.write("<tr bgcolor='FFFFFF'>\n");			
 			for (DBUser.fields field : DBUser.fields.values()) {
 
-				Object value = field.getValue(protocol);
+				Object value = field.getValue(user);
 				switch (field) {
 				case iduser: {
 					output.write(String.format("<td><a href='%s'>%s</a></td>",uri,uri));
@@ -230,7 +218,6 @@ public class UserHTMLReporter extends QueryHTMLReporter<DBUser, IQueryRetrieval<
 					output.write(String.format("<td>%s</td>",value==null?"":value.toString().length()>40?value.toString().substring(0,40):value.toString()));
 				}
 			}
-		//	output.write(String.format("<td><a href='%s%s'>Data template</a></td>",uri));
 			output.write("</tr>\n");
 		} catch (Exception x) {} 
 	}

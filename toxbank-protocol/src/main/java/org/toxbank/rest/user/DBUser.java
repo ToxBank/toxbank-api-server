@@ -14,31 +14,41 @@ public class DBUser extends User {
 		iduser {
 			@Override
 			public Object getValue(DBUser user) {
-				return user.getID();
+				return user==null?null:user.getID();
 			}
 		},
 		username {
 			@Override
 			public Object getValue(DBUser user) {
-				return user.getUserName();
+				return  user==null?null:user.getUserName();
 			}
 		},
 		title,
 		firstname {
 			@Override
 			public Object getValue(DBUser user) {
-				return user.getFirstname();
+				return  user==null?null:user.getFirstname();
 			}			
 		},
 		lastname {
 			@Override
 			public Object getValue(DBUser user) {
-				return user.getLastname();
+				return user==null?null:user.getLastname();
 			}
 		},
 		institute,
-		weblog,
-		homepage;
+		weblog {
+			@Override
+			public Object getValue(DBUser user) {
+				return user==null?null:user.getWeblog();
+			}			
+		},
+		homepage {
+			@Override
+			public Object getValue(DBUser user) {
+				return user==null?null:user.getHomepage();
+			}			
+		};
 		public String getHTMLField(DBUser protocol) {
 			Object value = getValue(protocol);
 			return String.format("<input name='%s' type='text' size='40' value='%s'>\n",
