@@ -34,6 +34,7 @@ import org.toxbank.rest.FileResource;
 import org.toxbank.rest.protocol.CallableProtocolUpload;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
+import org.toxbank.rest.user.DBUser;
 
 /**
  * Protocol resource
@@ -148,12 +149,23 @@ public class ProtocolDBResource	extends QueryResource<ReadProtocol,DBProtocol> {
 	@Override
 	protected CallableProtectedTask<String> createCallable(Method method,
 			List<FileItem> input, DBProtocol item) throws ResourceException {
+		/*
+		if ((getRequest().getClientInfo().getUser()==null) ||
+				getRequest().getClientInfo().getUser().getIdentifier()==null)
+				throw new ResourceException(Status.CLIENT_ERROR_UNAUTHORIZED);
+			
+		DBUser user = new DBUser();
+		user.setUserName(getRequest().getClientInfo().getUser().getIdentifier());
+		*/
 		Connection conn = null;
 		try {
 			ProtocolQueryURIReporter r = new ProtocolQueryURIReporter(getRequest(),"");
 			DBConnection dbc = new DBConnection(getApplication().getContext(),getConfigFile());
 			conn = dbc.getConnection(getRequest());
-			return new CallableProtocolUpload(input,conn,r,getToken(),getRequest().getRootRef().toString());
+
+			return new CallableProtocolUpload(null,input,conn,r,getToken(),getRequest().getRootRef().toString());
+		} catch (ResourceException x) {
+			throw x;
 		} catch (Exception x) {
 			try { conn.close(); } catch (Exception xx) {}
 			throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);

@@ -57,7 +57,7 @@ public abstract class GroupHTMLReporter extends QueryHTMLReporter<IDBGroup, IQue
 					StringBuilder curlHint = new StringBuilder();
 
 					curlHint.append("curl -X POST -H 'subjectid:TOKEN'");
-					curlHint.append(String.format(" Content-Type:%s",MediaType.APPLICATION_WWW_FORM.getName()));
+					curlHint.append(String.format(" -H 'Content-Type:%s'",MediaType.APPLICATION_WWW_FORM.getName()));
 					curlHint.append(String.format(" -d '%s=%s'","title","MANDATORY_VALUE"));
 					curlHint.append(String.format(" -d '%s=%s' ","ldapgroup","OPTIONAL_VALUE"));
 					curlHint.append(uri);

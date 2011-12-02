@@ -44,7 +44,6 @@ import org.toxbank.demo.task.TBAdminRouter;
 import org.toxbank.demo.task.TBTaskResource;
 import org.toxbank.demo.task.TBTaskRouter;
 import org.toxbank.resource.Resources;
-import org.toxbank.rest.db.DatabaseResource;
 import org.toxbank.rest.groups.OrganisationRouter;
 import org.toxbank.rest.groups.ProjectRouter;
 import org.toxbank.rest.protocol.ProtocolRouter;
@@ -138,6 +137,7 @@ public class TBApplication extends TaskApplication<String> {
 		router.attach(TBTaskResource.resource, new TBTaskRouter(getContext()));
 
 		/**  /protocol  */
+		//router.attach(Resources.protocol, createProtectedResource(new ProtocolRouter(getContext()),"",false));
 		router.attach(Resources.protocol, new ProtocolRouter(getContext()));
 		
 		router.attach(Resources.project, new ProjectRouter(getContext()));
@@ -198,11 +198,18 @@ public class TBApplication extends TaskApplication<String> {
 		return createProtectedResource(router,null);
 	}
 	protected Restlet createProtectedResource(Restlet router,String prefix) {
+		return createProtectedResource(router, prefix,true);
+	}
+	protected Restlet createProtectedResource(Restlet router,String prefix,boolean authz) {
 		Filter authN = new OpenSSOAuthenticator(getContext(),false,"opentox.org",new OpenSSOVerifierSetUser(false));
-		OpenSSOAuthorizer authZ = new OpenSSOAuthorizer();
-		authZ.setPrefix(prefix);
-		authN.setNext(authZ);
-		authZ.setNext(router);		
+		if (authz) {
+			OpenSSOAuthorizer authZ = new OpenSSOAuthorizer();
+			authZ.setPrefix(prefix);
+			authN.setNext(authZ);
+			authZ.setNext(router);
+		} else {
+			authN.setNext(router);
+		}
 		return authN;
 	}
 	

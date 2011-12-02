@@ -14,6 +14,7 @@ import net.idea.modbcum.q.query.AbstractQuery;
 import net.toxbank.client.resource.Organisation;
 import net.toxbank.client.resource.Project;
 
+import org.toxbank.resource.Resources;
 import org.toxbank.rest.groups.DBOrganisation;
 import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.protocol.DBProtocol;
@@ -30,6 +31,34 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 	 * 
 	 */
 	private static final long serialVersionUID = 6228939989116141217L;
+	public static final ReadProtocol.fields[] entryFields = new ReadProtocol.fields[] {
+			fields.filename,
+			fields.title,
+			fields.anabstract,
+			fields.keywords,
+			fields.summarySearchable,
+			//ReadProtocol.fields.status
+			fields.project_uri,
+			fields.organisation_uri,
+			fields.user_uri
+			//ReadProtocol.fields.version
+			//ReadProtocol.fields.accesslevel
+		};
+	public static final ReadProtocol.fields[] displayFields = new ReadProtocol.fields[] {
+			fields.idprotocol,
+			fields.identifier,
+			fields.version,
+			fields.filename,
+			fields.title,
+			fields.anabstract,
+			fields.keywords,
+			fields.summarySearchable,
+			//ReadProtocol.fields.status
+			fields.idproject,
+			fields.iduser,
+			fields.idorganisation
+			//ReadProtocol.fields.accesslevel
+		};	
 	public enum fields {
 		idprotocol {
 			@Override
@@ -142,7 +171,9 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			public String getHTMLField(DBProtocol protocol) {
 				Object value = getValue(protocol);
 				return String.format("<textarea name='%s' cols='40' rows='5' title='%s'>%s</textarea>\n",
-						name(),getDescription(),value==null?"":value.toString());
+						name(),
+						getDescription(),
+						value==null?"":value.toString());
 			}			
 			@Override
 			public String toString() {
@@ -170,6 +201,28 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			public Object getValue(DBProtocol protocol) {
 				return  protocol==null?null:((DBUser) protocol.getOwner()).getID();
 			}			
+		},		
+		user_uri {
+
+			@Override
+			public Object getValue(DBProtocol protocol) {
+				return  protocol==null?null:
+						protocol.getOrganisation()==null?null:protocol.getOrganisation().getResourceURL().toString();
+			}		
+
+			@Override
+			public String toString() {
+				return "User (owner) URI";
+			}
+			@Override
+			public String getExampleValue(String uri) {
+				return String.format("%s%s/U1",uri,Resources.user);
+			}
+			@Override
+			public String getHelp(String uri) {
+				return String.format("<a href='%s%s' target='Users'>Users list</a>",uri,Resources.user);
+			}
+		
 		},			
 		summarySearchable {
 			@Override
@@ -224,8 +277,33 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			@Override
 			public Object getValue(DBProtocol protocol) {
 				return  protocol==null?null:protocol.getProject();
-			}			
+			}		
+			@Override
+			public String toString() {
+				return "Project ID";
+			}
 		},
+		project_uri {
+
+			@Override
+			public Object getValue(DBProtocol protocol) {
+				return  protocol==null?null:
+						protocol.getProject()==null?null:protocol.getProject().getResourceURL().toString();
+			}		
+
+			@Override
+			public String toString() {
+				return "Project URI";
+			}
+			@Override
+			public String getExampleValue(String uri) {
+				return String.format("%s%s/G1",uri,Resources.project);
+			}
+			@Override
+			public String getHelp(String uri) {
+				return String.format("<a href='%s%s' target='projects'>Projects list</a>",uri,Resources.project);
+			}
+		},		
 		project {
 			@Override
 			public QueryParam getParam(DBProtocol protocol) {
@@ -279,7 +357,19 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			@Override
 			public Object getValue(DBProtocol protocol) {
 				return  protocol==null?null:protocol.getOrganisation();
-			}			
+			}	
+			@Override
+			public String toString() {
+				return "Organisation URI";
+			}
+			@Override
+			public String getExampleValue(String uri) {
+				return String.format("%s%s/G1",uri,Resources.organisation);
+			}
+			@Override
+			public String getHelp(String uri) {
+				return String.format("<a href='%s/organisation' target='organistions'>Organisations list</a>",uri);
+			}
 		},	
 		organisation {
 			@Override
@@ -306,6 +396,27 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 				return  protocol==null?null:protocol.getOrganisation();
 			}			
 		},		
+		organisation_uri {
+
+			@Override
+			public Object getValue(DBProtocol protocol) {
+				return  protocol==null?null:
+						protocol.getOrganisation()==null?null:protocol.getOrganisation().getResourceURL().toString();
+			}		
+
+			@Override
+			public String toString() {
+				return "Organisation URI";
+			}
+			@Override
+			public String getExampleValue(String uri) {
+				return String.format("%s%s/G1",uri,Resources.organisation);
+			}
+			@Override
+			public String getHelp(String uri) {
+				return String.format("<a href='%s%s' target='organisations'>Organisations list</a>",uri,Resources.organisation);
+			}
+		},			
 		filename {
 			@Override
 			public QueryParam getParam(DBProtocol protocol) {
@@ -336,23 +447,41 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 		public String getCondition() {
 			return String.format(" %s = ? ",name());
 		}
-		public QueryParam getParam(DBProtocol protocol) {
-			return new QueryParam<String>(String.class,  getValue(protocol).toString());
-		}
+	
 		public Object getValue(DBProtocol protocol) {
-			return protocol.getDocument().getURI().toString();
+			return protocol.getResourceURL().toString();
 		}
 		public Class getClassType(DBProtocol protocol) {
 			return String.class;
 		}
+		/**
+		 * SQL
+		 * @param protocol
+		 * @param rs
+		 * @throws SQLException
+		 */
 		public void setParam(DBProtocol protocol,ResultSet rs) throws SQLException {}
-		
+		public QueryParam getParam(DBProtocol protocol) {
+			return null;
+		}	
+		/**
+		 * HTML
+		 * @param protocol
+		 * @return
+		 */
 		public String getHTMLField(DBProtocol protocol) {
 			Object value = getValue(protocol);
 			return String.format("<input name='%s' type='text' size='40' value='%s'>\n",
 					name(),getDescription(),value==null?"":value.toString());
 		}
+		/**
+		 * Hints
+		 * @return
+		 */
 		public String getDescription() { return toString();}
+		public String getHelp(String uri) {return null;}
+		public String getExampleValue(String uri) {return null;}
+		
 		@Override
 		public String toString() {
 			String name= name();
@@ -360,7 +489,6 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 					name.substring(0,1).toUpperCase(),
 					name.substring(1).toLowerCase());
 		}
-
 	}
 	
 	protected static String sql = 
@@ -370,7 +498,23 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 		"join project using(idproject)\n" +
 		"left join keywords using(idprotocol) %s %s ";
 
-
+	public static final ReadProtocol.fields[] sqlFields = new ReadProtocol.fields[] {
+		fields.idprotocol,
+		fields.version,
+		fields.identifier,
+		fields.title,
+		fields.anabstract,
+		fields.iduser,
+		fields.summarySearchable,
+		fields.idproject,
+		fields.project,
+		fields.idorganisation,
+		fields.organisation,
+		fields.filename,
+		fields.keywords,
+		//ReadProtocol.fields.accesslevel
+	};	
+	
 	public ReadProtocol(Integer id) {
 		super();
 		setValue(id==null?null:new DBProtocol(id));
@@ -407,7 +551,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 	public DBProtocol getObject(ResultSet rs) throws AmbitException {
 		try {
 			DBProtocol p =  new DBProtocol();
-			for (fields field:fields.values()) try {
+			for (fields field:sqlFields) try {
 				field.setParam(p,rs);
 				
 			} catch (Exception x) {

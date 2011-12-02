@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import net.toxbank.client.resource.Organisation;
 import net.toxbank.client.resource.Project;
+import net.toxbank.client.resource.User;
 
 import org.apache.commons.fileupload.FileItem;
 import org.restlet.data.Status;
@@ -66,7 +67,7 @@ public class ProtocolFactory {
 					}
 			        break;
 				}
-				case project: {
+				case project_uri: {
 					Project p = protocol.getProject();
 					if (p==null) { p = new DBProject(); protocol.setProject(p);}
 					if (fi.getString().startsWith("http"))
@@ -74,7 +75,15 @@ public class ProtocolFactory {
 					else p.setTitle(fi.getString());
 					break;					
 				}
-				case organisation: {
+				case user_uri: {
+					User p = protocol.getOwner();
+					if (p==null) { p = new DBUser(); protocol.setOwner(p);}
+					if (fi.getString().startsWith("http"))
+						p.setResourceURL(new URL(fi.getString()));
+					else p.setUserName(fi.getString());
+					break;					
+				}				
+				case organisation_uri: {
 					Organisation p = protocol.getOrganisation();
 					if (p==null) { p = new DBOrganisation(); protocol.setOrganisation(p);}
 					if (fi.getString().startsWith("http"))

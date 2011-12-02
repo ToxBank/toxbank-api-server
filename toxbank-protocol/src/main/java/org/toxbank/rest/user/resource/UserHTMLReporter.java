@@ -53,7 +53,7 @@ public class UserHTMLReporter extends QueryHTMLReporter<DBUser, IQueryRetrieval<
 					w.write("<h3>Create new User</h3>");
 					StringBuilder curlHint = new StringBuilder();
 					curlHint.append("curl -X POST -H 'subjectid:TOKEN'");
-					curlHint.append(String.format(" Content-Type:%s",MediaType.APPLICATION_WWW_FORM.getName()));
+					curlHint.append(String.format(" -H 'Content-Type:%s'",MediaType.APPLICATION_WWW_FORM.getName()));
 					for (DBUser.fields field : DBUser.fields.values()) {
 						switch (field) {
 						case iduser: continue;

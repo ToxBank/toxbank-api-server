@@ -31,8 +31,12 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
  * @author nina
  *
  */
-public class ProtocolResourceTest extends ResourceTest {
+public class ProtocolResourceTest extends ProtectedResourceTest {
 	
+	@Override
+	protected boolean isAAEnabled() {
+		return false;
+	}
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
@@ -302,22 +306,28 @@ public class ProtocolResourceTest extends ResourceTest {
 		String[] names = new String[ReadProtocol.fields.values().length];
 		String[] values = new String[ReadProtocol.fields.values().length];
 		int i=0;
-		for (ReadProtocol.fields field : ReadProtocol.fields.values()) {
+		for (ReadProtocol.fields field : ReadProtocol.entryFields) {
 			switch (field) {
 			case idprotocol: continue;
 			case filename: continue;
-			case iduser: { 
+			/*
+			case user_uri: { 
 				values[i] = String.format("http://localhost:%d%s/%s",port,Resources.user,"U1");
 				break;
 			}
-			case project: {
+			*/
+			case project_uri: {
 				values[i] = String.format("http://localhost:%d%s/%s",port,Resources.project,"G1");
 				break;
 			}
-			case organisation: {
+			case organisation_uri: {
 				values[i] = String.format("http://localhost:%d%s/%s",port,Resources.organisation,"G2");
 				break;
 			}
+			case user_uri: {
+				values[i] = String.format("http://localhost:%d%s/%s",port,Resources.user,"U1");
+				break;
+			}			
 			default: {
 				values[i] = field.name();
 			}

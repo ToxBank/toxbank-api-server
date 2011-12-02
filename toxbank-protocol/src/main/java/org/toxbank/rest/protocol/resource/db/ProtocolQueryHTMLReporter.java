@@ -22,36 +22,8 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 	 * 
 	 */
 	private static final long serialVersionUID = -7959033048710547839L;
-	ReadProtocol.fields[] entryFields = new ReadProtocol.fields[] {
-			ReadProtocol.fields.filename,
-			ReadProtocol.fields.title,
-			ReadProtocol.fields.anabstract,
-			//ReadProtocol.fields.status
-			ReadProtocol.fields.project,
-			ReadProtocol.fields.iduser,
-			//ReadProtocol.fields.organisation
-			//ReadProtocol.fields.version
-			//ReadProtocol.fields.accesslevel
-			ReadProtocol.fields.keywords,
-			ReadProtocol.fields.summarySearchable
-			
-		};
-	ReadProtocol.fields[] displayFields = new ReadProtocol.fields[] {
-			ReadProtocol.fields.idprotocol,
-			ReadProtocol.fields.identifier,
-			ReadProtocol.fields.filename,
-			ReadProtocol.fields.title,
-			ReadProtocol.fields.anabstract,
-			//ReadProtocol.fields.status
-			ReadProtocol.fields.project,
-			ReadProtocol.fields.iduser,
-			//ReadProtocol.fields.organisation
-			//ReadProtocol.fields.version
-			//ReadProtocol.fields.accesslevel
-			ReadProtocol.fields.keywords,
-			ReadProtocol.fields.summarySearchable
-			
-		};	
+	
+	
 	
 	protected boolean editable = false;
 	public ProtocolQueryHTMLReporter() {
@@ -81,14 +53,26 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 					w.write("<h3>Create new Protocol</h3>");
 					StringBuilder curlHint = new StringBuilder();
 					curlHint.append("curl -X POST -H 'subjectid:TOKEN'");
-					for (ReadProtocol.fields field : ReadProtocol.fields.values()) {
+					curlHint.append(String.format(" -H 'Content-Type:%s'",MediaType.APPLICATION_WWW_FORM.getName()));
+					for (ReadProtocol.fields field : ReadProtocol.entryFields) {
 						switch (field) {
 						case idprotocol: continue;
+						case idproject: {
+							curlHint.append(String.format(" -d '%s=%s'",field.name(),"Project URI"));
+							break;
+						}
+						case idorganisation: {
+							curlHint.append(String.format(" -d '%s=%s'",field.name(),"Organisation URI"));
+							break;
+						}	
+						case iduser: {
+							curlHint.append(String.format(" -d '%s=%s'",field.name(),"Owner User URI"));
+							break;
+						}							
 						default: {
 							curlHint.append(String.format(" -d '%s=%s'",field.name(),"VALUE"));
 						}
 						}
-						
 					}
 					
 					output.write("<form method='POST' action='' ENCTYPE=\"multipart/form-data\">");
@@ -198,10 +182,10 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 	
 	protected void printForm(Writer output, String uri, DBProtocol protocol, boolean editable) {
 		try {
-			ReadProtocol.fields[] fields = editable?entryFields:displayFields;
+			ReadProtocol.fields[] fields = editable?ReadProtocol.entryFields:ReadProtocol.displayFields;
 			for (ReadProtocol.fields field : fields) {
 				output.write("<tr bgcolor='FFFFFF'>\n");	
-				Object value = field.getValue(protocol);
+				Object value = protocol==null?field.getExampleValue(uri):field.getValue(protocol);
 
 				if (editable) {
 					value = field.getHTMLField(protocol);
@@ -211,7 +195,8 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 				switch (field) {
 				case idprotocol: {
 					if (!editable)
-						output.write(String.format("<th>%s</th><td align='left'><a href='%s'>%s</a></td>\n",
+						output.write(String.format("<th title='%s'>%s</th><td align='left'><a href='%s'>%s</a></td><td align='left'></td>\n",
+							field.name(),	
 							field.toString(),
 							uri,
 							uri));		
@@ -219,25 +204,33 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 				}	
 				case filename: {
 					if (editable)
-					output.write(String.format("<th>%s</th><td align='left'><input type=\"file\" name=\"%s\" title='%s' size=\"60\"></td>",
+					output.write(String.format("<th title='%s'>%s</th><td align='left'><input type=\"file\" name=\"%s\" title='%s' size=\"60\"></td><td align='left'></td>",
+							field.name(),	
 							field.toString(),
 							field.name(),
 							"PDF file")); 					
 					else 
-						output.write(String.format("<th>%s</th><td align='left'><a href='%s/file'>Download</a></td>",field.toString(),uri));
+						output.write(String.format("<th title='%s'>%s</th><td align='left'><a href='%s/file'>Download</a></td>",
+									field.name(),	
+									field.toString(),uri));
 
 					break;
 				}	
-				default :
-					output.write(String.format("<th>%s</th><td align='left'>%s</td>\n",
-						field.toString(),value));
+				default :  {
+					String help = field.getHelp(uriReporter.getRequest().getRootRef().toString());
+					output.write(String.format("<th>%s</th><td align='left'>%s</td><td align='left'>%s</td>\n",
+									field.toString(),
+									value,help==null?"":help));
+				}
 				}
 							
 				output.write("</tr>\n");				
 			}
-			output.write("<tr bgcolor='FFFFFF'>\n");
-			output.write(String.format("<th>%s</th><td align='left'><a href='%s%s'>Data template</a></td>","Data template",uri,Resources.datatemplate));
-			output.write("</tr>\n");
+			if (!editable) {
+				output.write("<tr bgcolor='FFFFFF'>\n");
+				output.write(String.format("<th>%s</th><td align='left'><a href='%s%s'>Data template</a></td>","Data template",uri,Resources.datatemplate));
+				output.write("</tr>\n");
+			}
 			output.flush();
 		} catch (Exception x) {x.printStackTrace();} 
 	}	

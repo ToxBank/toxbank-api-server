@@ -27,30 +27,33 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 	protected Connection connection;
 	protected UpdateExecutor exec;
 	protected String baseReference;
-	
-	public CallableProtocolUpload(List<FileItem> input,Connection connection,ProtocolQueryURIReporter r,String token,String baseReference) {
+	protected DBUser user;
+	public CallableProtocolUpload(DBUser user,List<FileItem> input,Connection connection,ProtocolQueryURIReporter r,String token,String baseReference) {
 		super(token);
 		this.connection = connection;
 		this.input = input;
 		this.reporter = r;
 		this.baseReference = baseReference;
+		this.user = user;
+
 	}
 
 	@Override
 	public TaskResult doCall() throws Exception {
 		try {
 			DBProtocol protocol = ProtocolFactory.getProtocol(input, 10000000);
+			//protocol.setOwner(user);
 			exec = new UpdateExecutor<IQueryUpdate>();
 			exec.setConnection(connection);
 			
 			//user
-			DBUser u = protocol.getOwner() instanceof DBUser?
+			DBUser user = protocol.getOwner() instanceof DBUser?
 						(DBUser)protocol.getOwner():
 						new DBUser(protocol.getOwner());
-		    protocol.setOwner(u);
-		    if (u.getID()<=0) u.setID(u.parseURI(baseReference));
-			if (u.getID()<=0) {
-				CreateUser q1 = new CreateUser(u);
+		    protocol.setOwner(user);
+		    if (user.getID()<=0) user.setID(user.parseURI(baseReference));
+			if (user.getID()<=0) {
+				CreateUser q1 = new CreateUser(user);
 				exec.process(q1);
 			}			
 			//project
