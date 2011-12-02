@@ -25,8 +25,8 @@ public class CallableGroupCreator extends CallableDBUpdateTask<IDBGroup,Form,Str
 	@Override
 	protected DBGroup getTarget(Form input) throws Exception {
 		DBGroup user = new DBGroup(type);
-		user.setTitle(input.getFirstValue("name"));
-		user.setGroupName(input.getFirstValue("groupname"));
+		user.setTitle(input.getFirstValue(DBGroup.fields.name.name()));
+		user.setGroupName(input.getFirstValue(DBGroup.fields.ldapgroup.name()));
  		return user;
 	}
 

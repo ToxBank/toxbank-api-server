@@ -19,6 +19,7 @@ import org.restlet.data.Method;
 import org.restlet.data.Reference;
 import org.restlet.representation.Representation;
 import org.toxbank.resource.Resources;
+import org.toxbank.rest.groups.DBGroup;
 import org.toxbank.rest.groups.db.ReadProject;
 
 import com.hp.hpl.jena.ontology.OntModel;
@@ -111,7 +112,7 @@ public class ProjectResourceTest  extends ResourceTest {
 	@Test
 	public void testCreateEntryFromWebForm() throws Exception {
 		Form form = new Form();
-		form.add("name", "project");
+		form.add(DBGroup.fields.name.name(), "project");
 
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM organisation");

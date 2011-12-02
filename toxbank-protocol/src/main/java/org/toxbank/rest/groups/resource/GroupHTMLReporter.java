@@ -12,7 +12,7 @@ import net.idea.restnet.db.convertors.QueryHTMLReporter;
 import org.restlet.Request;
 import org.restlet.data.MediaType;
 import org.restlet.data.Reference;
-import org.toxbank.resource.Resources;
+import org.toxbank.rest.groups.DBGroup;
 import org.toxbank.rest.groups.IDBGroup;
 import org.toxbank.rest.protocol.TBHTMLBeauty;
 
@@ -55,24 +55,17 @@ public abstract class GroupHTMLReporter extends QueryHTMLReporter<IDBGroup, IQue
 				if (editable) {
 					w.write("<h3>Create new entry</h3>");
 					StringBuilder curlHint = new StringBuilder();
+
 					curlHint.append("curl -X POST -H 'subjectid:TOKEN'");
-					/*
-					for (ReadProtocol.fields field : ReadProtocol.fields.values()) {
-						switch (field) {
-						case idprotocol: continue;
-						default: {
-							curlHint.append(String.format(" -d '%s=%s'",field.name(),"VALUE"));
-						}
-						}
-						
-					}
-					*/
-					output.write("<form method='POST' action='' ENCTYPE=\"multipart/form-data\">");
+					curlHint.append(String.format(" Content-Type:%s",MediaType.APPLICATION_WWW_FORM.getName()));
+					curlHint.append(String.format(" -d '%s=%s'","title","MANDATORY_VALUE"));
+					curlHint.append(String.format(" -d '%s=%s' ","ldapgroup","OPTIONAL_VALUE"));
+					curlHint.append(uri);
+					output.write("<form method='POST' action=''\">");
 					w.write("<table width='99%'>\n");
-					output.write(String.format("<tr><td>API call</td><td title='How to create a new %s via ToxBank API (cURL example)'><h5>%s</h5></td></tr>", getTitle(),curlHint));
-					//printForm(output,uri.toString(),null,true);
-					printTable(output,uri.toString(),null);
-					
+					output.write(String.format("<tr><td>API call</td><td title='How to create a new %s via ToxBank API (cURL example)'><h5>%s</h5></td></tr>", 
+									getTitle(),curlHint));
+					printForm(output,uri.toString(),null,true);
 					
 					output.write(String.format("<tr><td></td><td><input type='submit' enabled='false' value='Create new %s'></td></tr>",getTitle()));
 					w.write("</table>\n");
@@ -153,12 +146,9 @@ public abstract class GroupHTMLReporter extends QueryHTMLReporter<IDBGroup, IQue
 			w.write("<table bgcolor='EEEEEE' width='99%'>\n");
 			if (collapsed) {
 				output.write("<tr bgcolor='FFFFFF' >\n");	
-				/*
-				for (ReadProtocol.fields field : ReadProtocol.fields.values()) {
+				for (DBGroup.fields field : DBGroup.fields.values()) {
 					output.write(String.format("<th>%s</th>",field.toString()));
 				}
-				*/
-				output.write(String.format("<th>%s</th>","Template"));
 				output.write("</tr>\n");
 			} else {
 				
@@ -178,37 +168,25 @@ public abstract class GroupHTMLReporter extends QueryHTMLReporter<IDBGroup, IQue
 		}
 		return null;
 	}
-	/*
-	protected void printForm(Writer output, String uri, IDBGroup protocol, boolean editable) {
+
+	protected void printForm(Writer output, String uri, IDBGroup group, boolean editable) {
 		try {
-			ReadProtocol.fields[] fields = editable?entryFields:displayFields;
-			for (ReadProtocol.fields field : fields) {
+			for (DBGroup.fields field : DBGroup.fields.values()) {
 				output.write("<tr bgcolor='FFFFFF'>\n");	
-				Object value = field.getValue(protocol);
+				Object value = field.getValue(group);
 
 				if (editable) {
-					value = field.getHTMLField(protocol);
+					value = field.getHTMLField(group);
 				} else 
 					if (value==null) value = "";
 							
 				switch (field) {
-				case idprotocol: {
+				case idgroup: {
 					if (!editable)
 						output.write(String.format("<th>%s</th><td align='left'><a href='%s'>%s</a></td>\n",
 							field.toString(),
 							uri,
 							uri));		
-					break;
-				}	
-				case filename: {
-					if (editable)
-					output.write(String.format("<th>%s</th><td align='left'><input type=\"file\" name=\"%s\" title='%s' size=\"60\"></td>",
-							field.toString(),
-							field.name(),
-							"PDF file")); 					
-					else 
-						output.write(String.format("<th>%s</th><td align='left'><a href='%s/file'>Download</a></td>",field.toString(),uri));
-
 					break;
 				}	
 				default :
@@ -218,13 +196,10 @@ public abstract class GroupHTMLReporter extends QueryHTMLReporter<IDBGroup, IQue
 							
 				output.write("</tr>\n");				
 			}
-			output.write("<tr bgcolor='FFFFFF'>\n");
-			output.write(String.format("<th>%s</th><td align='left'><a href='%s%s'>Data template</a></td>","Data template",uri,Resources.datatemplate));
-			output.write("</tr>\n");
 			output.flush();
 		} catch (Exception x) {x.printStackTrace();} 
 	}	
-	*/
+
 	protected void printTable(Writer output, String uri, IDBGroup item) {
 		try {
 			output.write("<tr bgcolor='FFFFFF'>\n");		

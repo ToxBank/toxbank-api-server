@@ -19,6 +19,7 @@ import org.restlet.data.Method;
 import org.restlet.data.Reference;
 import org.restlet.representation.Representation;
 import org.toxbank.resource.Resources;
+import org.toxbank.rest.groups.DBGroup;
 import org.toxbank.rest.groups.db.ReadOrganisation;
 import org.toxbank.rest.user.db.ReadUser;
 
@@ -111,7 +112,8 @@ public class OrganisationResourceTest extends ResourceTest {
 	@Test
 	public void testCreateEntryFromWebForm() throws Exception {
 		Form form = new Form();
-		form.add("name", "organisation");
+		form.add(DBGroup.fields.name.name(), "organisation");
+		form.add(DBGroup.fields.ldapgroup.name(), "toxbank");
 
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM organisation");
@@ -135,6 +137,8 @@ public class OrganisationResourceTest extends ResourceTest {
 		Assert.assertEquals(3,table.getRowCount());
 		table = 	c.createQueryTable("EXPECTED","SELECT idorganisation,name,ldapgroup from organisation where idorganisation>2");
 		Assert.assertEquals(1,table.getRowCount());
+		Assert.assertEquals("toxbank",table.getValue(0,"ldapgroup"));
+		Assert.assertEquals("organisation",table.getValue(0,"name"));
 		c.close();
 
 	}	
