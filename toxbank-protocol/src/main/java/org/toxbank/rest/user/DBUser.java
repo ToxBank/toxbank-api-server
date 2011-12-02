@@ -102,4 +102,11 @@ public class DBUser extends User {
 			return Integer.parseInt(vars.get(FileResource.resourceKey).toString().substring(1)); 
 		} catch (Exception x) { return -1; }
 	}
+	@Override
+	public String toString() {
+		return String.format("<a href='%s' title='%s'>%s</a>",
+				getResourceURL(),
+				getTitle()==null?getResourceURL():getTitle(),
+				getTitle()==null?getResourceURL():getTitle());
+	}
 }

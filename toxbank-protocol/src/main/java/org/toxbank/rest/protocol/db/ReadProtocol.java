@@ -55,8 +55,8 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			fields.summarySearchable,
 			//ReadProtocol.fields.status
 			fields.idproject,
-			fields.iduser,
-			fields.idorganisation
+			fields.idorganisation,
+			fields.user_uri,
 			//ReadProtocol.fields.accesslevel
 		};	
 	public enum fields {
@@ -201,13 +201,17 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			public Object getValue(DBProtocol protocol) {
 				return  protocol==null?null:((DBUser) protocol.getOwner()).getID();
 			}			
+			@Override
+			public String toString() {
+				return "Owner";
+			}
 		},		
 		user_uri {
 
 			@Override
 			public Object getValue(DBProtocol protocol) {
 				return  protocol==null?null:
-						protocol.getOrganisation()==null?null:protocol.getOrganisation().getResourceURL().toString();
+						protocol.getOwner()==null?null:protocol.getOwner().getResourceURL().toString();
 			}		
 
 			@Override
@@ -280,7 +284,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			}		
 			@Override
 			public String toString() {
-				return "Project ID";
+				return "Project";
 			}
 		},
 		project_uri {
@@ -360,15 +364,11 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			}	
 			@Override
 			public String toString() {
-				return "Organisation URI";
+				return "Organisation";
 			}
 			@Override
 			public String getExampleValue(String uri) {
 				return String.format("%s%s/G1",uri,Resources.organisation);
-			}
-			@Override
-			public String getHelp(String uri) {
-				return String.format("<a href='%s/organisation' target='organistions'>Organisations list</a>",uri);
 			}
 		},	
 		organisation {

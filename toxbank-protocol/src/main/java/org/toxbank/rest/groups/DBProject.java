@@ -53,7 +53,10 @@ public class DBProject extends Project implements IDBGroup {
 	}
 	@Override
 	public String toString() {
-		return getTitle();
+		return String.format("<a href='%s' title='%s'>%s</a>",
+					getResourceURL(),
+					getTitle()==null?getResourceURL():getTitle(),
+					getTitle()==null?getResourceURL():getTitle());
 	}
 	
 	/**
@@ -69,4 +72,5 @@ public class DBProject extends Project implements IDBGroup {
 			return Integer.parseInt(vars.get(FileResource.resourceKey).toString().substring(1)); 
 		} catch (Exception x) { return -1; }
 	}
+	
 }

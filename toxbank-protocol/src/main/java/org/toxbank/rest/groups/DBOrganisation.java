@@ -59,4 +59,11 @@ public class DBOrganisation extends Organisation implements IDBGroup {
 		} catch (Exception x) { return -1; }
 	}
 	
+	@Override
+	public String toString() {
+		return String.format("<a href='%s' title='%s'>%s</a>",
+					getResourceURL(),
+					getTitle()==null?getResourceURL():getTitle(),
+					getTitle()==null?getResourceURL():getTitle());
+	}
 }
