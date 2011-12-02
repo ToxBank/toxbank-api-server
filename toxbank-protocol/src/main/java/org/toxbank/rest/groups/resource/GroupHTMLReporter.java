@@ -99,7 +99,7 @@ public abstract class GroupHTMLReporter extends QueryHTMLReporter<IDBGroup, IQue
 			String curlHint = String.format("curl -X GET -H 'Accept:%s' -H 'subjectid:%s' %s","SUPPORTED-MEDIA-TYPE","TOKEN",uri);
 
 			output.write(String.format("<table><tr><td>API call</td><td title='How to retrieve a %s via ToxBank API (cURL example)'><h5>%s</h5></td></tr></table>",
-					curlHint,getTitle()));
+					getTitle(),curlHint,getTitle()));
 			output.write("<br>Download in supported Media Types:&nbsp;");
 			//nmimes
 			String paging = "page=0&pagesize=10";
