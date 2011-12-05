@@ -112,8 +112,10 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 								Resources.protocol));
 			} else {
 				w.write("<h3>Protocol</h3>");
+				
 				output.write(String.format("<a href='%s%s'>Back to protocols</a>",
 					uriReporter.getRequest().getRootRef(),Resources.protocol));
+				output.write(String.format("&nbsp;<a href='%s%s'>Versions</a>",uri,Resources.versions));				
 			}
 			
 			String curlHint = String.format("curl -X GET -H 'Accept:%s' -H 'subjectid:%s' %s","SUPPORTED-MEDIA-TYPE","TOKEN",uri);
