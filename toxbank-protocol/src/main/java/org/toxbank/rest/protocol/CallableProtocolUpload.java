@@ -1,5 +1,6 @@
 package org.toxbank.rest.protocol;
 
+import java.io.File;
 import java.sql.Connection;
 import java.util.List;
 
@@ -28,20 +29,27 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 	protected UpdateExecutor exec;
 	protected String baseReference;
 	protected DBUser user;
-	public CallableProtocolUpload(DBUser user,List<FileItem> input,Connection connection,ProtocolQueryURIReporter r,String token,String baseReference) {
+	protected File dir;
+	public CallableProtocolUpload(DBUser user,List<FileItem> input,
+					Connection connection,
+					ProtocolQueryURIReporter r,
+					String token,
+					String baseReference,
+					File dir) {
 		super(token);
 		this.connection = connection;
 		this.input = input;
 		this.reporter = r;
 		this.baseReference = baseReference;
 		this.user = user;
+		this.dir = dir;
 
 	}
 
 	@Override
 	public TaskResult doCall() throws Exception {
 		try {
-			DBProtocol protocol = ProtocolFactory.getProtocol(input, 10000000);
+			DBProtocol protocol = ProtocolFactory.getProtocol(input, 10000000,dir);
 			//protocol.setOwner(user);
 			exec = new UpdateExecutor<IQueryUpdate>();
 			exec.setConnection(connection);

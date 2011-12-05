@@ -30,6 +30,7 @@ import org.restlet.resource.ResourceException;
 import org.toxbank.resource.Resources;
 import org.toxbank.rest.FileResource;
 import org.toxbank.rest.protocol.DBProtocol;
+import org.toxbank.rest.protocol.db.ReadProtocol;
 import org.toxbank.rest.protocol.db.template.ReadDataTemplate;
 import org.toxbank.rest.protocol.resource.db.ProtocolQueryURIReporter;
 
@@ -74,9 +75,8 @@ public class DataTemplateResource extends QueryResource<ReadDataTemplate,DBProto
 				throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
 			}			
 			else {
-				if (key.toString().startsWith("P")) {
-					return new ReadDataTemplate(new DBProtocol(new Integer(Reference.decode(key.toString().substring(1)))));
-				} else throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
+				int id[] = ReadProtocol.parseIdentifier(Reference.decode(key.toString()));
+				return new ReadDataTemplate(new DBProtocol(id[0],id[1]));
 			}
 		}catch (ResourceException x) {
 			throw x;

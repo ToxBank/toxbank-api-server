@@ -34,7 +34,7 @@ public class DataTemplate_crud_test  extends CRUDTest<Object,DBProtocol> {
 	
 	@Override
 	protected IQueryUpdate<Object,DBProtocol> updateQuery() throws Exception {
-		DBProtocol protocol = new DBProtocol(1);
+		DBProtocol protocol = new DBProtocol(1,1);
 		protocol.setTemplate(new DataTemplate("ABCDEFGH"));
 		return new UpdateDataTemplate(protocol);
 	}

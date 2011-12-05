@@ -396,6 +396,8 @@
 		<!-- The user name -->	
 			<toxbank.db.user>guest</toxbank.db.user>
 			<toxbank.db.user.password>guest</toxbank.db.user.password>
+		<!-- The folder where protocol files are stored -->
+			<toxbank.dir.protocol></toxbank.dir.protocol>
 		<!-- How to serialize RDF - by Jena or StAX  jena|stax -->
 			<rdf.writer>jena</rdf.writer>
 			<!-- Protect /admin resource by AA -->
@@ -406,7 +408,9 @@
 			<license.intextfiles>false</license.intextfiles>
 			<!-- Not used in TB so far -->
 			<aa.admin>false</aa.admin>
-			<!-- Not used in TB so far -->
+			<!-- Controls whether database could be created by 
+			curl -X POST -d "dbname=tb" /admin/database  
+			-->
 			<toxbank.db.create.allow>true</toxbank.db.create.allow>						
 		<!-- Used in surefire tests only-->
 			<!-- Database for tests -->

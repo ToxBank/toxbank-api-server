@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
@@ -45,7 +46,7 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 	}
 	@Override
 	public String getTestURI() {
-		return String.format("http://localhost:%d%s/P1", port,Resources.protocol);
+		return String.format("http://localhost:%d%s/%s-1-1", port,Resources.protocol,Protocol.id_prefix);
 	}
 	
 	@Test
@@ -61,7 +62,7 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		int count = 0;
 		while ((line = r.readLine())!= null) {
 			Assert.assertEquals(
-					String.format("http://localhost:%d%s/P1",port,Resources.protocol)
+					String.format("http://localhost:%d%s/%s-1-1",port,Resources.protocol,Protocol.id_prefix)
 							, line);
 			count++;
 		}
@@ -83,8 +84,9 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		ProtocolIO ioClass = new ProtocolIO();
 		List<Protocol> protocols = ioClass.fromJena(model);
 		Assert.assertEquals(1,protocols.size());
-		Assert.assertEquals("http://localhost:8181/protocol/P1",protocols.get(0).getResourceURL().toString());
-		Assert.assertEquals("SEURAT-234", protocols.get(0).getIdentifier());
+		Assert.assertEquals(String.format("http://localhost:8181/protocol/%s-1-1",Protocol.id_prefix),
+					protocols.get(0).getResourceURL().toString());
+		Assert.assertEquals("SEURAT-Protocol-1-1", protocols.get(0).getIdentifier());
 		Assert.assertEquals("Very important protocol", protocols.get(0).getTitle());
 		Assert.assertNotNull(protocols.get(0).getAbstract());
 		
@@ -353,18 +355,19 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 			Thread.sleep(100);
 			Thread.yield();
 		}
-		Assert.assertTrue(task.getResult().toString().startsWith(String.format("http://localhost:%d/protocol/P",port)));
+		Assert.assertTrue(task.getResult().toString().startsWith(
+							String.format("http://localhost:%d/protocol/%s",port,Protocol.id_prefix)));
 
         c = getConnection();	
 		table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
 		Assert.assertEquals(3,table.getRowCount());
-		table = 	c.createQueryTable("EXPECTED","SELECT idprotocol,filename from protocol where idprotocol>2");
+		table = 	c.createQueryTable("EXPECTED","SELECT idprotocol,version,filename from protocol where idprotocol>2");
 		Assert.assertEquals(1,table.getRowCount());
+		Assert.assertEquals(new BigInteger("1"),table.getValue(0,"version"));
 		File f = new File(new URI(table.getValue(0,"filename").toString()));
 		//System.out.println(f);
 		Assert.assertTrue(f.exists());
 		f.delete();
-
 		c.close();
 
 	}	

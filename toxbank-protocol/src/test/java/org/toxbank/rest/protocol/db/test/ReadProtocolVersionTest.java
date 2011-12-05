@@ -6,12 +6,14 @@ import junit.framework.Assert;
 
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
+import org.toxbank.rest.protocol.db.ReadProtocolVersions;
 
-public class ReadProtocolTest extends QueryTest<ReadProtocol> {
+public class ReadProtocolVersionTest extends QueryTest<ReadProtocol> {
+
 
 	@Override
 	protected ReadProtocol createQuery() throws Exception {
-		return new ReadProtocol(2,1);
+		return new ReadProtocolVersions(2);
 	}
 
 	@Override
@@ -26,7 +28,7 @@ public class ReadProtocolTest extends QueryTest<ReadProtocol> {
 			//Assert.assertNotNull(protocol.getOwner().getFirstname());
 			records++;
 		}
-		Assert.assertEquals(1,records);
+		Assert.assertEquals(2,records);
 		
 	}
 

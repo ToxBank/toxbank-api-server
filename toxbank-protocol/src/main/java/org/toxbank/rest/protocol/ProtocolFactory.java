@@ -22,7 +22,7 @@ import org.toxbank.rest.user.DBUser;
 
 public class ProtocolFactory {
 	
-	public static DBProtocol getProtocol(List<FileItem> items, long maxSize) throws ResourceException {
+	public static DBProtocol getProtocol(List<FileItem> items, long maxSize, File dir) throws ResourceException {
 		
 		DBProtocol protocol = new DBProtocol();
 		for (final Iterator<FileItem> it = items.iterator(); it.hasNext();) {
@@ -57,11 +57,15 @@ public class ProtocolFactory {
 						File file = null;
 				        if (fi.getName()==null)
 				           	throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,"File name can't be empty!");
-				        else
+				        else {
+				        	try { 
+				        		if ((dir!=null) && !dir.exists())  dir.mkdir();
+				        	} catch (Exception x) {dir = null; }
 				          	file = new File(
 				            		String.format("%s/%s",
-				            				System.getProperty("java.io.tmpdir"),
+				            				dir==null?System.getProperty("java.io.tmpdir"):dir,
 				            				fi.getName()));
+				        }
 				        fi.write(file);
 				        protocol.setDocument(new Document(file.toURI()));		
 					}
@@ -121,7 +125,7 @@ public class ProtocolFactory {
 			} 
 
 		}
-		if (protocol.getIdentifier()==null) protocol.setIdentifier(String.format("SEURAT-%s",UUID.randomUUID()));
+		//if (protocol.getIdentifier()==null) protocol.setIdentifier(String.format("SEURAT-%s",UUID.randomUUID()));
 		return protocol;
 	}
 	

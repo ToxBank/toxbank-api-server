@@ -13,7 +13,10 @@ import net.idea.modbcum.q.conditions.EQCondition;
 import net.idea.modbcum.q.query.AbstractQuery;
 import net.toxbank.client.resource.Organisation;
 import net.toxbank.client.resource.Project;
+import net.toxbank.client.resource.Protocol;
 
+import org.restlet.data.Status;
+import org.restlet.resource.ResourceException;
 import org.toxbank.resource.Resources;
 import org.toxbank.rest.groups.DBOrganisation;
 import org.toxbank.rest.groups.DBProject;
@@ -112,7 +115,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 		version {
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
-				protocol.setVersion(rs.getString(name()));
+				protocol.setVersion(rs.getInt(name()));
 			}
 			@Override
 			public QueryParam getParam(DBProtocol protocol) {
@@ -120,7 +123,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			}	
 			@Override
 			public Object getValue(DBProtocol protocol) {
-				return protocol==null?1:protocol.getVersion()==null?1:protocol.getVersion();
+				return protocol==null?0:protocol.getVersion()<=0?1:protocol.getVersion();
 			}
 			@Override
 			public String toString() {
@@ -492,16 +495,15 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 	}
 	
 	protected static String sql = 
-		"select idprotocol,version,identifier,protocol.title,abstract as anabstract,iduser,summarySearchable," +
+		"select idprotocol,version,protocol.title,abstract as anabstract,iduser,summarySearchable," +
 		"idproject,project.name as project,idorganisation,organisation.name as organisation,filename,keywords\n" +
 		"from protocol join organisation using(idorganisation)\n" +
 		"join project using(idproject)\n" +
-		"left join keywords using(idprotocol) %s %s ";
+		"left join keywords using(idprotocol) %s %s order by idprotocol,version desc";
 
 	public static final ReadProtocol.fields[] sqlFields = new ReadProtocol.fields[] {
 		fields.idprotocol,
 		fields.version,
-		fields.identifier,
 		fields.title,
 		fields.anabstract,
 		fields.iduser,
@@ -516,11 +518,14 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 	};	
 	
 	public ReadProtocol(Integer id) {
+		this(id,null);
+	}
+	public ReadProtocol(Integer id, Integer version) {
 		super();
-		setValue(id==null?null:new DBProtocol(id));
+		setValue(id==null?null:new DBProtocol(id,version));
 	}
 	public ReadProtocol() {
-		this(null);
+		this(null,null);
 	}
 		
 	public double calculateMetric(DBProtocol object) {
@@ -535,22 +540,33 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 		List<QueryParam> params = null;
 		if (getValue()!=null) {
 			params = new ArrayList<QueryParam>();
-			params.add(fields.idprotocol.getParam(getValue()));
+			if (getValue().getID()>0)
+				params.add(fields.idprotocol.getParam(getValue()));
+				if (getValue().getVersion()>0)
+					params.add(fields.version.getParam(getValue()));
+				else 
+					throw new AmbitException("Protocol version not set!");
+					
 		}
 		return params;
 	}
 
 	public String getSQL() throws AmbitException {
-		if ((getValue()!=null) && (getValue().getID()>0))
-			return String.format(sql,"where",fields.idprotocol.getCondition());
-		else 
-			return String.format(sql,"","");
-			
+		if (getValue()!=null) {
+			if (getValue().getID()>0) 
+				if (getValue().getVersion()>0)
+					return String.format(sql,"where",
+							String.format("%s and %s",fields.idprotocol.getCondition(),fields.version.getCondition()));
+				else
+					throw new AmbitException("Protocol version not set!");
+		}
+		return String.format(sql,"","");
 	}
 
 	public DBProtocol getObject(ResultSet rs) throws AmbitException {
+		DBProtocol p = null;
 		try {
-			DBProtocol p =  new DBProtocol();
+			p =  new DBProtocol();
 			for (fields field:sqlFields) try {
 				field.setParam(p,rs);
 				
@@ -558,13 +574,29 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 				System.err.println(field);
 				x.printStackTrace();
 			}
+			
 			return p;
 		} catch (Exception x) {
 			return null;
+		} finally {
+			if (p!=null) p.setIdentifier(String.format("SEURAT-Protocol-%d-%d", p.getID(),p.getVersion()));
 		}
 	}
 	@Override
 	public String toString() {
 		return getValue()==null?"All protocols":String.format("Protocol id=P%s",getValue().getID());
+	}
+	
+	public static int[] parseIdentifier(String identifier) throws ResourceException {
+		String ids[] = identifier.split("-");
+		if ((ids.length!=4) || !identifier.startsWith(Protocol.id_prefix)) throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,"Invalid format");
+		int[] id = new int[2];
+		for (int i=0; i < 2; i++)
+			try {
+				id[i] = Integer.parseInt(ids[i+2]);
+			} catch (NumberFormatException x) {
+				throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);
+			}
+		return id;
 	}
 }

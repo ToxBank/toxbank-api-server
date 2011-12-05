@@ -34,9 +34,8 @@ public class ProtocolDocumentResource extends QueryResource<ReadProtocol,DBProto
 		try {
 			if (key==null) throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
 			else {
-				if (key.toString().startsWith("P")) {
-					return new ReadProtocol(new Integer(Reference.decode(key.toString().substring(1))));
-				} else throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
+				int id[] = ReadProtocol.parseIdentifier(Reference.decode(key.toString()));
+				return new ReadProtocol(id[0],id[1]);
 			}
 		}catch (ResourceException x) {
 			throw x;

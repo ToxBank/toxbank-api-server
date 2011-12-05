@@ -2,6 +2,7 @@ package org.toxbank.rest.protocol.resource.db;
 
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.restnet.db.QueryURIReporter;
+import net.toxbank.client.resource.Protocol;
 
 import org.restlet.Request;
 import org.toxbank.resource.Resources;
@@ -42,7 +43,11 @@ public class ProtocolQueryURIReporter <Q extends IQueryRetrieval<DBProtocol>> ex
 	@Override
 	public String getURI(String ref, DBProtocol item) {
 
-		return String.format("%s%s/P%d%s",ref,Resources.protocol,item.getID(),suffix);
+		return String.format("%s%s/%s-%d-%d%s",
+				ref,
+				Resources.protocol,
+				Protocol.id_prefix,item.getID(),item.getVersion(),
+				suffix);
 	}
 
 }

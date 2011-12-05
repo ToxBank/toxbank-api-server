@@ -21,7 +21,7 @@ public class ReadDataTemplate extends AbstractQuery<String, DBProtocol, EQCondit
 	private static final long serialVersionUID = 6228939989116141217L;
 	
 	protected static String sql = 
-		"select idprotocol,identifier,uncompress(template) from protocol where idprotocol=?";
+		"select idprotocol,version,uncompress(template) from protocol where idprotocol=?";
 
 	public ReadDataTemplate(DBProtocol protocol) {
 		super();
@@ -58,7 +58,7 @@ public class ReadDataTemplate extends AbstractQuery<String, DBProtocol, EQCondit
 		try {
 			DBProtocol protocol =  new DBProtocol();
 			fields.idprotocol.setParam(protocol, rs);
-			fields.identifier.setParam(protocol, rs);
+			fields.version.setParam(protocol, rs);
 			protocol.setTemplate(new DataTemplate(rs.getString(3)));
 			return protocol;
 		} catch (Exception x) {

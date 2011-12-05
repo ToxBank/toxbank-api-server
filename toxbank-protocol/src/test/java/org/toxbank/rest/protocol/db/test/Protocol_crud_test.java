@@ -51,7 +51,8 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 	@Override
 	protected IQueryUpdate<Object,DBProtocol> createQuery() throws Exception {
 		DBProtocol ref = new DBProtocol();
-		ref.setIdentifier("identifier");
+		//ref.setID(3);
+		//ref.setVersion(1);
 		ref.setTitle("title");
 		ref.setAbstract("abstract");
 		DBUser user = new DBUser();
@@ -69,7 +70,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 			throws Exception {
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED",
-				String.format("SELECT idprotocol,summarySearchable FROM protocol where identifier='identifier' and title='title' and abstract='abstract' and iduser='1' and idproject=1 and idorganisation=1 and filename='%s'",file));
+				String.format("SELECT idprotocol,summarySearchable FROM protocol where title='title' and abstract='abstract' and iduser='1' and idproject=1 and idorganisation=1 and filename='%s'",file));
 		
 		Assert.assertEquals(1,table.getRowCount());
 		Assert.assertEquals(Boolean.TRUE,table.getValue(0,"summarySearchable"));
@@ -78,7 +79,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 
 	@Override
 	protected IQueryUpdate<Object,DBProtocol> deleteQuery() throws Exception {
-		DBProtocol ref = new DBProtocol(2);
+		DBProtocol ref = new DBProtocol(2,1);
 		return new DeleteProtocol(ref);
 	}
 

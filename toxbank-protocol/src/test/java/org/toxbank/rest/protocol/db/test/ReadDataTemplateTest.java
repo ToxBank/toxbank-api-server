@@ -11,7 +11,7 @@ public class ReadDataTemplateTest  extends QueryTest<ReadDataTemplate> {
 
 	@Override
 	protected ReadDataTemplate createQuery() throws Exception {
-		DBProtocol protocol = new DBProtocol(1);
+		DBProtocol protocol = new DBProtocol(1,1);
 		return new ReadDataTemplate(protocol);
 	}
 

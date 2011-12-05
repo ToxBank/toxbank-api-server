@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 
 import junit.framework.Assert;
 
+import net.toxbank.client.resource.Protocol;
+
 import org.junit.Test;
 import org.restlet.data.MediaType;
 import org.restlet.representation.Representation;
@@ -22,7 +24,8 @@ public class DataTemplateResourceTest extends ResourceTest {
 	}
 	@Override
 	public String getTestURI() {
-		return String.format("http://localhost:%d%s/P1%s", port,Resources.protocol,Resources.datatemplate);
+		return String.format("http://localhost:%d%s/%s-1-1%s", port,Resources.protocol,
+					Protocol.id_prefix,Resources.datatemplate);
 	}
 	
 	@Test
@@ -30,7 +33,7 @@ public class DataTemplateResourceTest extends ResourceTest {
 		testGet(getTestURI(),MediaType.TEXT_URI_LIST);
 	}
 	/**
-	 * The URI should be /protocol/P1/datatemplate
+	 * The URI should be /protocol/SEURAT-Protocol-1-1/datatemplate
 	 */
 	@Override
 	public boolean verifyResponseURI(String uri, MediaType media, InputStream in)
@@ -40,7 +43,8 @@ public class DataTemplateResourceTest extends ResourceTest {
 		int count = 0;
 		while ((line = r.readLine())!= null) {
 			Assert.assertEquals(
-					String.format("http://localhost:%d%s/P1%s",port,Resources.protocol,Resources.datatemplate)
+					String.format("http://localhost:%d%s/%s-1-1%s",port,Resources.protocol,
+							Protocol.id_prefix,Resources.datatemplate)
 							, line);
 			count++;
 		}

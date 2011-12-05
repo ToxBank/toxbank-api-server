@@ -1,5 +1,6 @@
 package org.toxbank.rest.protocol.resource.db;
 
+import java.io.File;
 import java.sql.Connection;
 import java.util.List;
 
@@ -34,7 +35,6 @@ import org.toxbank.rest.FileResource;
 import org.toxbank.rest.protocol.CallableProtocolUpload;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
-import org.toxbank.rest.user.DBUser;
 
 /**
  * Protocol resource
@@ -42,7 +42,7 @@ import org.toxbank.rest.user.DBUser;
  *
  * @param <Q>
  */
-public class ProtocolDBResource	extends QueryResource<ReadProtocol,DBProtocol> {
+public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,DBProtocol> {
 
 	
 	protected boolean singleItem = false;
@@ -51,13 +51,7 @@ public class ProtocolDBResource	extends QueryResource<ReadProtocol,DBProtocol> {
 	@Override
 	public RepresentationConvertor createConvertor(Variant variant)
 			throws AmbitException, ResourceException {
-		/*
-		if (variant.getMediaType().equals(MediaType.TEXT_PLAIN)) {
-			
-			return new StringConvertor(new PropertyValueReporter(),MediaType.TEXT_PLAIN);
-			
-		} else
-		*/ 
+
 		if (variant.getMediaType().equals(MediaType.TEXT_URI_LIST)) {
 				return new StringConvertor(	
 						new ProtocolQueryURIReporter(getRequest())
@@ -87,8 +81,22 @@ public class ProtocolDBResource	extends QueryResource<ReadProtocol,DBProtocol> {
 		else throw new ResourceException(Status.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE);
 	}
 
+	protected Q getProtocolQuery(Object key) throws ResourceException {
+		if (key==null) {
+			ReadProtocol query = new ReadProtocol();
+//			query.setFieldname(search.toString());
+			return (Q)query;
+		}			
+		else {
+			singleItem = true;
+			int id[] = ReadProtocol.parseIdentifier(Reference.decode(key.toString()));
+			ReadProtocol query =  new ReadProtocol(id[0],id[1]);
+			return (Q)query;
+		}
+	}
+	
 	@Override
-	protected ReadProtocol createQuery(Context context, Request request, Response response)
+	protected Q createQuery(Context context, Request request, Response response)
 			throws ResourceException {
 		Form form = request.getResourceRef().getQueryAsForm();
 		Object search = null;
@@ -105,32 +113,20 @@ public class ProtocolDBResource	extends QueryResource<ReadProtocol,DBProtocol> {
 		}
 		Object key = request.getAttributes().get(FileResource.resourceKey);		
 		try {
-			if (key==null) key = search;
-			
-			if (key==null) {
-				ReadProtocol query = new ReadProtocol();
-//				query.setFieldname(search.toString());
-				return query;
-			}			
-			else {
-				if (key.toString().startsWith("P")) {
-					singleItem = true;
-					return new ReadProtocol(new Integer(Reference.decode(key.toString().substring(1))));
-				} else throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
-			}
+			return getProtocolQuery(key);
 		}catch (ResourceException x) {
 			throw x;
 		} catch (Exception x) {
 			throw new ResourceException(
 					Status.CLIENT_ERROR_BAD_REQUEST,
-					String.format("Invalid protocol id %d",key),
+					String.format("Invalid protocol id %s",key),
 					x
 					);
 		}
 	} 
 
 	@Override
-	protected QueryURIReporter<DBProtocol, ReadProtocol> getURUReporter(
+	protected QueryURIReporter<DBProtocol, Q> getURUReporter(
 			Request baseReference) throws ResourceException {
 		return new ProtocolQueryURIReporter(getRequest());
 	}
@@ -160,10 +156,22 @@ public class ProtocolDBResource	extends QueryResource<ReadProtocol,DBProtocol> {
 		Connection conn = null;
 		try {
 			ProtocolQueryURIReporter r = new ProtocolQueryURIReporter(getRequest(),"");
-			DBConnection dbc = new DBConnection(getApplication().getContext(),getConfigFile());
+			class TDBConnection extends DBConnection {
+				public TDBConnection(Context context,String configFile) {
+					super(context,configFile);
+				}
+				public String getDir() {
+					loadProperties();
+					return properties.getProperty("dir.protocol");
+				}
+			};
+			TDBConnection dbc = new TDBConnection(getApplication().getContext(),getConfigFile());
 			conn = dbc.getConnection(getRequest());
 
-			return new CallableProtocolUpload(null,input,conn,r,getToken(),getRequest().getRootRef().toString());
+			String dir = dbc.getDir();
+			return new CallableProtocolUpload(null,input,conn,r,getToken(),getRequest().getRootRef().toString(),
+						dir==null?null:new File(dir)
+			);
 		} catch (ResourceException x) {
 			throw x;
 		} catch (Exception x) {
@@ -180,7 +188,7 @@ public class ProtocolDBResource	extends QueryResource<ReadProtocol,DBProtocol> {
 	}
 	
 	@Override
-	protected ReadProtocol createPOSTQuery(Context context, Request request,
+	protected Q createPOSTQuery(Context context, Request request,
 			Response response) throws ResourceException {
 		Object key = request.getAttributes().get(FileResource.resourceKey);		
 		if (key==null) return null;//post allowed only on /protocol level, not on /protocol/id

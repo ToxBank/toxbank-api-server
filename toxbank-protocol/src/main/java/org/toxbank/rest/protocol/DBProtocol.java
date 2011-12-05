@@ -12,14 +12,7 @@ public class DBProtocol extends Protocol {
 	 */
 	private static final long serialVersionUID = -6632168193661223228L;
 	protected int ID;
-	protected String version;
-	public String getVersion() {
-		return version;
-	}
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
 	protected IDocument document;
 	protected ITemplate template;
 
@@ -27,8 +20,10 @@ public class DBProtocol extends Protocol {
 		
 	}
 	
-	public DBProtocol(int id) {
+	
+	public DBProtocol(int id, int version) {
 		setID(id);
+		setVersion(version);
 	}
 	
 	public int getID() {
@@ -64,4 +59,5 @@ public class DBProtocol extends Protocol {
 	public String toString() {
 		return String.format("<a href='%s'>%s</a>",getResourceURL(),getTitle()==null?getResourceURL():getTitle());
 	}
+	
 }

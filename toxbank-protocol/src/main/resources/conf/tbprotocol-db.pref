@@ -24,4 +24,6 @@ service.ontology=${service.ontology}
 license.intextfiles=${license.intextfiles}
 #Protect /admin resources via OpenTox AA
 aa.admin=${aa.admin}
+#Folder to store protocol files
+dir.protocol=${toxbank.dir.protocol}
 MAXRECORDS=0

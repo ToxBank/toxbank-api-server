@@ -43,7 +43,6 @@ DROP TABLE IF EXISTS `protocol`;
 CREATE TABLE  `protocol` (
   `idprotocol` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `version` int(10) unsigned NOT NULL DEFAULT '1' COMMENT 'Version',
-  `identifier` varchar(45) DEFAULT NULL COMMENT 'Unique human readable ID',
   `title` varchar(45) NOT NULL COMMENT 'Title',
   `abstract` text,
   `summarySearchable` tinyint(1) NOT NULL DEFAULT '1',
@@ -52,16 +51,30 @@ CREATE TABLE  `protocol` (
   `idorganisation` int(10) unsigned NOT NULL COMMENT 'Link to org table',
   `filename` text COMMENT 'Path to file name',
   `template` blob COMMENT 'Data template',
-  PRIMARY KEY (`idprotocol`),
-  UNIQUE KEY `Index_2` (`identifier`),
+  `status` enum('RESEARCH','SOP') NOT NULL DEFAULT 'RESEARCH' COMMENT 'Research or Standard Operating Procedure',
+  `latest` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Is the latest version',
+  PRIMARY KEY (`idprotocol`,`version`) USING BTREE,
   KEY `Index_3` (`title`),
   KEY `FK_protocol_1` (`idproject`),
   KEY `FK_protocol_2` (`idorganisation`),
   KEY `FK_protocol_3` (`iduser`),
-  CONSTRAINT `FK_protocol_3` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`),
+  KEY `Index_7` (`latest`),
   CONSTRAINT `FK_protocol_1` FOREIGN KEY (`idproject`) REFERENCES `project` (`idproject`),
-  CONSTRAINT `FK_protocol_2` FOREIGN KEY (`idorganisation`) REFERENCES `organisation` (`idorganisation`)
+  CONSTRAINT `FK_protocol_2` FOREIGN KEY (`idorganisation`) REFERENCES `organisation` (`idorganisation`),
+  CONSTRAINT `FK_protocol_3` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Trigger to add property entry to template_def 
+-- -----------------------------------------------------
+-- DELIMITER $
+-- CREATE TRIGGER insert_protocol_id BEFORE UPDATE ON protocol
+--FOR EACH ROW BEGIN
+--	IF NEW.idprotocol != null THEN
+--		set NEW.version = OLD.version+1;
+--	END IF;
+-- END $
+-- DELIMITER ;
 
 -- Keywords. Want to do full text search, thus MyISAM. Could be changed eventually.
 
@@ -83,4 +96,4 @@ CREATE TABLE  `version` (
   `comment` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`idmajor`,`idminor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-insert into version (idmajor,idminor,comment) values (0,7,"TB Protocol schema");
+insert into version (idmajor,idminor,comment) values (0,8,"TB Protocol schema");
