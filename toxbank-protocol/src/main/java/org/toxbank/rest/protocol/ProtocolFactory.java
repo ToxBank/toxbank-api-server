@@ -41,10 +41,12 @@ public class ProtocolFactory {
 				switch (field) {
 				case idprotocol: continue;
 				case identifier: {
-					protocol.setIdentifier(fi.getString());
+					if (fi.getString()!=null)
+						protocol.setIdentifier(fi.getString());
 					break;
 				}
 				case anabstract: {
+					if (fi.getString()!=null)
 					protocol.setAbstract(fi.getString());
 					break;
 				}
@@ -71,27 +73,33 @@ public class ProtocolFactory {
 			        break;
 				}
 				case project_uri: {
-					Project p = protocol.getProject();
-					if (p==null) { p = new DBProject(); protocol.setProject(p);}
-					if (fi.getString().startsWith("http"))
-						p.setResourceURL(new URL(fi.getString()));
-					else p.setTitle(fi.getString());
+					if (fi.getString()!=null) {
+						Project p = protocol.getProject();
+						if (p==null) { p = new DBProject(); protocol.setProject(p);}
+						if (fi.getString().startsWith("http"))
+							p.setResourceURL(new URL(fi.getString()));
+						else p.setTitle(fi.getString());
+					}
 					break;					
 				}
 				case user_uri: {
-					User p = protocol.getOwner();
-					if (p==null) { p = new DBUser(); protocol.setOwner(p);}
-					if (fi.getString().startsWith("http"))
-						p.setResourceURL(new URL(fi.getString()));
-					else p.setUserName(fi.getString());
+					if (fi.getString()!=null) {
+						User p = protocol.getOwner();
+						if (p==null) { p = new DBUser(); protocol.setOwner(p);}
+						if (fi.getString().startsWith("http"))
+							p.setResourceURL(new URL(fi.getString()));
+						else p.setUserName(fi.getString());
+					}
 					break;					
 				}				
 				case organisation_uri: {
-					Organisation p = protocol.getOrganisation();
-					if (p==null) { p = new DBOrganisation(); protocol.setOrganisation(p);}
-					if (fi.getString().startsWith("http"))
-						p.setResourceURL(new URL(fi.getString()));
-					else p.setTitle(fi.getString());
+					if (fi.getString()!=null) {
+						Organisation p = protocol.getOrganisation();
+						if (p==null) { p = new DBOrganisation(); protocol.setOrganisation(p);}
+						if (fi.getString().startsWith("http"))
+							p.setResourceURL(new URL(fi.getString()));
+						else p.setTitle(fi.getString());
+					}
 					break;					
 				}		
 				case author_uri: {
@@ -100,20 +108,23 @@ public class ProtocolFactory {
 					break;	
 				}
 				case title: {
-					protocol.setTitle(fi.getString());
+					if (fi.getString()!=null)
+						protocol.setTitle(fi.getString());
 					break;
 				}
 				case iduser: {
-					DBUser user = new DBUser();
-					if (fi.getString().startsWith("http"))
-						user.setResourceURL(new URL(fi.getString()));
-					else user.setTitle(fi.getString());
-					protocol.setOwner(user);
+					if (fi.getString()!=null) {
+						DBUser user = new DBUser();
+						if (fi.getString().startsWith("http"))
+							user.setResourceURL(new URL(fi.getString()));
+						else user.setTitle(fi.getString());
+						protocol.setOwner(user);
+					}
 					break;
 				}
 				case summarySearchable: {
 					try {
-					protocol.setSummarySearchable(Boolean.parseBoolean(fi.getString()));
+						protocol.setSummarySearchable(Boolean.parseBoolean(fi.getString()));
 					} catch (Exception x) { protocol.setSummarySearchable(false);}
 					break;					
 				}

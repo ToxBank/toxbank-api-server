@@ -310,7 +310,7 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		Assert.assertEquals(2,table.getRowCount());
 		Assert.assertEquals(new BigInteger("1"),table.getValue(0,"version"));
 		Assert.assertEquals(new BigInteger("2"),table.getValue(1,"version"));
-		File f = new File(new URI(table.getValue(0,"filename").toString()));
+		File f = new File(new URI(table.getValue(1,"filename").toString()));
 		//System.out.println(f);
 		Assert.assertTrue(f.exists());
 		f.delete();
@@ -378,7 +378,8 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		//yeat another author
 		values[i] = String.format("http://localhost:%d%s/%s",port,Resources.user,"U1");
 		names[i] = ReadProtocol.fields.author_uri.name();
-		
+		values[i+1] = null;
+		names[i+1] = ReadProtocol.fields.author_uri.name();
 		Representation rep = getMultipartWebFormRepresentation(names,values,file,MediaType.APPLICATION_PDF.toString());
 		
         IDatabaseConnection c = getConnection();	
