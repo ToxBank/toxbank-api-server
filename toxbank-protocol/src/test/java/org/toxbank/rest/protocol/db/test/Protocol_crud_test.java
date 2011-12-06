@@ -44,6 +44,7 @@ import org.toxbank.rest.protocol.db.DeleteProtocol;
 import org.toxbank.rest.protocol.db.UpdateProtocol;
 import org.toxbank.rest.protocol.metadata.Document;
 import org.toxbank.rest.user.DBUser;
+import org.toxbank.rest.user.author.db.AddAuthors;
 
 public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 	String file = "http://localhost/1.pdf";
@@ -92,31 +93,26 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 		c.close();
 		
 	}
-
-	@Override
-	public void testUpdate() throws Exception {
-		//TODO Not iplemented
-	}
+	
+	/**
+	 * Adds authors to a protocol
+	 */
 	@Override
 	protected IQueryUpdate<Object,DBProtocol> updateQuery() throws Exception {
-		DBProtocol ref = new DBProtocol();
-		ref.setAbstract("NEW");
-		ref.setID(2);
+		DBProtocol ref = new DBProtocol(1,1);
+		ref.addAuthor(new DBUser(1));
+		ref.addAuthor(new DBUser(2));
 
-		return new UpdateProtocol(ref);
+		return new AddAuthors(ref);
 	}
 
 	@Override
 	protected void updateVerify(IQueryUpdate<Object,DBProtocol> query)
 			throws Exception {
         IDatabaseConnection c = getConnection();	
-		ITable table = 	c.createQueryTable("EXPECTED","SELECT abstract FROM protocol where idprotocol=2");
-		Assert.assertEquals(1,table.getRowCount());
-
-		Assert.assertEquals("NEW",table.getValue(0,"abstract"));
-		
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT idprotocol,version,iduser FROM protocol_authors where idprotocol=1");
+		Assert.assertEquals(2,table.getRowCount());
 		c.close();
-		
 	}
 
 	@Override

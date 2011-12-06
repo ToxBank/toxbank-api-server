@@ -5,7 +5,6 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 import net.toxbank.client.resource.Organisation;
 import net.toxbank.client.resource.Project;
@@ -22,9 +21,9 @@ import org.toxbank.rest.user.DBUser;
 
 public class ProtocolFactory {
 	
-	public static DBProtocol getProtocol(List<FileItem> items, long maxSize, File dir) throws ResourceException {
+	public static DBProtocol getProtocol(DBProtocol protocol,List<FileItem> items, long maxSize, File dir) throws ResourceException {
 		
-		DBProtocol protocol = new DBProtocol();
+		if (protocol==null) protocol = new DBProtocol();
 		for (final Iterator<FileItem> it = items.iterator(); it.hasNext();) {
 			FileItem fi = it.next();
 		//	System.out.println(String.format("%s\t%s", fi.getFieldName(),fi.getString()));
@@ -94,7 +93,12 @@ public class ProtocolFactory {
 						p.setResourceURL(new URL(fi.getString()));
 					else p.setTitle(fi.getString());
 					break;					
-				}				
+				}		
+				case author_uri: {
+					if ((fi.getString()!=null) && fi.getString().startsWith("http"))
+						 protocol.addAuthor(new DBUser(new URL(fi.getString())));
+					break;	
+				}
 				case title: {
 					protocol.setTitle(fi.getString());
 					break;

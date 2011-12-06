@@ -1,5 +1,6 @@
 package org.toxbank.rest.user;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,6 +72,10 @@ public class DBUser extends User {
 	}
 	public DBUser() {
 		this.id = -1;
+	}
+	public DBUser(URL resourceURL) {
+		this.id = -1;
+		setResourceURL(resourceURL);
 	}
 	public DBUser(User p) {
 		setTitle(p.getTitle());

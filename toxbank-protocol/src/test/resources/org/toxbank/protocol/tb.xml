@@ -18,4 +18,5 @@
   iduser="2" summarySearchable="false" 
   idproject="2" idorganisation="2" filename="C://Users//nina//Downloads//eduard.pdf"/>  
   <keywords idprotocol="2" keywords="one;two;three"/>
+  <protocol_authors idprotocol="1" version="1" iduser="1"/>
 </dataset>

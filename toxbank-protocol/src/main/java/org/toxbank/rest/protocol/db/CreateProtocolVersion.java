@@ -12,8 +12,7 @@ import org.toxbank.rest.protocol.DBProtocol;
 public class CreateProtocolVersion  extends AbstractObjectUpdate<DBProtocol>{
 	public static final String[] create_sql = {
 		"insert into protocol (idprotocol,version,title,abstract,iduser,summarySearchable,idproject,idorganisation,filename)\n" +
-		"select (idprotocol,max(version),?,?,iduser,summarySearchable,idproject,idorganisation,?) from protocol where idprotocol=? group by idprotocol\n"+
-		"on duplicate key update version=values(version)+1"
+		"select idprotocol,max(version)+1,?,?,iduser,summarySearchable,idproject,idorganisation,? from protocol where idprotocol=? group by idprotocol\n"
 	};
 
 	public CreateProtocolVersion(DBProtocol ref) {
@@ -27,10 +26,10 @@ public class CreateProtocolVersion  extends AbstractObjectUpdate<DBProtocol>{
 		
 		List<QueryParam> params1 = new ArrayList<QueryParam>();
 		ReadProtocol.fields[] f = new ReadProtocol.fields[] {
-				ReadProtocol.fields.idprotocol,
 				ReadProtocol.fields.title,
 				ReadProtocol.fields.anabstract,
-				ReadProtocol.fields.filename
+				ReadProtocol.fields.filename,
+				ReadProtocol.fields.idprotocol
 		};
 		for (ReadProtocol.fields field: f) 
 			params1.add(field.getParam(getObject()));

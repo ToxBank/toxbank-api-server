@@ -7,6 +7,7 @@ import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.update.AbstractObjectUpdate;
 
+import org.toxbank.rest.db.exceptions.InvalidUserException;
 import org.toxbank.rest.user.DBUser;
 
 /**
@@ -15,7 +16,7 @@ import org.toxbank.rest.user.DBUser;
  *
  */
 public class DeleteUser extends AbstractObjectUpdate<DBUser> {
-
+	protected static final String[] sql = new String[] {"DELETE from user where iduser=?"};
 	public DeleteUser(DBUser ref) {
 		super(ref);
 	}
@@ -23,7 +24,7 @@ public class DeleteUser extends AbstractObjectUpdate<DBUser> {
 		this(null);
 	}		
 	public List<QueryParam> getParameters(int index) throws AmbitException {
-		if (getObject()==null || getObject().getID()<=0) throw new AmbitException("No user id!");
+		if (getObject()==null || getObject().getID()<=0) throw new InvalidUserException();
 		List<QueryParam> params = new ArrayList<QueryParam>();
 		params.add(new QueryParam<Integer>(Integer.class, getObject().getID()));
 		return params;
@@ -31,8 +32,8 @@ public class DeleteUser extends AbstractObjectUpdate<DBUser> {
 	}
 
 	public String[] getSQL() throws AmbitException {
-		if (getObject()==null || getObject().getID()<=0) throw new AmbitException("No user id!");
-		return new String[] { "DELETE from user where iduser=?"};
+		if (getObject()==null || getObject().getID()<=0) throw new InvalidUserException();
+		return sql;
 	}
 	public void setID(int index, int id) {
 			

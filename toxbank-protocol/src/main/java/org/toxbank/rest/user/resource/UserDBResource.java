@@ -4,12 +4,10 @@ import java.sql.Connection;
 
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
-import net.idea.restnet.c.PageParams;
 import net.idea.restnet.c.RepresentationConvertor;
 import net.idea.restnet.c.StringConvertor;
 import net.idea.restnet.c.task.CallableProtectedTask;
 import net.idea.restnet.c.task.FactoryTaskConvertor;
-import net.idea.restnet.c.task.TaskCreator;
 import net.idea.restnet.db.DBConnection;
 import net.idea.restnet.db.QueryResource;
 import net.idea.restnet.db.QueryURIReporter;
@@ -30,8 +28,10 @@ import org.restlet.data.Status;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
 import org.toxbank.rest.FileResource;
+import org.toxbank.rest.protocol.db.ReadProtocol;
 import org.toxbank.rest.user.CallableUserCreator;
 import org.toxbank.rest.user.DBUser;
+import org.toxbank.rest.user.author.db.ReadAuthor;
 import org.toxbank.rest.user.db.ReadUser;
 
 /**
@@ -40,8 +40,8 @@ import org.toxbank.rest.user.db.ReadUser;
  *
  * @param <Q>
  */
-public class UserDBResource	extends QueryResource<ReadUser,DBUser> {
-	public static final String resourceKey = "key";
+public class UserDBResource<T>	extends QueryResource<ReadUser<T>,DBUser> {
+	public static final String resourceKey = "user";
 	
 	protected boolean singleItem = false;
 	protected boolean editable = true;
@@ -85,6 +85,19 @@ public class UserDBResource	extends QueryResource<ReadUser,DBUser> {
 		else throw new ResourceException(Status.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE);
 	}
 
+	protected ReadUser getUserQuery(Object key) throws ResourceException {
+		if (key==null) {
+			ReadUser query = new ReadUser();
+//			query.setFieldname(search.toString());
+			return query;
+		}			
+		else {
+			if (key.toString().startsWith("U")) {
+				singleItem = true;
+				return new ReadUser(new Integer(Reference.decode(key.toString().substring(1))));
+			} else throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
+		}		
+	}
 	@Override
 	protected ReadUser createQuery(Context context, Request request, Response response)
 			throws ResourceException {
@@ -101,21 +114,11 @@ public class UserDBResource	extends QueryResource<ReadUser,DBUser> {
 		} catch (Exception x) {
 			editable = false;
 		}
-		Object key = request.getAttributes().get(FileResource.resourceKey);		
+		Object key = request.getAttributes().get(UserDBResource.resourceKey);		
 		try {
 			if (key==null) key = search;
 			
-			if (key==null) {
-				ReadUser query = new ReadUser();
-//				query.setFieldname(search.toString());
-				return query;
-			}			
-			else {
-				if (key.toString().startsWith("U")) {
-					singleItem = true;
-					return new ReadUser(new Integer(Reference.decode(key.toString().substring(1))));
-				} else throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
-			}
+			return getUserQuery(key);
 		}catch (ResourceException x) {
 			throw x;
 		} catch (Exception x) {
@@ -128,7 +131,7 @@ public class UserDBResource	extends QueryResource<ReadUser,DBUser> {
 	} 
 
 	@Override
-	protected QueryURIReporter<DBUser, ReadUser> getURUReporter(
+	protected QueryURIReporter<DBUser, ReadUser<T>> getURUReporter(
 			Request baseReference) throws ResourceException {
 		return new UserURIReporter(getRequest());
 	}

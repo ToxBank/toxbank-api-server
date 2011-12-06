@@ -169,7 +169,7 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 			conn = dbc.getConnection(getRequest());
 
 			String dir = dbc.getDir();
-			return new CallableProtocolUpload(null,input,conn,r,getToken(),getRequest().getRootRef().toString(),
+			return new CallableProtocolUpload(item,null,input,conn,r,getToken(),getRequest().getRootRef().toString(),
 						dir==null?null:new File(dir)
 			);
 		} catch (ResourceException x) {

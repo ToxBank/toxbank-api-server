@@ -299,9 +299,42 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 
 		return o;
 	}
-	
+	@Test
+	public void testCreateVersionEntryFromMultipartWeb() throws Exception {
+		createEntryFromMultipartWeb(new Reference(getTestURI()+Resources.versions));
+		
+		 IDatabaseConnection c = getConnection();	
+		 ITable  table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
+		Assert.assertEquals(4,table.getRowCount());
+		table = 	c.createQueryTable("EXPECTED","SELECT p.idprotocol,p.version,filename from protocol p where p.idprotocol=1 order by version");
+		Assert.assertEquals(2,table.getRowCount());
+		Assert.assertEquals(new BigInteger("1"),table.getValue(0,"version"));
+		Assert.assertEquals(new BigInteger("2"),table.getValue(1,"version"));
+		File f = new File(new URI(table.getValue(0,"filename").toString()));
+		//System.out.println(f);
+		Assert.assertTrue(f.exists());
+		f.delete();
+		c.close();
+	}
 	@Test
 	public void testCreateEntryFromMultipartWeb() throws Exception {
+		createEntryFromMultipartWeb(new Reference(String.format("http://localhost:%d%s", port,Resources.protocol)));
+		
+		 IDatabaseConnection c = getConnection();	
+		 ITable  table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
+		Assert.assertEquals(4,table.getRowCount());
+		table = 	c.createQueryTable("EXPECTED","SELECT p.idprotocol,p.version,filename,pa.iduser from protocol p join protocol_authors pa where pa.idprotocol=p.idprotocol and p.version=pa.version and p.idprotocol>2 order by pa.iduser");
+		Assert.assertEquals(2,table.getRowCount());
+		Assert.assertEquals(new BigInteger("1"),table.getValue(0,"version"));
+		Assert.assertEquals(new BigInteger("1"),table.getValue(0,"iduser"));
+		Assert.assertEquals(new BigInteger("2"),table.getValue(1,"iduser"));
+		File f = new File(new URI(table.getValue(0,"filename").toString()));
+		//System.out.println(f);
+		Assert.assertTrue(f.exists());
+		f.delete();
+		c.close();
+	}
+	public void createEntryFromMultipartWeb(Reference uri) throws Exception {
 		URL url = getClass().getClassLoader().getResource("org/toxbank/protocol/protocol-sample.pdf");
 		File file = new File(url.getFile());
 		
@@ -329,7 +362,11 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 			case user_uri: {
 				values[i] = String.format("http://localhost:%d%s/%s",port,Resources.user,"U1");
 				break;
-			}			
+			}		
+			case author_uri: {
+				values[i] = String.format("http://localhost:%d%s/%s",port,Resources.user,"U2");
+				break;
+			}				
 			default: {
 				values[i] = field.name();
 			}
@@ -338,15 +375,18 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 			
 			i++;
 		}
+		//yeat another author
+		values[i] = String.format("http://localhost:%d%s/%s",port,Resources.user,"U1");
+		names[i] = ReadProtocol.fields.author_uri.name();
+		
 		Representation rep = getMultipartWebFormRepresentation(names,values,file,MediaType.APPLICATION_PDF.toString());
 		
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
-		Assert.assertEquals(2,table.getRowCount());
+		Assert.assertEquals(3,table.getRowCount());
 		c.close();
 
-		RemoteTask task = testAsyncPoll(new Reference(String.format("http://localhost:%d%s", port,
-				Resources.protocol)),
+		RemoteTask task = testAsyncPoll(uri,
 				MediaType.TEXT_URI_LIST, rep,
 				Method.POST);
 		//wait to complete
@@ -355,20 +395,12 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 			Thread.sleep(100);
 			Thread.yield();
 		}
+		if (!task.isCompletedOK())
+			System.out.println(task.getError());
 		Assert.assertTrue(task.getResult().toString().startsWith(
 							String.format("http://localhost:%d/protocol/%s",port,Protocol.id_prefix)));
 
-        c = getConnection();	
-		table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
-		Assert.assertEquals(3,table.getRowCount());
-		table = 	c.createQueryTable("EXPECTED","SELECT idprotocol,version,filename from protocol where idprotocol>2");
-		Assert.assertEquals(1,table.getRowCount());
-		Assert.assertEquals(new BigInteger("1"),table.getValue(0,"version"));
-		File f = new File(new URI(table.getValue(0,"filename").toString()));
-		//System.out.println(f);
-		Assert.assertTrue(f.exists());
-		f.delete();
-		c.close();
+
 
 	}	
 }

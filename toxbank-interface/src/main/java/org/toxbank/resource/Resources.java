@@ -7,5 +7,7 @@ public class Resources {
 	public static final String organisation = "/organisation";
 	public static final String user = "/user";
 	public static final String versions = "/versions";
+	public static final String authors = "/authors";
+	public static final String document = "/document";
 
 }

@@ -19,7 +19,7 @@ import org.toxbank.rest.user.DBUser;
  * @author nina
  *
  */
-public class ReadUser  extends AbstractQuery<String, DBUser, EQCondition, DBUser>  implements IQueryRetrieval<DBUser> {
+public class ReadUser<T>  extends AbstractQuery<T, DBUser, EQCondition, DBUser>  implements IQueryRetrieval<DBUser> {
 	/**
 	 * 
 	 */

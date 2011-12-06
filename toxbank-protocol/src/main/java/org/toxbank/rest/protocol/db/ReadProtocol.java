@@ -38,6 +38,9 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			fields.filename,
 			fields.title,
 			fields.anabstract,
+			fields.author_uri,
+			fields.author_uri,
+			fields.author_uri,
 			fields.keywords,
 			fields.summarySearchable,
 			//ReadProtocol.fields.status
@@ -54,6 +57,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			fields.filename,
 			fields.title,
 			fields.anabstract,
+			fields.author_uri,
 			fields.keywords,
 			fields.summarySearchable,
 			//ReadProtocol.fields.status
@@ -85,10 +89,12 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
 				try {
-				String[] keywords = rs.getString(name()).split(";");
-				for (String keyword:keywords)
-					if (!protocol.getKeywords().contains(keyword))
-						protocol.addKeyword(keyword);
+					String kw = rs.getString(name());
+					if (kw==null) return;
+					String[] keywords = kw.split(";");
+					for (String keyword:keywords)
+						if (!protocol.getKeywords().contains(keyword))
+							protocol.addKeyword(keyword);
 				} catch (Exception x) {
 					throw new SQLException(x);
 				}
@@ -420,6 +426,30 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 				return String.format("<a href='%s%s' target='organisations'>Organisations list</a>",uri,Resources.organisation);
 			}
 		},			
+		author_uri {
+
+			@Override
+			public Object getValue(DBProtocol protocol) {
+				return  protocol==null?null:
+						protocol.getResourceURL()==null?"":
+						String.format("%s%s",protocol.getResourceURL(),Resources.authors);
+			}		
+
+			@Override
+			public String toString() {
+				return "Author URI";
+			}
+			@Override
+			public String getExampleValue(String uri) {
+				return String.format("%s%s/U1",uri,Resources.user);
+			}
+
+			@Override
+			public String getHelp(String uri) {
+				return String.format("<a href='%s%s' target='Users'>Authors list</a>",uri,Resources.user);
+			}
+		
+		},					
 		filename {
 			@Override
 			public QueryParam getParam(DBProtocol protocol) {
@@ -447,6 +477,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 				return "Document";
 			}
 		};
+				
 		public String getCondition() {
 			return String.format(" %s = ? ",name());
 		}
