@@ -31,7 +31,7 @@ public abstract class ReadGroup<G extends IDBGroup> extends AbstractQuery<GroupT
 	@Override
 	public String getSQL() throws AmbitException {
 		if (getValue()==null) throw new AmbitException("No value!");
-		return getValue().getGroupType().getReadSQL(getValue().getID()<=0);
+		return getValue().getGroupType().getReadSQL(getValue().getID()<=0,getValue().getTitle());
 	}
 
 	@Override
@@ -41,6 +41,9 @@ public abstract class ReadGroup<G extends IDBGroup> extends AbstractQuery<GroupT
 		if (getValue().getID()>0) {
 			params = new ArrayList<QueryParam>();
 			params.add(new QueryParam<Integer>(Integer.class,getValue().getID()));
+		} else if (getValue().getTitle()!=null) {
+			params = new ArrayList<QueryParam>();
+			params.add(new QueryParam<String>(String.class,getValue().getTitle()));
 		}
 		return params;
 	}

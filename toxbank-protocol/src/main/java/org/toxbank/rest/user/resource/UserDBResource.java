@@ -85,10 +85,14 @@ public class UserDBResource<T>	extends QueryResource<ReadUser<T>,DBUser> {
 		else throw new ResourceException(Status.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE);
 	}
 
-	protected ReadUser getUserQuery(Object key) throws ResourceException {
+	protected ReadUser getUserQuery(Object key,Object search) throws ResourceException {
 		if (key==null) {
 			ReadUser query = new ReadUser();
-//			query.setFieldname(search.toString());
+			if (search != null) {
+				DBUser user = new DBUser();
+				user.setLastname(search.toString());
+				query.setValue(user);
+			}
 			return query;
 		}			
 		else {
@@ -116,9 +120,7 @@ public class UserDBResource<T>	extends QueryResource<ReadUser<T>,DBUser> {
 		}
 		Object key = request.getAttributes().get(UserDBResource.resourceKey);		
 		try {
-			if (key==null) key = search;
-			
-			return getUserQuery(key);
+			return getUserQuery(key,search);
 		}catch (ResourceException x) {
 			throw x;
 		} catch (Exception x) {

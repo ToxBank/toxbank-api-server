@@ -22,6 +22,7 @@ public class ProjectDBResource extends GroupDBResource<DBProject> {
 	public ReadGroup<DBProject> createGroupQuery(Integer key, String search) {
 		DBProject p = new DBProject();
 		if (key!=null) p.setID(key);
+		p.setTitle(search);
 		ReadProject q = new ReadProject(p);
 		return q;
 	}

@@ -21,6 +21,7 @@ public class OrganisationDBResource extends GroupDBResource<DBOrganisation> {
 	@Override
 	public ReadGroup<DBOrganisation> createGroupQuery(Integer key, String search) {
 		DBOrganisation p = new DBOrganisation();
+		p.setTitle(search);
 		if (key!=null) p.setID(key);
 		ReadOrganisation q = new ReadOrganisation(p);
 		return q;

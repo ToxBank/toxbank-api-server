@@ -83,6 +83,9 @@ public class ReadUser<T>  extends AbstractQuery<T, DBUser, EQCondition, DBUser> 
 			public Object getValue(DBUser protocol) {
 				return protocol==null?null:protocol.getLastname();
 			}
+			public String getCondition() {
+				return String.format(" %s regexp ? ",name());
+			}
 		},	
 		weblog {
 			@Override
@@ -174,16 +177,22 @@ public class ReadUser<T>  extends AbstractQuery<T, DBUser, EQCondition, DBUser> 
 		List<QueryParam> params = null;
 		if (getValue()!=null) {
 			params = new ArrayList<QueryParam>();
-			params.add(fields.iduser.getParam(getValue()));
-		}
+			if (getValue().getID()>0)
+				params.add(fields.iduser.getParam(getValue()));
+			else if (getValue().getLastname()!=null)
+				params.add(fields.lastname.getParam(getValue()));
+		} 
 		return params;
 	}
 
 	public String getSQL() throws AmbitException {
-		if ((getValue()!=null) && (getValue().getID()>0))
-			return String.format(sql,"where ",fields.iduser.getCondition());
-		else 
-			return String.format(sql,"","");
+		if (getValue()!=null) {
+			if (getValue().getID()>0)
+				return String.format(sql,"where ",fields.iduser.getCondition());
+			else if (getValue().getLastname()!= null)
+				return String.format(sql,"where ",fields.lastname.getCondition());
+		}
+		return String.format(sql,"","");
 			
 	}
 

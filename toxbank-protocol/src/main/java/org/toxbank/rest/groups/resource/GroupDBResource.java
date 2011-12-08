@@ -103,8 +103,6 @@ public abstract class GroupDBResource<G extends IDBGroup>	extends QueryResource<
 		}
 		Object key = request.getAttributes().get(FileResource.resourceKey);		
 		try {
-			if (key==null) key = search;
-			
 			if (key==null) {
 //				query.setFieldname(search.toString());
 				return createGroupQuery(null,search==null?null:search.toString());
