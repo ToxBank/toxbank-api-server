@@ -318,7 +318,11 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 	}
 	@Test
 	public void testCreateEntryFromMultipartWeb() throws Exception {
-		createEntryFromMultipartWeb(new Reference(String.format("http://localhost:%d%s", port,Resources.protocol)));
+		String url = createEntryFromMultipartWeb(new Reference(String.format("http://localhost:%d%s", port,Resources.protocol)));
+		
+		testGet(String.format("%s%s",
+				url,Resources.document),
+				MediaType.APPLICATION_PDF);		
 		
 		 IDatabaseConnection c = getConnection();	
 		 ITable  table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
@@ -334,7 +338,7 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		f.delete();
 		c.close();
 	}
-	public void createEntryFromMultipartWeb(Reference uri) throws Exception {
+	public String createEntryFromMultipartWeb(Reference uri) throws Exception {
 		URL url = getClass().getClassLoader().getResource("org/toxbank/protocol/protocol-sample.pdf");
 		File file = new File(url.getFile());
 		
@@ -401,13 +405,12 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		Assert.assertTrue(task.getResult().toString().startsWith(
 							String.format("http://localhost:%d/protocol/%s",port,Protocol.id_prefix)));
 		
-		testGet(String.format("%s%s",
-				task.getResult(),Resources.document),
-				MediaType.APPLICATION_PDF);		
+		return task.getResult().toString();
+
 
 	}	
 	
-	@Test
+	
 	public void testDownloadFile() throws Exception {
 		testGet(String.format("http://localhost:%d%s/%s-1-1%s", 
 					port,
