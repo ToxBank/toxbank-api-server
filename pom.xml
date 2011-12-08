@@ -107,6 +107,26 @@
                         <enabled>true</enabled>
                 </snapshots>
     </repository>
+   <repository>
+        <id>toxbank-snapshots</id>
+        <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/toxbank-snapshots</url>
+        <releases>
+        	<enabled>false</enabled>
+        </releases>
+        <snapshots>
+                        <enabled>true</enabled>
+                </snapshots>
+    </repository>    
+   <repository>
+        <id>toxbank-releases</id>
+        <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/toxbank-releases</url>
+        <releases>
+        	<enabled>false</enabled>
+        </releases>
+        <snapshots>
+                        <enabled>true</enabled>
+                </snapshots>
+    </repository>     
   	<repository>
   		<id>mvnrepository</id>
   		<name>mvnrepository</name>
@@ -200,7 +220,7 @@
  </modules>
  
    <distributionManagement>
-
+  
     <snapshotRepository>
   		<id>ambit-plovdiv-snapshots</id>
   		<url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/snapshots</url>
