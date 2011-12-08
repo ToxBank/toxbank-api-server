@@ -306,6 +306,7 @@ public abstract class ResourceTest extends DbUnitTest {
 	public boolean verifyResponsePNG(String uri, MediaType media,InputStream in) throws Exception {
 		throw new Exception("Not implemented");
 	}		
+
 	public boolean verifyResponseURI(String uri, MediaType media,InputStream in) throws Exception {
 		throw new Exception("Not implemented");
 	}	

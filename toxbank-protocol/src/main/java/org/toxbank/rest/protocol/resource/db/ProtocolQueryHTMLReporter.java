@@ -232,9 +232,9 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 							field.name(),
 							"PDF file")); 					
 					else 
-						output.write(String.format("<th title='%s'>%s</th><td align='left'><a href='%s/file'>Download</a></td><td></td>",
+						output.write(String.format("<th title='%s'>%s</th><td align='left'><a href='%s%s'>Download</a></td><td></td>",
 									field.name(),	
-									field.toString(),uri));
+									field.toString(),uri,Resources.document));
 
 					break;
 				}	
@@ -274,7 +274,7 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 					break;
 				}
 				case filename: {
-					output.write(String.format("<td><a href='%s/file'>Download</a></td>",uri));
+					output.write(String.format("<td><a href='%s%s'>Download</a></td>",uri,Resources.document));
 					break;
 				}				
 				case user_uri: {

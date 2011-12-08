@@ -40,19 +40,16 @@ public class DownloadDocumentConvertor extends   AbstractObjectConvertor<DBProto
 		}
 
 	}
-
-
-	@Override
-	public Representation process(FileRepresentation doc) throws AmbitException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
+	
 	@Override
 	protected FileRepresentation createOutput(IQueryRetrieval<DBProtocol> query)
 			throws AmbitException {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	@Override
+	public Representation process(FileRepresentation doc) throws AmbitException {
+		return doc;
+	}
+
 }

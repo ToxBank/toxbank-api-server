@@ -1,5 +1,6 @@
 package org.toxbank.rest.protocol.resource.db;
 
+import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.processors.IProcessor;
 import net.idea.restnet.db.QueryResource;
@@ -16,17 +17,15 @@ import org.toxbank.rest.FileResource;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 
-public class ProtocolDocumentResource extends QueryResource<ReadProtocol,DBProtocol> {
+public class ProtocolDocumentResource extends QueryResource<IQueryRetrieval<DBProtocol>,DBProtocol> {
 
+	
 	@Override
-	public IProcessor<ReadProtocol, Representation> createConvertor(
+	public IProcessor<IQueryRetrieval<DBProtocol>, Representation> createConvertor(
 			Variant variant) throws AmbitException, ResourceException {
-		//return new DownloadDocumentConvertor(null
-			//	,MediaType.APPLICATION_PDF
-			//	);
-		return null;
+		return new DownloadDocumentConvertor(new FileReporter());
 	}
-
+	
 	@Override
 	protected ReadProtocol createQuery(Context context, Request request,
 			Response response) throws ResourceException {
@@ -37,7 +36,7 @@ public class ProtocolDocumentResource extends QueryResource<ReadProtocol,DBProto
 				int id[] = ReadProtocol.parseIdentifier(Reference.decode(key.toString()));
 				return new ReadProtocol(id[0],id[1]);
 			}
-		}catch (ResourceException x) {
+		} catch (ResourceException x) {
 			throw x;
 		} catch (Exception x) {
 			throw new ResourceException(
@@ -47,5 +46,4 @@ public class ProtocolDocumentResource extends QueryResource<ReadProtocol,DBProto
 					);
 		}
 	}
-
 }

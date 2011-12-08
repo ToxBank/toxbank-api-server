@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.List;
 
 import junit.framework.Assert;
+import net.idea.restnet.i.tools.DownloadTool;
 import net.toxbank.client.io.rdf.ProtocolIO;
 import net.toxbank.client.resource.Protocol;
 
@@ -51,7 +52,6 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 	
 	@Test
 	public void testURI() throws Exception {
-	//	setUpDatabase(dbFile);
 		testGet(getTestURI(),MediaType.TEXT_URI_LIST);
 	}
 	@Override
@@ -400,8 +400,30 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 			System.out.println(task.getError());
 		Assert.assertTrue(task.getResult().toString().startsWith(
 							String.format("http://localhost:%d/protocol/%s",port,Protocol.id_prefix)));
-
-
+		
+		testGet(String.format("%s%s",
+				task.getResult(),Resources.document),
+				MediaType.APPLICATION_PDF);		
 
 	}	
+	
+	@Test
+	public void testDownloadFile() throws Exception {
+		testGet(String.format("http://localhost:%d%s/%s-1-1%s", 
+					port,
+					Resources.protocol,
+					Protocol.id_prefix,
+					Resources.document),
+					MediaType.APPLICATION_PDF);
+	}	
+	@Override
+	public boolean verifyResponsePDF(String uri, MediaType media, InputStream in)
+			throws Exception {
+		
+		File file = File.createTempFile("test", ".pdf");
+		file.deleteOnExit();
+		DownloadTool.download(in, file);
+		//System.out.println(file.getAbsolutePath());
+		return file.exists();
+	}
 }
