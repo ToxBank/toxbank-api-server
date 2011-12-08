@@ -81,9 +81,14 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 		else throw new ResourceException(Status.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE);
 	}
 
-	protected Q getProtocolQuery(Object key) throws ResourceException {
+	protected Q getProtocolQuery(Object key,Object search) throws ResourceException {
 		if (key==null) {
 			ReadProtocol query = new ReadProtocol();
+			if (search != null) {
+				DBProtocol p = new DBProtocol();
+				p.setTitle(search.toString());
+				query.setValue(p);
+			}
 //			query.setFieldname(search.toString());
 			return (Q)query;
 		}			
@@ -105,6 +110,7 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 		} catch (Exception x) {
 			search = null;
 		}		
+		
 		try {
 			String n = form.getFirstValue("new");
 			editable = n==null?false:Boolean.parseBoolean(n);
@@ -113,7 +119,7 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 		}
 		Object key = request.getAttributes().get(FileResource.resourceKey);		
 		try {
-			return getProtocolQuery(key);
+			return getProtocolQuery(key,search);
 		}catch (ResourceException x) {
 			throw x;
 		} catch (Exception x) {

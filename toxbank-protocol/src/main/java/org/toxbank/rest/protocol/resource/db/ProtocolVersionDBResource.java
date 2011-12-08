@@ -12,7 +12,7 @@ import org.toxbank.rest.protocol.db.ReadProtocolVersions;
 
 public class ProtocolVersionDBResource<Q extends ReadProtocol> extends ProtocolDBResource<Q> {
 
-	protected Q getProtocolQuery(Object key) throws ResourceException {
+	protected Q getProtocolQuery(Object key,Object search) throws ResourceException {
 		if (key==null) {
 			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
 		}			

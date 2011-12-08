@@ -163,6 +163,10 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			public Object getValue(DBProtocol protocol) {
 				return protocol==null?null:protocol.getTitle();
 			}
+			
+			public String getCondition() {
+				return String.format(" %s regexp ? ",name());
+			}
 		},
 		anabstract {
 			@Override
@@ -571,25 +575,30 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 		List<QueryParam> params = null;
 		if (getValue()!=null) {
 			params = new ArrayList<QueryParam>();
-			if (getValue().getID()>0)
+			if (getValue().getID()>0) {
 				params.add(fields.idprotocol.getParam(getValue()));
 				if (getValue().getVersion()>0)
 					params.add(fields.version.getParam(getValue()));
 				else 
 					throw new AmbitException("Protocol version not set!");
-					
+			} else if (getValue().getTitle()!=null) {
+				params.add(fields.title.getParam(getValue()));
+			}
 		}
 		return params;
 	}
 
 	public String getSQL() throws AmbitException {
 		if (getValue()!=null) {
-			if (getValue().getID()>0) 
+			if (getValue().getID()>0) {
 				if (getValue().getVersion()>0)
 					return String.format(sql,"where",
 							String.format("%s and %s",fields.idprotocol.getCondition(),fields.version.getCondition()));
 				else
 					throw new AmbitException("Protocol version not set!");
+			} else 
+				if (getValue().getTitle()!=null)
+					return String.format(sql,"where",fields.title.getCondition());
 		}
 		return String.format(sql,"","");
 	}
