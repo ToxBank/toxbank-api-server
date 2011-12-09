@@ -41,12 +41,12 @@ public class ProtocolFactory {
 				switch (field) {
 				case idprotocol: continue;
 				case identifier: {
-					if (fi.getString()!=null)
+					if ((fi.getString()!=null) && !"".equals(fi.getString()))
 						protocol.setIdentifier(fi.getString());
 					break;
 				}
 				case anabstract: {
-					if (fi.getString()!=null)
+					if ((fi.getString()!=null) && !"".equals(fi.getString()))
 					protocol.setAbstract(fi.getString());
 					break;
 				}
@@ -73,7 +73,7 @@ public class ProtocolFactory {
 			        break;
 				}
 				case project_uri: {
-					if (fi.getString()!=null) {
+					if ((fi.getString()!=null) && !"".equals(fi.getString())) {
 						Project p = protocol.getProject();
 						if (p==null) { p = new DBProject(); protocol.setProject(p);}
 						if (fi.getString().startsWith("http"))
@@ -83,7 +83,7 @@ public class ProtocolFactory {
 					break;					
 				}
 				case user_uri: {
-					if (fi.getString()!=null) {
+					if ((fi.getString()!=null) && !"".equals(fi.getString())) {
 						User p = protocol.getOwner();
 						if (p==null) { p = new DBUser(); protocol.setOwner(p);}
 						if (fi.getString().startsWith("http"))
@@ -93,7 +93,7 @@ public class ProtocolFactory {
 					break;					
 				}				
 				case organisation_uri: {
-					if (fi.getString()!=null) {
+					if ((fi.getString()!=null) && !"".equals(fi.getString())) {
 						Organisation p = protocol.getOrganisation();
 						if (p==null) { p = new DBOrganisation(); protocol.setOrganisation(p);}
 						if (fi.getString().startsWith("http"))
@@ -108,12 +108,12 @@ public class ProtocolFactory {
 					break;	
 				}
 				case title: {
-					if (fi.getString()!=null)
+					if ((fi.getString()!=null) && !"".equals(fi.getString()))
 						protocol.setTitle(fi.getString());
 					break;
 				}
 				case iduser: {
-					if (fi.getString()!=null) {
+					if ((fi.getString()!=null) && !"".equals(fi.getString())) {
 						DBUser user = new DBUser();
 						if (fi.getString().startsWith("http"))
 							user.setResourceURL(new URL(fi.getString()));
@@ -130,7 +130,8 @@ public class ProtocolFactory {
 				}
 				case keywords: {
 					try {
-						protocol.addKeyword(fi.getString().trim());
+						if ((fi.getString()!=null) && !"".equals(fi.getString()))
+							protocol.addKeyword(fi.getString().trim());
 						} catch (Exception x) { }
 						break;	
 				}
