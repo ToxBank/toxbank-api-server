@@ -240,7 +240,12 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 
 					break;
 				}	
-	
+				case author_uri: {
+					if (!editable) {
+						output.write(String.format("<td><a href='%s%s'>Authors</a></td>",uri,Resources.authors));
+						break;
+					}
+				}
 				default :  {
 					String help = field.getHelp(uriReporter.getRequest().getRootRef().toString());
 					output.write(String.format("<th>%s</th><td align='left'>%s</td><td align='left'>%s</td>\n",
@@ -277,6 +282,10 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 				}
 				case filename: {
 					output.write(String.format("<td><a href='%s%s'>Download</a></td>",uri,Resources.document));
+					break;
+				}		
+				case author_uri: {
+					output.write(String.format("<td><a href='%s%s'>Authors</a></td>",uri,Resources.authors));
 					break;
 				}				
 				case user_uri: {

@@ -47,7 +47,7 @@ public class ProtocolQueryURIReporter <Q extends IQueryRetrieval<DBProtocol>> ex
 				ref,
 				Resources.protocol,
 				Protocol.id_prefix,item.getID(),item.getVersion(),
-				suffix);
+				suffix==null?"":suffix);
 	}
 
 }
