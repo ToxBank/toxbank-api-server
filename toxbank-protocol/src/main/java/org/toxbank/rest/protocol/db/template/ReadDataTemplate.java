@@ -21,7 +21,7 @@ public class ReadDataTemplate extends AbstractQuery<String, DBProtocol, EQCondit
 	private static final long serialVersionUID = 6228939989116141217L;
 	
 	protected static String sql = 
-		"select idprotocol,version,uncompress(template) from protocol where idprotocol=?";
+		"select idprotocol,version,uncompress(template) from protocol where idprotocol=? and version=?";
 
 	public ReadDataTemplate(DBProtocol protocol) {
 		super();
@@ -45,6 +45,7 @@ public class ReadDataTemplate extends AbstractQuery<String, DBProtocol, EQCondit
 		if (getValue()!=null) {
 			params = new ArrayList<QueryParam>();
 			params.add(fields.idprotocol.getParam(getValue()));
+			params.add(fields.version.getParam(getValue()));
 		} else throw new AmbitException("No protocol id");
 		return params;
 	}
@@ -60,6 +61,7 @@ public class ReadDataTemplate extends AbstractQuery<String, DBProtocol, EQCondit
 			fields.idprotocol.setParam(protocol, rs);
 			fields.version.setParam(protocol, rs);
 			protocol.setTemplate(new DataTemplate(rs.getString(3)));
+			if (protocol!=null) protocol.setIdentifier(String.format("SEURAT-Protocol-%d-%d", protocol.getID(),protocol.getVersion()));
 			return protocol;
 		} catch (Exception x) {
 			return null;

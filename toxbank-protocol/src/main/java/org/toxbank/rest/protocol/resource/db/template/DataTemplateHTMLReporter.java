@@ -148,7 +148,7 @@ public class DataTemplateHTMLReporter extends QueryHTMLReporter<DBProtocol, IQue
 	public Object processItem(DBProtocol protocol) throws AmbitException  {
 		try {
 			String uri = uriReporter.getURI(protocol);
-			Object value = fields.identifier.getValue(protocol);
+			Object value =  fields.identifier.getValue(protocol);
 			output.write(String.format("<tr bgcolor='FFFFFF'><th width='25%%'>Protocol %s</th><td><a href='%s'>%s</a></td></tr>",
 					fields.identifier.toString(),uri.replace(Resources.datatemplate, ""),value));
 			output.write(String.format("<tr bgcolor='FFFFFF'><th width='25%%'>%s</th><td><textarea>%s</textarea></td></tr>",
