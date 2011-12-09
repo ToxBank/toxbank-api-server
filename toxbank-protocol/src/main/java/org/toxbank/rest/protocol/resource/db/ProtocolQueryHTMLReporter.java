@@ -56,11 +56,8 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 		
 		try {
 			//
-			if (collapsed) { 
-
-				
-				if (editable) {
-					w.write("<h3>Create new Protocol</h3>");
+			if (editable) {
+					w.write(String.format("<h3>Create new Protocol %s</h3>",uri.toString().contains("versions")?"version":""));
 					StringBuilder curlHint = new StringBuilder();
 					curlHint.append("curl -X POST -H 'subjectid:TOKEN'");
 					curlHint.append(String.format(" -H 'Content-Type:%s'",MediaType.APPLICATION_WWW_FORM.getName()));
@@ -79,25 +76,29 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 							curlHint.append(String.format(" -d '%s=%s'",field.name(),"Owner User URI"));
 							break;
 						}							
+						case filename: {
+							curlHint.append(String.format(" -F '%s=@%s'",field.name(),"FILE_NAME"));
+							break;
+						}
 						default: {
 							curlHint.append(String.format(" -d '%s=%s'",field.name(),"VALUE"));
 						}
 						}
 					}
-					
+					curlHint.append(" ");
+					curlHint.append(uri);
 					output.write("<form method='POST' action='' ENCTYPE=\"multipart/form-data\">");
 					w.write("<table width='99%'>\n");
 					output.write(String.format("<tr><td>API call</td><td title='How to create a new protocol via ToxBank API (cURL example)'><h5>%s</h5></td></tr>",curlHint));
 					printForm(output,uri.toString(),null,true);
 					
 					
-					output.write("<tr><td></td><td><input type='submit' enabled='false' value='Create new protocol'></td></tr>");
+					output.write(
+							"<tr><td></td><td><input type='submit' enabled='false' value='Submit'></td></tr>"
+							);
 					w.write("</table>\n");
 					output.write("</form>");
 					output.write("<hr>");	
-				}
-			} else	{
-				
 				
 			}
 	    } catch (Exception x) {}
@@ -116,6 +117,7 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 				output.write(String.format("<a href='%s%s'>Back to protocols</a>",
 					uriReporter.getRequest().getRootRef(),Resources.protocol));
 				output.write(String.format("&nbsp;<a href='%s%s'>Versions</a>",uri,Resources.versions));
+				output.write(String.format("&nbsp;<a href='%s%s?new=true'>Create new version</a>",uri,Resources.versions));
 				output.write(String.format("&nbsp;<a href='%s%s'>Authors</a>",uri,Resources.authors));
 			}
 			

@@ -46,6 +46,7 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 
 	
 	protected boolean singleItem = false;
+	protected boolean version = false;
 	protected boolean editable = true;
 
 	@Override
@@ -76,12 +77,17 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 				};
 		} else if (variant.getMediaType().equals(MediaType.TEXT_HTML))
 				return new OutputWriterConvertor(
-						new ProtocolQueryHTMLReporter(getRequest(),!singleItem,editable),
+						new ProtocolQueryHTMLReporter(getRequest(),!singleItem,isEditable()),
 						MediaType.TEXT_HTML);
 		else throw new ResourceException(Status.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE);
 	}
+	protected boolean isEditable() {
+		return editable
+			   ?version?true:!singleItem	
+			   :false;
+	}
 
-	protected Q getProtocolQuery(Object key,Object search) throws ResourceException {
+	protected Q getProtocolQuery(Object key,Object search, boolean showCreateLink) throws ResourceException {
 		if (key==null) {
 			ReadProtocol query = new ReadProtocol();
 			if (search != null) {
@@ -90,9 +96,11 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 				query.setValue(p);
 			}
 //			query.setFieldname(search.toString());
+			editable = showCreateLink;
 			return (Q)query;
 		}			
 		else {
+			editable = showCreateLink;
 			singleItem = true;
 			int id[] = ReadProtocol.parseIdentifier(Reference.decode(key.toString()));
 			ReadProtocol query =  new ReadProtocol(id[0],id[1]);
@@ -110,16 +118,16 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 		} catch (Exception x) {
 			search = null;
 		}		
-		
+		boolean showCreateLink = false;
 		try {
 			String n = form.getFirstValue("new");
-			editable = n==null?false:Boolean.parseBoolean(n);
+			showCreateLink = n==null?false:Boolean.parseBoolean(n);
 		} catch (Exception x) {
-			editable = false;
+			showCreateLink = false;
 		}
 		Object key = request.getAttributes().get(FileResource.resourceKey);		
 		try {
-			return getProtocolQuery(key,search);
+			return getProtocolQuery(key,search,showCreateLink);
 		}catch (ResourceException x) {
 			throw x;
 		} catch (Exception x) {

@@ -509,7 +509,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 		 */
 		public String getHTMLField(DBProtocol protocol) {
 			Object value = getValue(protocol);
-			return String.format("<input name='%s' type='text' size='40' value='%s'>\n",
+			return String.format("<input name='%s' type='text' size='60' title='%s' value='%s'>\n",
 					name(),getDescription(),value==null?"":value.toString());
 		}
 		/**

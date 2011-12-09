@@ -12,11 +12,13 @@ import org.toxbank.rest.protocol.db.ReadProtocolVersions;
 
 public class ProtocolVersionDBResource<Q extends ReadProtocol> extends ProtocolDBResource<Q> {
 
-	protected Q getProtocolQuery(Object key,Object search) throws ResourceException {
+	protected Q getProtocolQuery(Object key,Object search,boolean showCreateLink) throws ResourceException {
+		version = true;
 		if (key==null) {
 			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
 		}			
 		else {
+			editable = showCreateLink;
 			singleItem = false;
 			int id[] = ReadProtocol.parseIdentifier(Reference.decode(key.toString()));
 			return (Q)new ReadProtocolVersions(id[0]);
