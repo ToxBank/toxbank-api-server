@@ -242,7 +242,8 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 				}	
 				case author_uri: {
 					if (!editable) {
-						output.write(String.format("<td><a href='%s%s'>Authors</a></td>",uri,Resources.authors));
+						output.write(String.format("<th>%s</th><td><a href='%s%s'>Authors</a></td>",
+								field.toString(),uri,Resources.authors));
 						break;
 					}
 				}
