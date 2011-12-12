@@ -250,11 +250,11 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			}		
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
-				protocol.setSummarySearchable(rs.getBoolean(name()));
+				protocol.setSearchable(rs.getBoolean(name()));
 			}
 			@Override
 			public Object getValue(DBProtocol protocol) {
-				return protocol==null?null:protocol.isSummarySearchable();
+				return protocol==null?null:protocol.isSearchable();
 			}
 			@Override
 			public Class getClassType(DBProtocol protocol) {

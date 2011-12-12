@@ -27,15 +27,6 @@ public class DBProtocol extends Protocol {
 		ID = iD;
 	}
 
-	private boolean summarySearchable;
-
-	public boolean isSummarySearchable() {
-		return summarySearchable;
-	}
-
-	public void setSummarySearchable(boolean summarySearchable) {
-		this.summarySearchable = summarySearchable;
-	}
 	@Override
 	public String toString() {
 		return String.format("<a href='%s'>%s</a>",getResourceURL(),getTitle()==null?getResourceURL():getTitle());

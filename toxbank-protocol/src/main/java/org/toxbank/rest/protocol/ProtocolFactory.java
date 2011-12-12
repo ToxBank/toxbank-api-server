@@ -123,8 +123,8 @@ public class ProtocolFactory {
 				}
 				case summarySearchable: {
 					try {
-						protocol.setSummarySearchable(Boolean.parseBoolean(fi.getString()));
-					} catch (Exception x) { protocol.setSummarySearchable(false);}
+						protocol.setSearchable(Boolean.parseBoolean(fi.getString()));
+					} catch (Exception x) { protocol.setSearchable(false);}
 					break;					
 				}
 				case keywords: {

@@ -60,7 +60,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 		ref.setOwner(user);
 		ref.setProject(new DBProject(1));	
 		ref.setOrganisation(new DBOrganisation(1));
-		ref.setSummarySearchable(true);
+		ref.setSearchable(true);
 		ref.setDocument(new Document(new URL(file)));
 		return new CreateProtocol(ref);
 	}
