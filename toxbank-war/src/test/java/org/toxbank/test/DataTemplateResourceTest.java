@@ -51,7 +51,7 @@ public class DataTemplateResourceTest extends ResourceTest {
 		return count==1;
 	}	
 	
-	@Test
+	//have to ensure test files are stored in a reachable location
 	public void testTXT() throws Exception {
 		testGet(getTestURI(),MediaType.TEXT_PLAIN);
 	}

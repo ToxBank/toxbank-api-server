@@ -12,6 +12,7 @@ import org.restlet.representation.FileRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
+import org.toxbank.resource.Resources;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.resource.db.DownloadDocumentConvertor;
 import org.toxbank.rest.protocol.resource.db.FileReporter;
@@ -19,10 +20,13 @@ import org.toxbank.rest.protocol.resource.db.ProtocolDocumentResource;
 
 public class DataTemplateResource extends ProtocolDocumentResource {
 
+	public DataTemplateResource() {
+		super(Resources.datatemplate);
+	}
+
 	@Override
-	public IProcessor<IQueryRetrieval<DBProtocol>, Representation> createConvertor(
-			Variant variant) throws AmbitException, ResourceException {
-		return new DownloadDocumentConvertor(new FileReporter() {
+	protected FileReporter createFileReporter() throws ResourceException {
+		return new FileReporter() {
 			@Override
 			public Object processItem(DBProtocol item) throws AmbitException {
 				try {
@@ -33,9 +37,8 @@ public class DataTemplateResource extends ProtocolDocumentResource {
 					throw new AmbitException(x);
 				}
 			}
-		});
+		};
 	}
-
 }
 
 

@@ -3,28 +3,48 @@ package org.toxbank.rest.protocol.resource.db;
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.processors.IProcessor;
+import net.idea.restnet.c.StringConvertor;
 import net.idea.restnet.db.QueryResource;
 
 import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
+import org.restlet.data.MediaType;
 import org.restlet.data.Reference;
 import org.restlet.data.Status;
 import org.restlet.representation.Representation;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
+import org.toxbank.resource.Resources;
 import org.toxbank.rest.FileResource;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 import org.toxbank.rest.protocol.db.template.ReadFilePointers;
 
 public class ProtocolDocumentResource extends QueryResource<IQueryRetrieval<DBProtocol>,DBProtocol> {
-
+	protected String suffix = Resources.document;
+	
+	public ProtocolDocumentResource() {
+		this(Resources.document);
+	}
+	public ProtocolDocumentResource(String suffix) {
+		super();
+		this.suffix = suffix;
+	}
 	
 	@Override
 	public IProcessor<IQueryRetrieval<DBProtocol>, Representation> createConvertor(
 			Variant variant) throws AmbitException, ResourceException {
-		return new DownloadDocumentConvertor(new FileReporter());
+		if (variant.getMediaType().equals(MediaType.TEXT_URI_LIST)) 
+			return new StringConvertor(	
+					new ProtocolQueryURIReporter(getRequest(),suffix)
+					,MediaType.TEXT_URI_LIST);
+			else	
+				return new DownloadDocumentConvertor(createFileReporter());
+	}
+	
+	protected FileReporter createFileReporter() throws ResourceException {
+		return new FileReporter();
 	}
 	
 	@Override
