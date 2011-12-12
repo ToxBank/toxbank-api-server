@@ -17,6 +17,7 @@ import net.idea.restnet.c.task.TaskStorage;
 import net.idea.restnet.i.task.ICallableTask;
 import net.idea.restnet.i.task.Task;
 import net.idea.restnet.i.task.TaskResult;
+import net.toxbank.client.Resources;
 
 import org.restlet.Component;
 import org.restlet.Context;
@@ -43,7 +44,6 @@ import org.toxbank.demo.task.TBAdminResource;
 import org.toxbank.demo.task.TBAdminRouter;
 import org.toxbank.demo.task.TBTaskResource;
 import org.toxbank.demo.task.TBTaskRouter;
-import org.toxbank.resource.Resources;
 import org.toxbank.rest.groups.OrganisationRouter;
 import org.toxbank.rest.groups.ProjectRouter;
 import org.toxbank.rest.protocol.ProtocolRouter;

@@ -3,13 +3,11 @@ package org.toxbank.rest.groups;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.opentox.rdf.OpenTox;
-import org.restlet.routing.Template;
-import org.toxbank.resource.Resources;
-import org.toxbank.rest.FileResource;
-import org.toxbank.rest.protocol.resource.db.ProtocolDBResource;
-
+import net.toxbank.client.Resources;
 import net.toxbank.client.resource.Project;
+
+import org.restlet.routing.Template;
+import org.toxbank.rest.FileResource;
 
 public class DBProject extends Project implements IDBGroup {
 	/**

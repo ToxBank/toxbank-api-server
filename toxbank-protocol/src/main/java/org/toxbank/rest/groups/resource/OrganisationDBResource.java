@@ -4,12 +4,12 @@ import java.sql.Connection;
 
 import net.idea.restnet.c.task.CallableProtectedTask;
 import net.idea.restnet.db.DBConnection;
+import net.toxbank.client.Resources;
 
 import org.restlet.data.Form;
 import org.restlet.data.Method;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
-import org.toxbank.resource.Resources;
 import org.toxbank.rest.groups.CallableGroupCreator;
 import org.toxbank.rest.groups.DBOrganisation;
 import org.toxbank.rest.groups.GroupType;

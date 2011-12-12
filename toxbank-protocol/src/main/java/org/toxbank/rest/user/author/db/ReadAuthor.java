@@ -11,7 +11,6 @@ import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.db.ReadUser;
-import org.toxbank.rest.user.db.ReadUser.fields;
 
 public class ReadAuthor extends ReadUser<DBProtocol> {
 

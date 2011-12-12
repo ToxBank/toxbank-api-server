@@ -4,7 +4,6 @@ import net.idea.restnet.c.routers.MyRouter;
 
 import org.restlet.Context;
 import org.toxbank.rest.groups.resource.OrganisationDBResource;
-import org.toxbank.rest.groups.resource.ProjectDBResource;
 
 public class OrganisationRouter extends MyRouter {
 	public OrganisationRouter(Context context) {

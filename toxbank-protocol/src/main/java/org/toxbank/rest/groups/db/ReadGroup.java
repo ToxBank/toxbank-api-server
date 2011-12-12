@@ -10,7 +10,6 @@ import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.conditions.EQCondition;
 import net.idea.modbcum.q.query.AbstractQuery;
 
-import org.toxbank.rest.groups.DBGroup;
 import org.toxbank.rest.groups.GroupType;
 import org.toxbank.rest.groups.IDBGroup;
 

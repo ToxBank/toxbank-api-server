@@ -6,8 +6,6 @@ import java.util.List;
 import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.query.QueryParam;
 
-import org.toxbank.rest.protocol.db.ReadProtocol.fields;
-
 public class ReadProtocolVersions extends ReadProtocol {
 
 	/**

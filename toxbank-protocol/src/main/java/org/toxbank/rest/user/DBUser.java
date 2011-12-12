@@ -4,10 +4,10 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.toxbank.client.Resources;
 import net.toxbank.client.resource.User;
 
 import org.restlet.routing.Template;
-import org.toxbank.resource.Resources;
 import org.toxbank.rest.FileResource;
 
 public class DBUser extends User {

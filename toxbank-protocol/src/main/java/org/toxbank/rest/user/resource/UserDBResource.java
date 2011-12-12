@@ -28,10 +28,8 @@ import org.restlet.data.Status;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
 import org.toxbank.rest.FileResource;
-import org.toxbank.rest.protocol.db.ReadProtocol;
 import org.toxbank.rest.user.CallableUserCreator;
 import org.toxbank.rest.user.DBUser;
-import org.toxbank.rest.user.author.db.ReadAuthor;
 import org.toxbank.rest.user.db.ReadUser;
 
 /**

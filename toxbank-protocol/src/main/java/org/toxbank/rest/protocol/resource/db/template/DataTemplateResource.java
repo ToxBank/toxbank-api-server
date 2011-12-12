@@ -15,6 +15,7 @@ import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.db.convertors.QueryHTMLReporter;
 import net.idea.restnet.i.task.ITaskStorage;
 import net.idea.restnet.rdf.FactoryTaskConvertorRDF;
+import net.toxbank.client.Resources;
 
 import org.apache.commons.fileupload.FileItem;
 import org.restlet.Context;
@@ -27,7 +28,6 @@ import org.restlet.data.Reference;
 import org.restlet.data.Status;
 import org.restlet.representation.FileRepresentation;
 import org.restlet.resource.ResourceException;
-import org.toxbank.resource.Resources;
 import org.toxbank.rest.FileResource;
 import org.toxbank.rest.protocol.CallableProtocolUpload;
 import org.toxbank.rest.protocol.DBProtocol;

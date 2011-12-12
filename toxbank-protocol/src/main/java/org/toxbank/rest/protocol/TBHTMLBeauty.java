@@ -5,10 +5,10 @@ import java.io.Writer;
 
 import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.c.html.HTMLBeauty;
+import net.toxbank.client.Resources;
 
 import org.restlet.Request;
 import org.restlet.data.Reference;
-import org.toxbank.resource.Resources;
 
 public class TBHTMLBeauty extends HTMLBeauty {
 	public TBHTMLBeauty() {

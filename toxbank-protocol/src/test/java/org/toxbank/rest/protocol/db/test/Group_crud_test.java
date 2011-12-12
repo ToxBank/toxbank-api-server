@@ -5,9 +5,7 @@ import net.idea.modbcum.i.query.IQueryUpdate;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
-import org.toxbank.rest.groups.DBGroup;
 import org.toxbank.rest.groups.DBProject;
-import org.toxbank.rest.groups.GroupType;
 import org.toxbank.rest.groups.IDBGroup;
 import org.toxbank.rest.groups.db.CreateGroup;
 import org.toxbank.rest.groups.db.DeleteGroup;

@@ -4,13 +4,13 @@ import java.io.File;
 import java.util.Iterator;
 
 import net.idea.modbcum.i.reporter.Reporter;
+import net.toxbank.client.Resources;
 import net.toxbank.client.resource.Protocol;
 
 import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.resource.ResourceException;
-import org.toxbank.resource.Resources;
 import org.toxbank.rest.FileResource;
 import org.toxbank.rest.protocol.ProtocolHTMLReporter;
 import org.toxbank.rest.protocol.ProtocolURIReporter;

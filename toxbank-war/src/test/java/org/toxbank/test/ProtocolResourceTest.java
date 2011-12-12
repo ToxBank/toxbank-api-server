@@ -11,6 +11,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 import net.idea.restnet.i.tools.DownloadTool;
+import net.toxbank.client.Resources;
 import net.toxbank.client.io.rdf.ProtocolIO;
 import net.toxbank.client.resource.Protocol;
 
@@ -22,7 +23,6 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Reference;
 import org.restlet.representation.Representation;
-import org.toxbank.resource.Resources;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 
 import com.hp.hpl.jena.ontology.OntModel;

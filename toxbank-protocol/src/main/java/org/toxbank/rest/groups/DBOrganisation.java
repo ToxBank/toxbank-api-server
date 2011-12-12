@@ -3,11 +3,11 @@ package org.toxbank.rest.groups;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.restlet.routing.Template;
-import org.toxbank.resource.Resources;
-import org.toxbank.rest.FileResource;
-
+import net.toxbank.client.Resources;
 import net.toxbank.client.resource.Organisation;
+
+import org.restlet.routing.Template;
+import org.toxbank.rest.FileResource;
 
 public class DBOrganisation extends Organisation implements IDBGroup {
 	/**

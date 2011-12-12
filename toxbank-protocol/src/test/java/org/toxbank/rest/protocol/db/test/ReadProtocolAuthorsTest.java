@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import junit.framework.Assert;
 
 import org.toxbank.rest.protocol.DBProtocol;
-import org.toxbank.rest.protocol.db.ReadProtocol;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.author.db.ReadAuthor;
 

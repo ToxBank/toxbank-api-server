@@ -12,13 +12,6 @@
   <dependencies>
   	<dependency>
   		<groupId>org.toxbank</groupId>
-  		<artifactId>toxbank-interface</artifactId>
-  		<version>${project.version}</version>
-  		<type>jar</type>
-  		<scope>compile</scope>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.toxbank</groupId>
   		<artifactId>toxbank-resource</artifactId>
   		<version>${project.version}</version>
   		<type>jar</type>

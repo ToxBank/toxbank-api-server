@@ -3,7 +3,6 @@ package org.toxbank.rest.db;
 import java.io.Writer;
 
 import net.idea.modbcum.i.exceptions.AmbitException;
-import net.idea.modbcum.i.exceptions.DbAmbitException;
 import net.idea.modbcum.r.QueryReporter;
 
 public class DBTextReporter extends QueryReporter<DBVersion,DBVersionQuery,Writer> {

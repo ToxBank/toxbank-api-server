@@ -9,12 +9,12 @@ import net.idea.modbcum.p.ProcessorException;
 import net.idea.modbcum.p.UpdateExecutor;
 import net.idea.restnet.c.task.CallableProtectedTask;
 import net.idea.restnet.i.task.TaskResult;
+import net.toxbank.client.Resources;
 import net.toxbank.client.resource.User;
 
 import org.apache.commons.fileupload.FileItem;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
-import org.toxbank.resource.Resources;
 import org.toxbank.rest.groups.DBOrganisation;
 import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.groups.db.CreateGroup;

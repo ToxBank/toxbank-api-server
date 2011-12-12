@@ -8,11 +8,11 @@ import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.c.html.HTMLBeauty;
 import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.db.convertors.QueryHTMLReporter;
+import net.toxbank.client.Resources;
 
 import org.restlet.Request;
 import org.restlet.data.MediaType;
 import org.restlet.data.Reference;
-import org.toxbank.resource.Resources;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.TBHTMLBeauty;
 import org.toxbank.rest.protocol.db.ReadProtocol;

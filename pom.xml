@@ -213,7 +213,6 @@
   	<module>toxbank-war</module>
   	<module>toxbank-resource</module>
   	<module>toxbank-protocol</module>
-  	<module>toxbank-interface</module>
 <!--
   	<module>toxbank-study</module>
 -->    

@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 import junit.framework.Assert;
+import net.toxbank.client.Resources;
 import net.toxbank.client.io.rdf.ProjectIO;
 import net.toxbank.client.resource.Project;
 
@@ -18,7 +19,6 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Reference;
 import org.restlet.representation.Representation;
-import org.toxbank.resource.Resources;
 import org.toxbank.rest.groups.DBGroup;
 import org.toxbank.rest.groups.db.ReadProject;
 

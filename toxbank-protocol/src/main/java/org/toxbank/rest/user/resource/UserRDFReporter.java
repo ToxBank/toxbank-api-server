@@ -8,7 +8,6 @@ import net.idea.modbcum.i.exceptions.DbAmbitException;
 import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.db.convertors.QueryRDFReporter;
-import net.toxbank.client.io.rdf.ProtocolIO;
 import net.toxbank.client.io.rdf.TOXBANK;
 import net.toxbank.client.io.rdf.UserIO;
 

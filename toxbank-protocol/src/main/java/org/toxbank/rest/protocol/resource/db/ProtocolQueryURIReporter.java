@@ -2,10 +2,10 @@ package org.toxbank.rest.protocol.resource.db;
 
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.restnet.db.QueryURIReporter;
+import net.toxbank.client.Resources;
 import net.toxbank.client.resource.Protocol;
 
 import org.restlet.Request;
-import org.toxbank.resource.Resources;
 import org.toxbank.rest.protocol.DBProtocol;
 
 /**

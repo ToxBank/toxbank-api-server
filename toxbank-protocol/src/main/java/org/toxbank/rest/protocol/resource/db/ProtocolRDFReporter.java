@@ -8,19 +8,18 @@ import net.idea.modbcum.i.exceptions.DbAmbitException;
 import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.db.convertors.QueryRDFReporter;
+import net.toxbank.client.Resources;
 import net.toxbank.client.io.rdf.ProtocolIO;
 import net.toxbank.client.io.rdf.TOXBANK;
 
 import org.restlet.Request;
 import org.restlet.data.MediaType;
-import org.toxbank.resource.Resources;
 import org.toxbank.rest.groups.DBOrganisation;
 import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.groups.IDBGroup;
 import org.toxbank.rest.groups.resource.GroupQueryURIReporter;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.user.DBUser;
-import org.toxbank.rest.user.resource.UserRDFReporter;
 import org.toxbank.rest.user.resource.UserURIReporter;
 
 import com.hp.hpl.jena.rdf.model.Model;

@@ -34,7 +34,6 @@ import net.idea.modbcum.i.query.IQueryUpdate;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
-import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.db.CreateUser;
 import org.toxbank.rest.user.db.DeleteUser;

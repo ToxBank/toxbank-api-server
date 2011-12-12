@@ -1,13 +1,12 @@
 package org.toxbank.test;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.util.List;
 
 import junit.framework.Assert;
+import net.toxbank.client.Resources;
 import net.toxbank.client.io.rdf.UserIO;
 import net.toxbank.client.resource.User;
 
@@ -20,7 +19,6 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Reference;
 import org.restlet.representation.Representation;
-import org.toxbank.resource.Resources;
 import org.toxbank.rest.user.db.ReadUser;
 
 import com.hp.hpl.jena.ontology.OntModel;

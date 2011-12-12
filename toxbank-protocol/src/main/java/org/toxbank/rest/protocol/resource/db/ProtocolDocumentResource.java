@@ -6,6 +6,7 @@ import net.idea.modbcum.i.processors.IProcessor;
 import net.idea.restnet.c.StringConvertor;
 import net.idea.restnet.db.QueryResource;
 import net.idea.restnet.db.convertors.QueryHTMLReporter;
+import net.toxbank.client.Resources;
 
 import org.restlet.Context;
 import org.restlet.Request;
@@ -16,7 +17,6 @@ import org.restlet.data.Status;
 import org.restlet.representation.Representation;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
-import org.toxbank.resource.Resources;
 import org.toxbank.rest.FileResource;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
