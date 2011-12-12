@@ -52,25 +52,7 @@ public class DataTemplateHTMLReporter extends QueryHTMLReporter<DBProtocol, IQue
 					w.write("<h3>Create new template</h3>");
 					StringBuilder curlHint = new StringBuilder();
 					curlHint.append("curl -X POST -H 'subjectid:TOKEN'");
-					for (ReadProtocol.fields field : ReadProtocol.fields.values()) {
-						switch (field) {
-						case idprotocol: continue;
-						default: {
-							curlHint.append(String.format(" -d '%s=%s'",field.name(),"VALUE"));
-						}
-						}
-						
-					}
-					/*
-					output.write("<form method='POST' action=''>");
-					w.write("<table width='99%'>\n");
-					output.write(String.format("<tr><td>API call</td><td title='How to create a new protocol via ToxBank API (cURL example)'><h5>%s</h5></td></tr>",curlHint));
-					printForm(output,uri.toString(),null,true);
-					output.write("<tr><td>Not implemented yet!</td><td><input type='submit' enabled='false' value='Create new protocol'></td></tr>");
-					w.write("</table>\n");
-					output.write("</form>");
-					output.write("<hr>");
-					*/	
+					curlHint.append(String.format(" -F '@%s=%s'",ReadProtocol.fields.template.name(),"FILE"));
 				}
 			} else	{
 				
@@ -96,14 +78,14 @@ public class DataTemplateHTMLReporter extends QueryHTMLReporter<DBProtocol, IQue
 
 			output.write(String.format("<table><tr><td>API call</td><td title='How to retrieve a protocol data template via ToxBank API (cURL example)'><h5>%s</h5></td></tr></table>",
 					curlHint));
-			output.write("<br>Download Protocol data templates in supported Media Types:&nbsp;");
+			output.write("<br>Download Protocol data template in supported Media Types:&nbsp;");
 			//nmimes
 			String paging = "page=0&pagesize=10";
 			MediaType[] mimes = {
 					MediaType.TEXT_URI_LIST,
 					MediaType.APPLICATION_RDF_XML,
 					MediaType.TEXT_RDF_N3,
-					MediaType.APPLICATION_JSON,
+					MediaType.APPLICATION_PDF,
 					MediaType.TEXT_CSV
 					};
 			
@@ -111,7 +93,7 @@ public class DataTemplateHTMLReporter extends QueryHTMLReporter<DBProtocol, IQue
 					"link.png",
 					"rdf.gif",
 					"rdf.gif",
-					"json.png",
+					"pdf.png",
 					"excel.png"
 			};	
 			
@@ -151,14 +133,22 @@ public class DataTemplateHTMLReporter extends QueryHTMLReporter<DBProtocol, IQue
 			Object value =  fields.identifier.getValue(protocol);
 			output.write(String.format("<tr bgcolor='FFFFFF'><th width='25%%'>Protocol %s</th><td><a href='%s'>%s</a></td></tr>",
 					fields.identifier.toString(),uri.replace(Resources.datatemplate, ""),value));
-			output.write(String.format("<tr bgcolor='FFFFFF'><th width='25%%'>%s</th>%s</td></tr>",
+			output.write(String.format("<tr bgcolor='FFFFFF'><th width='25%%'>%s</th><td>%s</td></tr>",
 					"Data template",
 					protocol.getDataTemplate()==null?"N/A":
-					String.format("<a href='%s'>Data template</a>",protocol.getDataTemplate().getResourceURL()))
+					String.format("<a href='%s?media=text/plain'>Download</a>",uri))
 					);
-
-		} catch (Exception x) {
 			
+			output.write("<form method='POST' action='' ENCTYPE=\"multipart/form-data\">");
+			output.write(String.format("<tr bgcolor='FFFFFF'><th title='%s'>%s</th><td align='left'><input type=\"file\" name=\"%s\" title='%s' size=\"60\"></td></tr>",
+					ReadProtocol.fields.template.name(),	
+					ReadProtocol.fields.template.toString(),
+					ReadProtocol.fields.template.name(),
+					"ISA-TAB template")); 				
+			output.write("<tr bgcolor='FFFFFF'><th></th><td><input type='submit' enabled='false' value='Submit'></td></tr>");
+			output.write("</form>");
+		} catch (Exception x) {
+			x.printStackTrace();
 		}
 		return null;
 	}

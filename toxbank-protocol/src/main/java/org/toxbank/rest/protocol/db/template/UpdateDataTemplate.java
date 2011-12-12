@@ -13,7 +13,7 @@ import org.toxbank.rest.protocol.db.ReadProtocol.fields;
 
 public class UpdateDataTemplate extends AbstractObjectUpdate<DBProtocol>{
 	public static final String[] create_sql = {
-		"update protocol set template = ? where idprotocol=?"
+		"update protocol set template = ? where idprotocol=? and version=?"
 	};
 
 	public UpdateDataTemplate(DBProtocol ref) {
@@ -26,6 +26,7 @@ public class UpdateDataTemplate extends AbstractObjectUpdate<DBProtocol>{
 		List<QueryParam> params1 = new ArrayList<QueryParam>();
 		params1.add(new QueryParam<String>(String.class,getObject().getDataTemplate().getResourceURL().toString()));
 		params1.add(fields.idprotocol.getParam(getObject()));
+		params1.add(fields.version.getParam(getObject()));
 		
 		return params1;
 		

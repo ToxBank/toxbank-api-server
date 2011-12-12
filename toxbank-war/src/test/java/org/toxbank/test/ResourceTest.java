@@ -402,13 +402,19 @@ public abstract class ResourceTest extends DbUnitTest {
 	 * @return
 	 * @throws Exception
 	 */
+
 	protected Representation getMultipartWebFormRepresentation(
 				String[] formFields, String[] formValues, 
 				File file, String mediaType) throws Exception {
+		return getMultipartWebFormRepresentation(formFields, formValues, "filename",file, mediaType);
+	}
+	protected Representation getMultipartWebFormRepresentation(
+				String[] formFields, String[] formValues, 
+				String fileFieldName, File file, String mediaType) throws Exception {
 		String docPath = file.getAbsolutePath();
 		StringBuffer str_b = new StringBuffer();
 		final String bndry ="XCVBGFDS";
-		String paramName = "filename";
+		String paramName = fileFieldName;
 		String fileName = file.getName();
 		final MediaType type = new MediaType(String.format("multipart/form-data; boundary=%s",bndry));
 	    file = new File(docPath);

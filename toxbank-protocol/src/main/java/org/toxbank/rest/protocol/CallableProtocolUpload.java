@@ -14,12 +14,14 @@ import net.toxbank.client.resource.User;
 import org.apache.commons.fileupload.FileItem;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
+import org.toxbank.resource.Resources;
 import org.toxbank.rest.groups.DBOrganisation;
 import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.groups.db.CreateGroup;
 import org.toxbank.rest.protocol.db.CreateProtocol;
 import org.toxbank.rest.protocol.db.CreateProtocolVersion;
 import org.toxbank.rest.protocol.db.UpdateKeywords;
+import org.toxbank.rest.protocol.db.template.UpdateDataTemplate;
 import org.toxbank.rest.protocol.resource.db.ProtocolQueryURIReporter;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.author.db.AddAuthors;
@@ -34,6 +36,15 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 	protected DBUser user;
 	protected File dir;
 	protected DBProtocol protocol;
+	protected boolean setDataTemplateOnly = false;
+	public boolean isSetDataTemplateOnly() {
+		return setDataTemplateOnly;
+	}
+
+	public void setSetDataTemplateOnly(boolean setDataTemplateOnly) {
+		this.setDataTemplateOnly = setDataTemplateOnly;
+	}
+
 	/**
 	 * 
 	 * @param protocol  NULL if a new protocol, otherwise the protocol which version to be created
@@ -70,6 +81,32 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);
 		}
 		//now write
+		
+		if (setDataTemplateOnly) //data template only
+			try {
+				if ((protocol.getDataTemplate()!=null) && protocol.getDataTemplate().getResourceURL().toString().startsWith("file:")) {
+					connection.setAutoCommit(false);
+					//protocol.setOwner(user);
+					exec = new UpdateExecutor<IQueryUpdate>();
+					exec.setConnection(connection);					
+					UpdateDataTemplate k = new UpdateDataTemplate(protocol);
+					exec.process(k);
+					connection.commit();
+					String uri = String.format("%s%s",reporter.getURI(protocol),Resources.datatemplate);
+					return new TaskResult(uri,false);
+				} else throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,"Data template");
+			} catch (ProcessorException x) {
+				try {connection.rollback();} catch (Exception xx) {}
+				throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);
+			} catch (Exception x) {
+				try {connection.rollback();} catch (Exception xx) {}
+				throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);
+			} finally {
+				try {exec.close();} catch (Exception x) {}
+				try {connection.setAutoCommit(true);} catch (Exception x) {}
+				try {connection.close();} catch (Exception x) {}
+			}
+		else //everything else 
 		try {
 			connection.setAutoCommit(false);
 			//protocol.setOwner(user);
@@ -136,6 +173,13 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 				AddAuthors k = new AddAuthors(protocol);
 				exec.process(k);
 			}
+			
+			if ((protocol.getDataTemplate()!=null) && 
+					(protocol.getDataTemplate().getResourceURL()!=null) &&
+					 protocol.getDataTemplate().getResourceURL().toString().startsWith("file:")) {
+				UpdateDataTemplate k = new UpdateDataTemplate(protocol);
+				exec.process(k);
+			}	
 			
 			connection.commit();
 			return new TaskResult(uri,true);

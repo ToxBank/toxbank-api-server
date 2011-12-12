@@ -258,12 +258,15 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 							"ISA-TAB template")); 					
 					else 
 						if (protocol.getDataTemplate()==null)
-							output.write(String.format("<th title='%s'>%s</th><td align='left'>N/A</td><td></td>",
+							output.write(String.format("<th title='%s'>%s</th><td align='left'><a href='%s%s?media=text/html'>Create data template</a></td><td></td>",
 									field.name(),	
-									field.toString()));
+									field.toString(),
+									uri,
+									Resources.datatemplate		
+							));
 							
 						else
-						output.write(String.format("<th title='%s'>%s</th><td align='left'><a href='%s%s'>Download</a></td><td></td>",
+						output.write(String.format("<th title='%s'>%s</th><td align='left'><a href='%s%s?media=text/plain'>Download</a></td><td></td>",
 									field.name(),	
 									field.toString(),
 									uri,
@@ -312,7 +315,8 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 					if ((protocol.getDocument()==null) || (protocol.getDocument().getResourceURL()==null))
 						output.write("<td>N/A</td>");
 					else					
-						output.write(String.format("<td><a href='%s%s'>Download</a></td>",uri,Resources.document));
+						output.write(String.format("<td><a href='%s%s?media=%s'>Download</a></td>",
+								uri,Resources.document,Reference.encode(MediaType.APPLICATION_PDF.toString())));
 					break;
 				}	
 				case template: {

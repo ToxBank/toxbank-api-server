@@ -5,6 +5,7 @@ import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.processors.IProcessor;
 import net.idea.restnet.c.StringConvertor;
 import net.idea.restnet.db.QueryResource;
+import net.idea.restnet.db.convertors.QueryHTMLReporter;
 
 import org.restlet.Context;
 import org.restlet.Request;
@@ -39,8 +40,13 @@ public class ProtocolDocumentResource extends QueryResource<IQueryRetrieval<DBPr
 			return new StringConvertor(	
 					new ProtocolQueryURIReporter(getRequest(),suffix)
 					,MediaType.TEXT_URI_LIST);
+		if (variant.getMediaType().equals(MediaType.TEXT_HTML)) 
+			return new StringConvertor(createHTMLReporter(),MediaType.TEXT_HTML);	
 			else	
 				return new DownloadDocumentConvertor(createFileReporter());
+	}
+	protected QueryHTMLReporter createHTMLReporter() throws ResourceException {
+		throw new ResourceException(Status.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE);
 	}
 	
 	protected FileReporter createFileReporter() throws ResourceException {

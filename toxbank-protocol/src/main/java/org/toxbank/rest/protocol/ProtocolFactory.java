@@ -8,6 +8,7 @@ import java.util.List;
 import net.toxbank.client.resource.Document;
 import net.toxbank.client.resource.Organisation;
 import net.toxbank.client.resource.Project;
+import net.toxbank.client.resource.Template;
 import net.toxbank.client.resource.User;
 
 import org.apache.commons.fileupload.FileItem;
@@ -71,6 +72,28 @@ public class ProtocolFactory {
 					}
 			        break;
 				}
+				case template: {
+					if (fi.isFormField()) {
+						protocol.setDataTemplate(new Template(new URL(fi.getString())));
+					} else {	
+						if (fi.getSize()==0)  throw new ResourceException(new Status(Status.CLIENT_ERROR_BAD_REQUEST,"Empty file!"));
+						File file = null;
+				        if (fi.getName()==null)
+				           	throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,"File name can't be empty!");
+				        else {
+				        	try { 
+				        		if ((dir!=null) && !dir.exists())  dir.mkdir();
+				        	} catch (Exception x) {dir = null; }
+				          	file = new File(
+				            		String.format("%s/%s",
+				            				dir==null?System.getProperty("java.io.tmpdir"):dir,
+				            				fi.getName()));
+				        }
+				        fi.write(file);
+				        protocol.setDataTemplate(new Template(file.toURI().toURL()));		
+					}
+			        break;
+				}				
 				case project_uri: {
 					if ((fi.getString()!=null) && !"".equals(fi.getString())) {
 						Project p = protocol.getProject();
