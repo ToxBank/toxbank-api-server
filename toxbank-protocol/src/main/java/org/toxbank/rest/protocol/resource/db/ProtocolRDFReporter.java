@@ -13,6 +13,7 @@ import net.toxbank.client.io.rdf.TOXBANK;
 
 import org.restlet.Request;
 import org.restlet.data.MediaType;
+import org.toxbank.resource.Resources;
 import org.toxbank.rest.groups.DBOrganisation;
 import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.groups.IDBGroup;
@@ -49,6 +50,10 @@ public class ProtocolRDFReporter<Q extends IQueryRetrieval<DBProtocol>> extends 
 	public void setOutput(Model output) throws AmbitException {
 		this.output = output;
 		if (output!=null) {
+			output.setNsPrefix("tbpl", String.format("%s%s",uriReporter.getBaseReference().toString(),Resources.protocol));
+			output.setNsPrefix("tbpt", String.format("%s%s",uriReporter.getBaseReference().toString(),Resources.project));
+			output.setNsPrefix("tbo", String.format("%s%s",uriReporter.getBaseReference().toString(),Resources.organisation));
+			output.setNsPrefix("tbu", String.format("%s%s",uriReporter.getBaseReference().toString(),Resources.user));
 			output.setNsPrefix("tb", TOXBANK.URI);
 			output.setNsPrefix("dcterms", DCTerms.getURI());
 			output.setNsPrefix("xsd", XSD.getURI());
@@ -64,7 +69,12 @@ public class ProtocolRDFReporter<Q extends IQueryRetrieval<DBProtocol>> extends 
 			if ((item.getOwner()!=null) && (item.getOwner().getResourceURL()==null))
 				item.getOwner().setResourceURL(new URL(userReporter.getURI((DBUser)item.getOwner())));
 						
-			item.setResourceURL(new URL(uriReporter.getURI(item)));
+			String uri = uriReporter.getURI(item);
+			item.setResourceURL(new URL(uri));
+			//no local file names should be serialized!
+			if (item.getDocument()!=null) item.getDocument().setResourceURL(new URL(String.format("%s%s",uri,Resources.document)));
+			if (item.getDataTemplate()!=null) item.getDataTemplate().setResourceURL(new URL(String.format("%s%s",uri,Resources.datatemplate)));
+			
 			ioClass.toJena(
 				getJenaModel(), // create a new class
 				item
