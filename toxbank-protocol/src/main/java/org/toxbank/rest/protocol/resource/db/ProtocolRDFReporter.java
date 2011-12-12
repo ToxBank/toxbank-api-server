@@ -50,10 +50,10 @@ public class ProtocolRDFReporter<Q extends IQueryRetrieval<DBProtocol>> extends 
 	public void setOutput(Model output) throws AmbitException {
 		this.output = output;
 		if (output!=null) {
-			output.setNsPrefix("tbpl", String.format("%s%s",uriReporter.getBaseReference().toString(),Resources.protocol));
-			output.setNsPrefix("tbpt", String.format("%s%s",uriReporter.getBaseReference().toString(),Resources.project));
-			output.setNsPrefix("tbo", String.format("%s%s",uriReporter.getBaseReference().toString(),Resources.organisation));
-			output.setNsPrefix("tbu", String.format("%s%s",uriReporter.getBaseReference().toString(),Resources.user));
+			output.setNsPrefix("tbpl", String.format("%s%s/",uriReporter.getBaseReference().toString(),Resources.protocol));
+			output.setNsPrefix("tbpt", String.format("%s%s/",uriReporter.getBaseReference().toString(),Resources.project));
+			output.setNsPrefix("tbo", String.format("%s%s/",uriReporter.getBaseReference().toString(),Resources.organisation));
+			output.setNsPrefix("tbu", String.format("%s%s/",uriReporter.getBaseReference().toString(),Resources.user));
 			output.setNsPrefix("tb", TOXBANK.URI);
 			output.setNsPrefix("dcterms", DCTerms.getURI());
 			output.setNsPrefix("xsd", XSD.getURI());
@@ -69,7 +69,9 @@ public class ProtocolRDFReporter<Q extends IQueryRetrieval<DBProtocol>> extends 
 			if ((item.getOwner()!=null) && (item.getOwner().getResourceURL()==null))
 				item.getOwner().setResourceURL(new URL(userReporter.getURI((DBUser)item.getOwner())));
 						
+		
 			String uri = uriReporter.getURI(item);
+			output.setNsPrefix(item.getIdentifier(), String.format("%s/",uri));
 			item.setResourceURL(new URL(uri));
 			//no local file names should be serialized!
 			if (item.getDocument()!=null) item.getDocument().setResourceURL(new URL(String.format("%s%s",uri,Resources.document)));
