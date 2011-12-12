@@ -30,7 +30,7 @@ public class DataTemplateReporter extends QueryReporter<DBProtocol,IQueryRetriev
 	@Override
 	public Object processItem(DBProtocol item) throws AmbitException {
 		try {
-			output.write(item.getTemplate().toString());
+			output.write(item.getDataTemplate().getResourceURL().toString());
 
 		} catch (Exception x) {
 			

@@ -1,6 +1,6 @@
 package org.toxbank.rest.protocol.db;
 
-import java.net.URI;
+import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,9 +11,11 @@ import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.conditions.EQCondition;
 import net.idea.modbcum.q.query.AbstractQuery;
+import net.toxbank.client.resource.Document;
 import net.toxbank.client.resource.Organisation;
 import net.toxbank.client.resource.Project;
 import net.toxbank.client.resource.Protocol;
+import net.toxbank.client.resource.Template;
 
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
@@ -21,7 +23,6 @@ import org.toxbank.resource.Resources;
 import org.toxbank.rest.groups.DBOrganisation;
 import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.protocol.DBProtocol;
-import org.toxbank.rest.protocol.metadata.Document;
 import org.toxbank.rest.user.DBUser;
 
 /**
@@ -64,6 +65,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			fields.idproject,
 			fields.idorganisation,
 			fields.user_uri,
+			fields.template
 			//ReadProtocol.fields.accesslevel
 		};	
 	public enum fields {
@@ -453,7 +455,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 				return String.format("<a href='%s%s' target='Users'>Authors list</a>",uri,Resources.user);
 			}
 		
-		},					
+		},		
 		filename {
 			@Override
 			public QueryParam getParam(DBProtocol protocol) {
@@ -462,12 +464,12 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
 				try {
-				protocol.setDocument(new Document(new URI(rs.getString(name()))));
-				} catch (Exception x) {throw new SQLException(x); }
+				protocol.setDocument(new Document(new URL(rs.getString(name()))));
+				} catch (Exception x) { protocol.setDocument(null);}
 			}
 			@Override
 			public Object getValue(DBProtocol protocol) {
-				return  protocol==null?null:protocol.getDocument().getURI();
+				return  protocol==null?null:protocol.getDocument().getResourceURL();
 			}				
 			public String getHTMLField(DBProtocol protocol) {
 				Object value = getValue(protocol);
@@ -479,6 +481,37 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 			@Override
 			public String toString() {
 				return "Document";
+			}
+		},		
+		template {
+			@Override
+			public QueryParam getParam(DBProtocol protocol) {
+				return new QueryParam<String>(String.class, getValue(protocol).toString());
+			}			
+			@Override
+			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
+				try {
+					protocol.setDataTemplate(new Template(new URL(rs.getString(name()))));
+				} catch (Exception x) {
+					protocol.setDataTemplate(null);
+				}
+			}
+			@Override
+			public Object getValue(DBProtocol protocol) {
+				return  protocol==null?null:
+					protocol.getDataTemplate()==null?null:
+					protocol.getDataTemplate().getResourceURL();
+			}				
+			public String getHTMLField(DBProtocol protocol) {
+				Object value = getValue(protocol);
+				return String.format("<input name='%s' type='file' title='%s' size='40' value='%s'>\n",
+						name(),
+						getDescription(),
+						value==null?"":value.toString());
+			}		
+			@Override
+			public String toString() {
+				return "Data template";
 			}
 		};
 				
@@ -531,7 +564,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 	
 	protected static String sql = 
 		"select idprotocol,version,protocol.title,abstract as anabstract,iduser,summarySearchable," +
-		"idproject,project.name as project,idorganisation,organisation.name as organisation,filename,keywords\n" +
+		"idproject,project.name as project,idorganisation,organisation.name as organisation,filename,keywords,template\n" +
 		"from protocol join organisation using(idorganisation)\n" +
 		"join project using(idproject)\n" +
 		"left join keywords using(idprotocol) %s %s order by idprotocol,version desc";
@@ -549,6 +582,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 		fields.organisation,
 		fields.filename,
 		fields.keywords,
+		fields.template
 		//ReadProtocol.fields.accesslevel
 	};	
 	

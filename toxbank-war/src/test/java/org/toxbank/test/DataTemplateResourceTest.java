@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.restlet.data.MediaType;
 import org.restlet.representation.Representation;
 import org.toxbank.resource.Resources;
-import org.toxbank.rest.protocol.db.template.ReadDataTemplate;
+import org.toxbank.rest.protocol.db.template.ReadFilePointers;
 
 public class DataTemplateResourceTest extends ResourceTest {
 	
@@ -75,7 +75,7 @@ public class DataTemplateResourceTest extends ResourceTest {
 	public Object verifyResponseJavaObject(String uri, MediaType media,
 			Representation rep) throws Exception {
 		Object o = super.verifyResponseJavaObject(uri, media, rep);
-		Assert.assertTrue(o instanceof ReadDataTemplate);
+		Assert.assertTrue(o instanceof ReadFilePointers);
 
 		return o;
 	}

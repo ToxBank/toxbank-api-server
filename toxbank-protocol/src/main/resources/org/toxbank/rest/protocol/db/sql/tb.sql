@@ -58,7 +58,7 @@ CREATE TABLE  `protocol` (
   `idproject` int(10) unsigned NOT NULL COMMENT 'Link to projects table',
   `idorganisation` int(10) unsigned NOT NULL COMMENT 'Link to org table',
   `filename` text COMMENT 'Path to file name',
-  `template` blob COMMENT 'Data template',
+  `template` text COMMENT 'Data template',
   `status` enum('RESEARCH','SOP') NOT NULL DEFAULT 'RESEARCH' COMMENT 'Research or Standard Operating Procedure',
   `latest` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Is the latest version',
   PRIMARY KEY (`idprotocol`,`version`) USING BTREE,
@@ -105,7 +105,8 @@ DROP TABLE IF EXISTS `keywords`;
 CREATE TABLE  `keywords` (
   `idprotocol` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `keywords` text NOT NULL COMMENT 'All keywords semicolon delimited',
-  PRIMARY KEY (`idprotocol`)
+  PRIMARY KEY (`idprotocol`),
+  FULLTEXT KEY `Index_2` (`keywords`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
@@ -119,4 +120,4 @@ CREATE TABLE  `version` (
   `comment` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`idmajor`,`idminor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-insert into version (idmajor,idminor,comment) values (0,9,"TB Protocol schema");
+insert into version (idmajor,idminor,comment) values (1,0,"TB Protocol schema");

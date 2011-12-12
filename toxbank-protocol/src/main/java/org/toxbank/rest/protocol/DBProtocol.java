@@ -2,9 +2,6 @@ package org.toxbank.rest.protocol;
 
 import net.toxbank.client.resource.Protocol;
 
-import org.toxbank.resource.IDocument;
-import org.toxbank.resource.ITemplate;
-
 public class DBProtocol extends Protocol {
 
 	/**
@@ -12,9 +9,6 @@ public class DBProtocol extends Protocol {
 	 */
 	private static final long serialVersionUID = -6632168193661223228L;
 	protected int ID;
-
-	protected IDocument document;
-	protected ITemplate template;
 
 	public DBProtocol() {
 		
@@ -32,20 +26,7 @@ public class DBProtocol extends Protocol {
 	public void setID(int iD) {
 		ID = iD;
 	}
-	
-	public IDocument getDocument() {
-		return document;
-	}
-	public void setDocument(IDocument document) {
-		this.document = document;
-	}
-	
-	public ITemplate getTemplate() {
-		return template;
-	}
-	public void setTemplate(ITemplate template) {
-		this.template = template;
-	}
+
 	private boolean summarySearchable;
 
 	public boolean isSummarySearchable() {

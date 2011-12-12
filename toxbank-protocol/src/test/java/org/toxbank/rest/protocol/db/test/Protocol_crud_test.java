@@ -29,10 +29,11 @@
 
 package org.toxbank.rest.protocol.db.test;
 
-import java.net.URI;
+import java.net.URL;
 
 import junit.framework.Assert;
 import net.idea.modbcum.i.query.IQueryUpdate;
+import net.toxbank.client.resource.Document;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
@@ -41,8 +42,6 @@ import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.CreateProtocol;
 import org.toxbank.rest.protocol.db.DeleteProtocol;
-import org.toxbank.rest.protocol.db.UpdateProtocol;
-import org.toxbank.rest.protocol.metadata.Document;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.author.db.AddAuthors;
 
@@ -62,7 +61,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 		ref.setProject(new DBProject(1));	
 		ref.setOrganisation(new DBOrganisation(1));
 		ref.setSummarySearchable(true);
-		ref.setDocument(new Document(new URI(file)));
+		ref.setDocument(new Document(new URL(file)));
 		return new CreateProtocol(ref);
 	}
 

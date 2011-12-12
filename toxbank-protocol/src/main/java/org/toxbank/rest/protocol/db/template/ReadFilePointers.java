@@ -1,5 +1,6 @@
 package org.toxbank.rest.protocol.db.template;
 
+import java.net.URL;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,26 +10,30 @@ import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.conditions.EQCondition;
 import net.idea.modbcum.q.query.AbstractQuery;
+import net.toxbank.client.resource.Document;
+import net.toxbank.client.resource.Template;
 
 import org.toxbank.rest.protocol.DBProtocol;
-import org.toxbank.rest.protocol.DataTemplate;
 import org.toxbank.rest.protocol.db.ReadProtocol.fields;
 
-public class ReadDataTemplate extends AbstractQuery<String, DBProtocol, EQCondition, DBProtocol>  implements IQueryRetrieval<DBProtocol> {
+public class ReadFilePointers extends AbstractQuery<String, DBProtocol, EQCondition, DBProtocol>  implements IQueryRetrieval<DBProtocol> {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6228939989116141217L;
 	
 	protected static String sql = 
-		"select idprotocol,version,uncompress(template) from protocol where idprotocol=? and version=?";
+		"select idprotocol,version,filename,template from protocol where idprotocol=? and version=?";
 
-	public ReadDataTemplate(DBProtocol protocol) {
+	public ReadFilePointers(DBProtocol protocol) {
 		super();
 		setValue(protocol);
 	}
-
-	public ReadDataTemplate() {
+	public ReadFilePointers(Integer id, Integer version) {
+		super();
+		setValue(id==null?null:new DBProtocol(id,version));
+	}
+	public ReadFilePointers() {
 		this((DBProtocol)null);
 	}
 		
@@ -60,7 +65,12 @@ public class ReadDataTemplate extends AbstractQuery<String, DBProtocol, EQCondit
 			DBProtocol protocol =  new DBProtocol();
 			fields.idprotocol.setParam(protocol, rs);
 			fields.version.setParam(protocol, rs);
-			protocol.setTemplate(new DataTemplate(rs.getString(3)));
+			try { 
+				protocol.setDataTemplate(new Template(new URL(rs.getString(fields.template.name()))));
+			} catch (Exception x) { protocol.setDataTemplate(null); }
+			try { 
+				protocol.setDocument(new Document(new URL(fields.filename.name())));
+			} catch (Exception x) { protocol.setDocument(null); }			
 			if (protocol!=null) protocol.setIdentifier(String.format("SEURAT-Protocol-%d-%d", protocol.getID(),protocol.getVersion()));
 			return protocol;
 		} catch (Exception x) {

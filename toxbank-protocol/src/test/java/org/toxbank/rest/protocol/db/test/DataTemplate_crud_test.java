@@ -1,16 +1,19 @@
 package org.toxbank.rest.protocol.db.test;
 
+import java.net.URL;
+
 import junit.framework.Assert;
 import net.idea.modbcum.i.query.IQueryUpdate;
+import net.toxbank.client.resource.Template;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
 import org.toxbank.rest.protocol.DBProtocol;
-import org.toxbank.rest.protocol.DataTemplate;
 import org.toxbank.rest.protocol.db.template.UpdateDataTemplate;
 
 public class DataTemplate_crud_test  extends CRUDTest<Object,DBProtocol> {
-
+	String template = "http://localhost/protocol/SEURAT-Protocol-1-1/dataTemplate";
+	
 	@Override
 	protected IQueryUpdate<Object,DBProtocol> createQuery() throws Exception {
 		return null;
@@ -35,7 +38,7 @@ public class DataTemplate_crud_test  extends CRUDTest<Object,DBProtocol> {
 	@Override
 	protected IQueryUpdate<Object,DBProtocol> updateQuery() throws Exception {
 		DBProtocol protocol = new DBProtocol(1,1);
-		protocol.setTemplate(new DataTemplate("ABCDEFGH"));
+		protocol.setDataTemplate(new Template(new URL(template)));
 		return new UpdateDataTemplate(protocol);
 	}
 
@@ -44,7 +47,7 @@ public class DataTemplate_crud_test  extends CRUDTest<Object,DBProtocol> {
 			throws Exception {
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED",
-				String.format("SELECT idprotocol,uncompress(template) as t from protocol where idprotocol=1"));
+				String.format("SELECT idprotocol,template as t from protocol where idprotocol=1"));
 		
 		Assert.assertEquals(1,table.getRowCount());
 		//dbunit is confused ...

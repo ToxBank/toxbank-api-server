@@ -1,11 +1,11 @@
 package org.toxbank.rest.protocol;
 
 import java.io.File;
-import java.net.URI;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
+import net.toxbank.client.resource.Document;
 import net.toxbank.client.resource.Organisation;
 import net.toxbank.client.resource.Project;
 import net.toxbank.client.resource.User;
@@ -16,7 +16,6 @@ import org.restlet.resource.ResourceException;
 import org.toxbank.rest.groups.DBOrganisation;
 import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.protocol.db.ReadProtocol;
-import org.toxbank.rest.protocol.metadata.Document;
 import org.toxbank.rest.user.DBUser;
 
 public class ProtocolFactory {
@@ -52,7 +51,7 @@ public class ProtocolFactory {
 				}
 				case filename: {
 					if (fi.isFormField()) {
-						protocol.setDocument(new Document(new URI(fi.getString())));
+						protocol.setDocument(new Document(new URL(fi.getString())));
 					} else {	
 						if (fi.getSize()==0)  throw new ResourceException(new Status(Status.CLIENT_ERROR_BAD_REQUEST,"Empty file!"));
 						File file = null;
@@ -68,7 +67,7 @@ public class ProtocolFactory {
 				            				fi.getName()));
 				        }
 				        fi.write(file);
-				        protocol.setDocument(new Document(file.toURI()));		
+				        protocol.setDocument(new Document(file.toURI().toURL()));		
 					}
 			        break;
 				}

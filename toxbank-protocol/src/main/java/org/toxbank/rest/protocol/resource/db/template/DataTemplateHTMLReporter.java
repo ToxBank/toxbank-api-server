@@ -151,9 +151,11 @@ public class DataTemplateHTMLReporter extends QueryHTMLReporter<DBProtocol, IQue
 			Object value =  fields.identifier.getValue(protocol);
 			output.write(String.format("<tr bgcolor='FFFFFF'><th width='25%%'>Protocol %s</th><td><a href='%s'>%s</a></td></tr>",
 					fields.identifier.toString(),uri.replace(Resources.datatemplate, ""),value));
-			output.write(String.format("<tr bgcolor='FFFFFF'><th width='25%%'>%s</th><td><textarea>%s</textarea></td></tr>",
+			output.write(String.format("<tr bgcolor='FFFFFF'><th width='25%%'>%s</th>%s</td></tr>",
 					"Data template",
-					protocol.getTemplate()));
+					protocol.getDataTemplate()==null?"N/A":
+					String.format("<a href='%s'>Data template</a>",protocol.getDataTemplate().getResourceURL()))
+					);
 
 		} catch (Exception x) {
 			

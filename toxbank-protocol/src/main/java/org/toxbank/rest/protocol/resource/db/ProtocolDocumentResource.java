@@ -16,6 +16,7 @@ import org.restlet.resource.ResourceException;
 import org.toxbank.rest.FileResource;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
+import org.toxbank.rest.protocol.db.template.ReadFilePointers;
 
 public class ProtocolDocumentResource extends QueryResource<IQueryRetrieval<DBProtocol>,DBProtocol> {
 
@@ -27,14 +28,14 @@ public class ProtocolDocumentResource extends QueryResource<IQueryRetrieval<DBPr
 	}
 	
 	@Override
-	protected ReadProtocol createQuery(Context context, Request request,
+	protected IQueryRetrieval<DBProtocol> createQuery(Context context, Request request,
 			Response response) throws ResourceException {
 		final Object key = request.getAttributes().get(FileResource.resourceKey);		
 		try {
 			if (key==null) throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
 			else {
 				int id[] = ReadProtocol.parseIdentifier(Reference.decode(key.toString()));
-				return new ReadProtocol(id[0],id[1]);
+				return new ReadFilePointers(id[0],id[1]);
 			}
 		} catch (ResourceException x) {
 			throw x;

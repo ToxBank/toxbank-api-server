@@ -1,13 +1,10 @@
 package org.toxbank.rest.protocol.resource.db;
 
-import java.io.File;
-
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.r.QueryReporter;
 import net.idea.restnet.db.convertors.AbstractObjectConvertor;
 
-import org.restlet.data.MediaType;
 import org.restlet.representation.FileRepresentation;
 import org.restlet.representation.Representation;
 import org.toxbank.rest.protocol.DBProtocol;
@@ -24,13 +21,17 @@ public class DownloadDocumentConvertor extends   AbstractObjectConvertor<DBProto
 	 */
 	private static final long serialVersionUID = 1979008352251532084L;
 
+	/*
+	protected File getFile(DBProtocol protocol) throws Exception  {
+		return new File(protocol.getDocument().getResourceURL().toURI());
+	}
 
-	public Representation process(DBProtocol doc) throws AmbitException {
+	public Representation process(DBProtocol protocol) throws AmbitException {
 		try {
-			if (doc==null) throw new AmbitException("No document!");
-			File file = new File(doc.getDocument().getURI());
+			if (protocol==null) throw new AmbitException("No protocol!");
+
+			File file = getFile(protocol);
 			if (!file.exists()) throw new AmbitException("No file!");
-			
 			return new FileRepresentation(file, MediaType.APPLICATION_PDF);
 			
 		} catch (AmbitException x) {
@@ -41,10 +42,10 @@ public class DownloadDocumentConvertor extends   AbstractObjectConvertor<DBProto
 
 	}
 	
+	*/
 	@Override
 	protected FileRepresentation createOutput(IQueryRetrieval<DBProtocol> query)
 			throws AmbitException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	@Override

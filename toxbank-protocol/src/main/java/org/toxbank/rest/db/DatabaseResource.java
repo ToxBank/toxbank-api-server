@@ -237,8 +237,9 @@ public class DatabaseResource  extends QueryResource<DBVersionQuery,DBVersion> {
 		} finally {
 			try {if (dbCreate!=null) dbCreate.close();} catch (Exception x) {}
 			try {if(c != null) c.close();} catch (Exception x) {}
-			return new StringRepresentation(dbname);
+			
 		}
+		return new StringRepresentation(dbname);
 	}		
 	
 	@Override

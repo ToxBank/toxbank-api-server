@@ -1,6 +1,7 @@
 package org.toxbank.rest.protocol.resource.db;
 
 import java.io.File;
+import java.net.URISyntaxException;
 
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
@@ -34,9 +35,13 @@ public class FileReporter extends QueryReporter<DBProtocol, IQueryRetrieval<DBPr
 
 	@Override
 	public Object processItem(DBProtocol item) throws AmbitException {
-		File file = new File(item.getDocument().getURI());
-		setOutput(new FileRepresentation(file, MediaType.APPLICATION_PDF));
-		return item;
+		try {
+			File file = new File(item.getDocument().getResourceURL().toURI());
+			setOutput(new FileRepresentation(file, MediaType.APPLICATION_PDF));
+			return item;
+		} catch (URISyntaxException x) {
+			throw new AmbitException(x);
+		}
 	}
 
 }

@@ -4,9 +4,9 @@ import java.io.File;
 import java.net.URL;
 
 import junit.framework.Assert;
+import net.toxbank.client.resource.Document;
 
 import org.junit.Test;
-import org.toxbank.rest.protocol.metadata.Document;
 
 public class ProtocolTest {
 
@@ -21,8 +21,8 @@ public class ProtocolTest {
 	public void testFilename() throws Exception {
 		DBProtocol p = new DBProtocol();
 		URL url = getClass().getClassLoader().getResource("org/toxbank/protocol/tb.xml");
-		p.setDocument(new Document(url.toURI()));
-		File file = new File(p.getDocument().getURI());
+		p.setDocument(new Document(url));
+		File file = new File(p.getDocument().getResourceURL().toURI());
 		Assert.assertTrue(file.exists());
 	}
 

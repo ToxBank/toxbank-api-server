@@ -175,7 +175,7 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 					if (ReadProtocol.fields.idprotocol.equals(field)) continue;
 					output.write(String.format("<th>%s</th>",field.toString()));
 				}
-				output.write(String.format("<th>%s</th>","Template"));
+
 				output.write("</tr>\n");
 			} else {
 				
@@ -209,7 +209,9 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 			ReadProtocol.fields[] fields = editable?ReadProtocol.entryFields:ReadProtocol.displayFields;
 			for (ReadProtocol.fields field : fields) {
 				output.write("<tr bgcolor='FFFFFF'>\n");	
-				Object value = protocol==null?field.getExampleValue(uri):field.getValue(protocol);
+				Object value = null;
+				
+				try { value = protocol==null?field.getExampleValue(uri):field.getValue(protocol);} catch (Exception x) {}
 
 				if (editable) {
 					value = field.getHTMLField(protocol);
@@ -234,12 +236,41 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 							field.name(),
 							"PDF file")); 					
 					else 
+						if ((protocol.getDocument()==null) || (protocol.getDocument().getResourceURL()==null))
+							output.write(String.format("<th title='%s'>%s</th><td align='left'>N/A</td><td></td>",
+									field.name(),	
+									field.toString()));							
+						else
 						output.write(String.format("<th title='%s'>%s</th><td align='left'><a href='%s%s'>Download</a></td><td></td>",
 									field.name(),	
-									field.toString(),uri,Resources.document));
+									field.toString(),
+									uri,
+									Resources.document));
 
 					break;
 				}	
+				case template: {
+					if (editable)
+					output.write(String.format("<th title='%s'>%s</th><td align='left'><input type=\"file\" name=\"%s\" title='%s' size=\"60\"></td><td align='left'></td>",
+							field.name(),	
+							field.toString(),
+							field.name(),
+							"ISA-TAB template")); 					
+					else 
+						if (protocol.getDataTemplate()==null)
+							output.write(String.format("<th title='%s'>%s</th><td align='left'>N/A</td><td></td>",
+									field.name(),	
+									field.toString()));
+							
+						else
+						output.write(String.format("<th title='%s'>%s</th><td align='left'><a href='%s%s'>Download</a></td><td></td>",
+									field.name(),	
+									field.toString(),
+									uri,
+									Resources.datatemplate));
+
+					break;
+				}					
 				case author_uri: {
 					if (!editable) {
 						output.write(String.format("<th>%s</th><td><a href='%s%s'>Authors</a></td>",
@@ -258,11 +289,6 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 							
 				output.write("</tr>\n");				
 			}
-			if (!editable) {
-				output.write("<tr bgcolor='FFFFFF'>\n");
-				output.write(String.format("<th>%s</th><td align='left'><a href='%s%s'>Data template</a></td><td></td>","Data template",uri,Resources.datatemplate));
-				output.write("</tr>\n");
-			}
 			output.flush();
 		} catch (Exception x) {x.printStackTrace();} 
 	}	
@@ -271,7 +297,8 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 			output.write("<tr bgcolor='FFFFFF'>\n");			
 			for (ReadProtocol.fields field : ReadProtocol.displayFields) {
 
-				Object value = field.getValue(protocol);
+				Object value = null; 
+				try { value = field.getValue(protocol);} catch (Exception x) {}
 				switch (field) {
 				case idprotocol: {
 					//output.write(String.format("<td><a href='%s'>%s</a></td>",uri,uri));
@@ -282,9 +309,19 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 					break;
 				}
 				case filename: {
-					output.write(String.format("<td><a href='%s%s'>Download</a></td>",uri,Resources.document));
+					if ((protocol.getDocument()==null) || (protocol.getDocument().getResourceURL()==null))
+						output.write("<td>N/A</td>");
+					else					
+						output.write(String.format("<td><a href='%s%s'>Download</a></td>",uri,Resources.document));
 					break;
-				}		
+				}	
+				case template: {
+					if ((protocol.getDataTemplate()==null) || (protocol.getDataTemplate().getResourceURL()==null))
+						output.write("<td>N/A</td>");
+					else
+					output.write(String.format("<td><a href='%s%s'>Download</a></td>",uri,Resources.datatemplate));
+					break;
+				}						
 				case author_uri: {
 					output.write(String.format("<td><a href='%s%s'>Authors</a></td>",uri,Resources.authors));
 					break;
@@ -307,8 +344,6 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 								value.toString().length()>40?value.toString().substring(0,40):value.toString()));
 				}
 			}
-			output.write(String.format("<td><a href='%s%s'>Download</a></td>",uri,Resources.datatemplate));
-		//	output.write(String.format("<td><a href='%s%s'>Data template</a></td>",uri));
 			output.write("</tr>\n");
 		} catch (Exception x) {} 
 	}
