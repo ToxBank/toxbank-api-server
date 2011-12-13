@@ -33,4 +33,8 @@ public class CreateGroup extends AbstractObjectUpdate<IDBGroup>{
 		getObject().setID(id);
 	}
 
+	@Override
+	public boolean returnKeys(int index) {
+		return true;
+	}
 }

@@ -136,6 +136,9 @@ public class ProjectResourceTest  extends ResourceTest {
 		Assert.assertEquals(4,table.getRowCount());
 		table = 	c.createQueryTable("EXPECTED","SELECT idproject,name,ldapgroup from project where idproject>3");
 		Assert.assertEquals(1,table.getRowCount());
+
+		String expectedURI = String.format("http://localhost:%d/project/G%s",port,table.getValue(0,"idproject"));
+		Assert.assertEquals(expectedURI,task.getResult().toString());
 		c.close();
 
 	}	

@@ -138,6 +138,11 @@ public class OrganisationResourceTest extends ResourceTest {
 		Assert.assertEquals(1,table.getRowCount());
 		Assert.assertEquals("toxbank",table.getValue(0,"ldapgroup"));
 		Assert.assertEquals("organisation",table.getValue(0,"name"));
+		
+
+		String expectedURI = String.format("http://localhost:%d/organisation/G%s",port,table.getValue(0,"idorganisation"));
+		Assert.assertEquals(expectedURI,task.getResult().toString());
+		
 		c.close();
 
 	}	
