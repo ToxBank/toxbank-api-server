@@ -30,7 +30,7 @@ import org.toxbank.rest.user.DBUser;
  * @author nina
  *
  */
-public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition, DBProtocol>  implements IQueryRetrieval<DBProtocol> {
+public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition, DBProtocol>  implements IQueryRetrieval<DBProtocol> {
 	/**
 	 * 
 	 */
@@ -592,6 +592,7 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 	public ReadProtocol(Integer id, Integer version) {
 		super();
 		setValue(id==null?null:new DBProtocol(id,version));
+		setFieldname(null);
 	}
 	public ReadProtocol() {
 		this(null,null);
@@ -606,9 +607,8 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 	}
 
 	public List<QueryParam> getParameters() throws AmbitException {
-		List<QueryParam> params = null;
+		List<QueryParam> params =  new ArrayList<QueryParam>();
 		if (getValue()!=null) {
-			params = new ArrayList<QueryParam>();
 			if (getValue().getID()>0) {
 				params.add(fields.idprotocol.getParam(getValue()));
 				if (getValue().getVersion()>0)
@@ -619,22 +619,36 @@ public class ReadProtocol  extends AbstractQuery<String, DBProtocol, EQCondition
 				params.add(fields.title.getParam(getValue()));
 			}
 		}
+		if ((getFieldname()!=null) && (getFieldname().getID()>0)) 
+			params.add(new QueryParam<Integer>(Integer.class, getFieldname().getID()));
+		
 		return params;
 	}
 
 	public String getSQL() throws AmbitException {
+		String byUser = null;
+		if ((getFieldname()!=null) && (getFieldname().getID()>0)) byUser = fields.iduser.getCondition();
+		
 		if (getValue()!=null) {
 			if (getValue().getID()>0) {
 				if (getValue().getVersion()>0)
 					return String.format(sql,"where",
-							String.format("%s and %s",fields.idprotocol.getCondition(),fields.version.getCondition()));
+							String.format("%s and %s %s %s",
+									fields.idprotocol.getCondition(),
+									fields.version.getCondition(),
+									byUser==null?"":" and ",
+									byUser==null?"":byUser));
 				else
 					throw new AmbitException("Protocol version not set!");
 			} else 
 				if (getValue().getTitle()!=null)
-					return String.format(sql,"where",fields.title.getCondition());
-		}
-		return String.format(sql,"","");
+					return String.format(sql,"where",
+										String.format("%s %s %s",
+												fields.title.getCondition(),
+												byUser==null?"":" and ",
+												byUser==null?"":byUser));
+		} 
+		return String.format(sql,byUser==null?"":"where",byUser==null?"":byUser);
 	}
 
 	public DBProtocol getObject(ResultSet rs) throws AmbitException {

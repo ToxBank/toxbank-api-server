@@ -90,7 +90,9 @@ public class UserHTMLReporter extends QueryHTMLReporter<DBUser, IQueryRetrieval<
 			} else {
 				w.write("<h3>User</h3>");
 				output.write(String.format("<a href='%s%s'>Back to users</a>",
-					uriReporter.getRequest().getRootRef(),Resources.user));
+								uriReporter.getRequest().getRootRef(),Resources.user));
+				output.write(String.format("&nbsp;<a href='%s%s'>Protocols</a>",
+											uri,Resources.protocol));				
 			}
 			
 			String curlHint = String.format("curl -X GET -H 'Accept:%s' -H 'subjectid:%s' %s","SUPPORTED-MEDIA-TYPE","TOKEN",uri);

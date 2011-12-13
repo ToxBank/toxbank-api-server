@@ -11,7 +11,12 @@ import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.conditions.EQCondition;
 import net.idea.modbcum.q.query.AbstractQuery;
+import net.toxbank.client.resource.Protocol;
 
+import org.restlet.data.Reference;
+import org.restlet.data.Status;
+import org.restlet.resource.ResourceException;
+import org.toxbank.rest.protocol.db.ReadProtocol;
 import org.toxbank.rest.user.DBUser;
 
 /**
@@ -215,4 +220,11 @@ public class ReadUser<T>  extends AbstractQuery<T, DBUser, EQCondition, DBUser> 
 	public String toString() {
 		return getValue()==null?"All users":String.format("User id=U%s",getValue().getID());
 	}
+	public static int parseIdentifier(String key) throws ResourceException {
+		if (key.toString().startsWith("U")) try {
+			return Integer.parseInt(Reference.decode(key.toString().substring(1)));
+		} catch (Exception x) {} 
+	    throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
+	}
+
 }

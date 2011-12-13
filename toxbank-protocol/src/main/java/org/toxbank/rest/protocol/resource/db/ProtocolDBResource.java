@@ -35,6 +35,9 @@ import org.toxbank.rest.FileResource;
 import org.toxbank.rest.protocol.CallableProtocolUpload;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
+import org.toxbank.rest.user.DBUser;
+import org.toxbank.rest.user.db.ReadUser;
+import org.toxbank.rest.user.resource.UserDBResource;
 
 /**
  * Protocol resource
@@ -87,7 +90,8 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 			   :false;
 	}
 
-	protected Q getProtocolQuery(Object key,Object search, boolean showCreateLink) throws ResourceException {
+	protected Q getProtocolQuery(Object key,int userID,Object search, boolean showCreateLink) throws ResourceException {
+		
 		if (key==null) {
 			ReadProtocol query = new ReadProtocol();
 			if (search != null) {
@@ -97,6 +101,7 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 			}
 //			query.setFieldname(search.toString());
 			editable = showCreateLink;
+			if (userID>0) query.setFieldname(new DBUser(userID));
 			return (Q)query;
 		}			
 		else {
@@ -104,6 +109,7 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 			singleItem = true;
 			int id[] = ReadProtocol.parseIdentifier(Reference.decode(key.toString()));
 			ReadProtocol query =  new ReadProtocol(id[0],id[1]);
+			if (userID>0) query.setFieldname(new DBUser(userID));
 			return (Q)query;
 		}
 	}
@@ -125,9 +131,16 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 		} catch (Exception x) {
 			showCreateLink = false;
 		}
-		Object key = request.getAttributes().get(FileResource.resourceKey);		
+		Object key = request.getAttributes().get(FileResource.resourceKey);
+		int userID = -1;
 		try {
-			return getProtocolQuery(key,search,showCreateLink);
+			Object userKey = request.getAttributes().get(UserDBResource.resourceKey);
+			if (userKey!=null)
+				userID = ReadUser.parseIdentifier(userKey.toString());
+		} catch (Exception x) {}
+		
+		try {
+			return getProtocolQuery(key,userID,search,showCreateLink);
 		}catch (ResourceException x) {
 			throw x;
 		} catch (Exception x) {

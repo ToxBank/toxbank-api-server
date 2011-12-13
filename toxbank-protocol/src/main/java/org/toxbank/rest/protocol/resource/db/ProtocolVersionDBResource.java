@@ -14,7 +14,8 @@ import org.toxbank.rest.protocol.db.template.ReadFilePointers;
 
 public class ProtocolVersionDBResource<Q extends ReadProtocol> extends ProtocolDBResource<Q> {
 
-	protected Q getProtocolQuery(Object key,Object search,boolean showCreateLink) throws ResourceException {
+	@Override
+	protected Q getProtocolQuery(Object key,int userID, Object search,boolean showCreateLink) throws ResourceException {
 		version = true;
 		if (key==null) {
 			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);

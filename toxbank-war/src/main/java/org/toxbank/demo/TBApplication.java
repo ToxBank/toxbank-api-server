@@ -136,15 +136,16 @@ public class TBApplication extends TaskApplication<String> {
 		/**  /task  */
 		router.attach(TBTaskResource.resource, new TBTaskRouter(getContext()));
 
+		ProtocolRouter protocols = new ProtocolRouter(getContext());
 		/**  /protocol  */
 		//router.attach(Resources.protocol, createProtectedResource(new ProtocolRouter(getContext()),"",false));
-		router.attach(Resources.protocol, new ProtocolRouter(getContext()));
+		router.attach(Resources.protocol, protocols);
 		
 		router.attach(Resources.project, new ProjectRouter(getContext()));
 		
 		router.attach(Resources.organisation, new OrganisationRouter(getContext()));
 		
-		router.attach(Resources.user, new UserRouter(getContext()));
+		router.attach(Resources.user, new UserRouter(getContext(),protocols));
 		
 		/**
 		 * Queries
