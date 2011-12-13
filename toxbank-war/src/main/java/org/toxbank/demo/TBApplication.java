@@ -86,6 +86,7 @@ public class TBApplication extends TaskApplication<String> {
 		});
 		getTunnelService().setUserAgentTunnel(true);
 		getTunnelService().setExtensionsTunnel(false);
+		getTunnelService().setMethodTunnel(true);
 
 		Preferences.setProperty(Preferences.MAXRECORDS,"0");
 		

@@ -109,16 +109,18 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 				output.write(String.format("<a href='%s%s'>All protocols</a>",uriReporter.getRequest().getRootRef(),
 							Resources.protocol));
 				if (!editable)
-					output.write(String.format("&nbsp;<a href='%s%s?new=true'>Create new Protocol</a>",uriReporter.getRequest().getRootRef(),
+					output.write(String.format("&nbsp;|&nbsp;<a href='%s%s?new=true'>Create new Protocol</a>",uriReporter.getRequest().getRootRef(),
 								Resources.protocol));
 			} else {
 				w.write("<h3>Protocol</h3>");
 				
 				output.write(String.format("<a href='%s%s'>Back to protocols</a>",
 					uriReporter.getRequest().getRootRef(),Resources.protocol));
-				output.write(String.format("&nbsp;<a href='%s%s'>Versions</a>",uri,Resources.versions));
-				output.write(String.format("&nbsp;<a href='%s%s?new=true'>Create new version</a>",uri,Resources.versions));
-				output.write(String.format("&nbsp;<a href='%s%s'>Authors</a>",uri,Resources.authors));
+				output.write(String.format("&nbsp;|&nbsp;<a href='%s%s'>Authors</a>",uri,Resources.authors));
+				output.write(String.format("&nbsp;|&nbsp;<a href='%s%s'>Versions</a>",uri,Resources.versions));
+				output.write(String.format("&nbsp;|&nbsp;<a href='%s%s?new=true'>Create new version</a>",uri,Resources.versions));
+				output.write(String.format("&nbsp;|&nbsp;<form action='%s?method=DELETE' method='POST'><INPUT type='submit' value='Delete this protocol'></form>",uri));
+
 			}
 			
 			String curlHint = String.format("curl -X GET -H 'Accept:%s' -H 'subjectid:%s' %s","SUPPORTED-MEDIA-TYPE","TOKEN",uri);
