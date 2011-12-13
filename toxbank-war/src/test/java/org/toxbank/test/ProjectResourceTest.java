@@ -19,6 +19,7 @@ import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Reference;
+import org.restlet.data.Status;
 import org.restlet.representation.Representation;
 import org.toxbank.rest.groups.DBGroup;
 import org.toxbank.rest.groups.db.ReadProject;
@@ -154,7 +155,8 @@ public class ProjectResourceTest  extends ResourceTest {
 		RemoteTask task = testAsyncPoll(new Reference(org),
 				MediaType.TEXT_URI_LIST, null,
 				Method.DELETE);
-		Assert.assertEquals(org,task.getResult().toString());
+		Assert.assertEquals(Status.SUCCESS_OK, task.getStatus());
+		//Assert.assertNull(task.getResult());
 		c = getConnection();	
 		table = 	c.createQueryTable("EXPECTED","SELECT * FROM project where idproject=3");
 		Assert.assertEquals(0,table.getRowCount());
