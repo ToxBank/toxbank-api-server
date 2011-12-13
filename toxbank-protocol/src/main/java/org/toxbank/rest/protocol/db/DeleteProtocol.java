@@ -40,7 +40,11 @@ import org.toxbank.rest.protocol.DBProtocol;
 
 public class DeleteProtocol extends AbstractObjectUpdate<DBProtocol> {
 
-	public static final String[] delete_sql = {"delete from protocol where idprotocol=?"};
+	public static final String[] delete_sql = {
+		"delete from keywords where idprotocol=?",
+		"delete from protocol_authors where idprotocol=?",
+		"delete from protocol where idprotocol=?"
+		};
 
 	public DeleteProtocol(DBProtocol ref) {
 		super(ref);
