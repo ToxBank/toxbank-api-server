@@ -44,7 +44,7 @@ public class OrganisationDBResource extends GroupDBResource<DBOrganisation> {
 			GroupQueryURIReporter r = new GroupQueryURIReporter(getRequest(),"");
 			DBConnection dbc = new DBConnection(getApplication().getContext(),getConfigFile());
 			conn = dbc.getConnection(getRequest());
-			return new CallableGroupCreator(GroupType.ORGANISATION,r,form,conn,getToken());
+			return new CallableGroupCreator(method,item,GroupType.ORGANISATION,r,form,conn,getToken());
 		} catch (Exception x) {
 			try { conn.close(); } catch (Exception xx) {}
 			throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);

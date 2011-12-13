@@ -8,6 +8,7 @@
   <project idproject="3" name="ABCDEF" ldapgroup="toxbank"/>
   <organisation idorganisation="1" name="DC" ldapgroup="toxbank"/>
   <organisation idorganisation="2" name="ABCDE" ldapgroup="toxbank"/>
+    <organisation idorganisation="3" name="Test" ldapgroup="test"/>
   <protocol idprotocol="1" version="1" title="Very important protocol" abstract="Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." 
   iduser="1" summarySearchable="true" 
   idproject="1" idorganisation="1" filename="file:/C:/Users//xxx/Downloads//ci1001179-tautomers.pdf" 

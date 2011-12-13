@@ -27,7 +27,6 @@ import org.restlet.data.Reference;
 import org.restlet.data.Status;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
-import org.toxbank.rest.FileResource;
 import org.toxbank.rest.user.CallableUserCreator;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.db.ReadUser;
@@ -149,7 +148,7 @@ public class UserDBResource<T>	extends QueryResource<ReadUser<T>,DBUser> {
 			UserURIReporter reporter = new UserURIReporter(getRequest(),"");
 			DBConnection dbc = new DBConnection(getApplication().getContext(),getConfigFile());
 			conn = dbc.getConnection(getRequest());
-			return new CallableUserCreator(reporter, form,conn,getToken());
+			return new CallableUserCreator(method,item,reporter, form,conn,getToken());
 		} catch (Exception x) {
 			try { conn.close(); } catch (Exception xx) {}
 			throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);
@@ -161,11 +160,15 @@ public class UserDBResource<T>	extends QueryResource<ReadUser<T>,DBUser> {
 	}
 	
 	@Override
-	protected ReadUser createPOSTQuery(Context context, Request request,
-			Response response) throws ResourceException {
-		Object key = request.getAttributes().get(FileResource.resourceKey);		
-		if (key==null) return null;//post allowed only on /protocol level, not on /protocol/id
-		else throw new ResourceException(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+	protected ReadUser<T> createUpdateQuery(Method method, Context context,
+			Request request, Response response) throws ResourceException {
+		Object key = request.getAttributes().get(UserDBResource.resourceKey);
+		if (Method.POST.equals(method)) {
+			if (key==null) return null;//post allowed only on /user level, not on /user/id
+		} else {
+			if (key!=null) return super.createUpdateQuery(method, context, request, response);
+		}
+		throw new ResourceException(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
 	}
 	@Override
 	protected FactoryTaskConvertor getFactoryTaskConvertor(ITaskStorage storage)

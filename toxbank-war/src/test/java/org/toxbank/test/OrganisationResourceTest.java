@@ -3,6 +3,7 @@ package org.toxbank.test;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -55,7 +56,7 @@ public class OrganisationResourceTest extends ResourceTest {
 			Assert.assertTrue(line.startsWith(String.format("http://localhost:%d%s/G",port,Resources.organisation)));
 			count++;
 		}
-		return count==2;
+		return count==3;
 	}	
 	
 	
@@ -116,7 +117,7 @@ public class OrganisationResourceTest extends ResourceTest {
 
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM organisation");
-		Assert.assertEquals(2,table.getRowCount());
+		Assert.assertEquals(3,table.getRowCount());
 		c.close();
 
 		RemoteTask task = testAsyncPoll(new Reference(String.format("http://localhost:%d%s", port,
@@ -124,17 +125,19 @@ public class OrganisationResourceTest extends ResourceTest {
 				MediaType.TEXT_URI_LIST, form.getWebRepresentation(),
 				Method.POST);
 		//wait to complete
+	
 		while (!task.isDone()) {
 			task.poll();
 			Thread.sleep(100);
 			Thread.yield();
 		}
+		
 		Assert.assertTrue(task.getResult().toString().startsWith(String.format("http://localhost:%d/organisation/G",port)));
 
         c = getConnection();	
 		table = 	c.createQueryTable("EXPECTED","SELECT * FROM organisation");
-		Assert.assertEquals(3,table.getRowCount());
-		table = 	c.createQueryTable("EXPECTED","SELECT idorganisation,name,ldapgroup from organisation where idorganisation>2");
+		Assert.assertEquals(4,table.getRowCount());
+		table = 	c.createQueryTable("EXPECTED","SELECT idorganisation,name,ldapgroup from organisation where idorganisation>3");
 		Assert.assertEquals(1,table.getRowCount());
 		Assert.assertEquals("toxbank",table.getValue(0,"ldapgroup"));
 		Assert.assertEquals("organisation",table.getValue(0,"name"));
@@ -145,5 +148,22 @@ public class OrganisationResourceTest extends ResourceTest {
 		
 		c.close();
 
-	}	
+	}
+	
+	@Test
+	public void testDelete() throws Exception {
+		IDatabaseConnection c = getConnection();	
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT idorganisation FROM organisation where idorganisation=3");
+		Assert.assertEquals(new BigInteger("3"),table.getValue(0,"idorganisation"));
+		c.close();		
+		String org = String.format("http://localhost:%d%s/G3", port,Resources.organisation);
+		RemoteTask task = testAsyncPoll(new Reference(org),
+				MediaType.TEXT_URI_LIST, null,
+				Method.DELETE);
+		Assert.assertEquals(org,task.getResult().toString());
+		c = getConnection();	
+		table = 	c.createQueryTable("EXPECTED","SELECT * FROM organisation where idorganisation=3");
+		Assert.assertEquals(0,table.getRowCount());
+		c.close();			
+	}
 }

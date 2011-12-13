@@ -3,6 +3,7 @@ package org.toxbank.test;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -116,7 +117,7 @@ public class ProjectResourceTest  extends ResourceTest {
 
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM organisation");
-		Assert.assertEquals(2,table.getRowCount());
+		Assert.assertEquals(3,table.getRowCount());
 		c.close();
 
 		RemoteTask task = testAsyncPoll(new Reference(String.format("http://localhost:%d%s", port,
@@ -142,4 +143,21 @@ public class ProjectResourceTest  extends ResourceTest {
 		c.close();
 
 	}	
+	
+	@Test
+	public void testDelete() throws Exception {
+		IDatabaseConnection c = getConnection();	
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT idproject FROM project where idproject=3");
+		Assert.assertEquals(new BigInteger("3"),table.getValue(0,"idproject"));
+		c.close();		
+		String org = String.format("http://localhost:%d%s/G3", port,Resources.project);
+		RemoteTask task = testAsyncPoll(new Reference(org),
+				MediaType.TEXT_URI_LIST, null,
+				Method.DELETE);
+		Assert.assertEquals(org,task.getResult().toString());
+		c = getConnection();	
+		table = 	c.createQueryTable("EXPECTED","SELECT * FROM project where idproject=3");
+		Assert.assertEquals(0,table.getRowCount());
+		c.close();			
+	}
 }

@@ -203,11 +203,15 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 	}
 	
 	@Override
-	protected Q createPOSTQuery(Context context, Request request,
-			Response response) throws ResourceException {
-		Object key = request.getAttributes().get(FileResource.resourceKey);		
-		if (key==null) return null;//post allowed only on /protocol level, not on /protocol/id
-		else throw new ResourceException(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+	protected Q createUpdateQuery(Method method, Context context,
+			Request request, Response response) throws ResourceException {
+		Object key = request.getAttributes().get(FileResource.resourceKey);
+		if (Method.POST.equals(method)) {
+			if (key==null) return null;//post allowed only on /protocol level, not on /protocol/id
+		} else {
+			if (key!=null) return super.createUpdateQuery(method, context, request, response);
+		}
+		throw new ResourceException(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);		
 	}
 	@Override
 	protected FactoryTaskConvertor getFactoryTaskConvertor(ITaskStorage storage)

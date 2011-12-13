@@ -18,8 +18,11 @@ import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
+import org.restlet.data.Method;
 import org.restlet.data.Reference;
 import org.restlet.data.Status;
+import org.restlet.representation.EmptyRepresentation;
+import org.restlet.representation.Representation;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
 import org.toxbank.rest.FileResource;
@@ -141,18 +144,22 @@ public abstract class GroupDBResource<G extends IDBGroup>	extends QueryResource<
 		return MediaType.MULTIPART_FORM_DATA.equals(mediaType);
 	}
 
-	
 	@Override
-	protected ReadGroup<G> createPOSTQuery(Context context, Request request,
-			Response response) throws ResourceException {
-		Object key = request.getAttributes().get(FileResource.resourceKey);		
-		if (key==null) return null;//post allowed only on /group level, not on /group/id
-		else throw new ResourceException(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+	protected ReadGroup<G> createUpdateQuery(Method method, Context context,
+			Request request, Response response) throws ResourceException {
+		Object key = request.getAttributes().get(FileResource.resourceKey);
+		if (Method.POST.equals(method)) {
+			if (key==null) return null;//post allowed only on /protocol level, not on /protocol/id
+		} else {
+			if (key!=null) return super.createUpdateQuery(method, context, request, response);
+		}
+		throw new ResourceException(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);		
 	}
 	@Override
 	protected FactoryTaskConvertor getFactoryTaskConvertor(ITaskStorage storage)
 			throws ResourceException {
 		return new FactoryTaskConvertorRDF(storage);
 	}
+
 
 }

@@ -3,6 +3,7 @@ package org.toxbank.test;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -130,4 +131,22 @@ public class UserResourceTest extends ResourceTest {
 		c.close();
 
 	}	
+	
+
+	@Test
+	public void testDelete() throws Exception {
+		IDatabaseConnection c = getConnection();	
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT iduser FROM user where iduser=3");
+		Assert.assertEquals(new BigInteger("3"),table.getValue(0,"iduser"));
+		c.close();		
+		String org = String.format("http://localhost:%d%s/U3", port,Resources.user);
+		RemoteTask task = testAsyncPoll(new Reference(org),
+				MediaType.TEXT_URI_LIST, null,
+				Method.DELETE);
+		Assert.assertEquals(org,task.getResult().toString());
+		c = getConnection();	
+		table = 	c.createQueryTable("EXPECTED","SELECT * FROM user where iduser=3");
+		Assert.assertEquals(0,table.getRowCount());
+		c.close();			
+	}
 }

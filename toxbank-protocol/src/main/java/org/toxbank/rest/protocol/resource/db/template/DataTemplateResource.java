@@ -122,14 +122,19 @@ public class DataTemplateResource extends ProtocolDocumentResource {
 	}
 	
 	@Override
-	protected IQueryRetrieval<DBProtocol> createPOSTQuery(Context context, Request request,
-			Response response) throws ResourceException {
-		Object key = request.getAttributes().get(FileResource.resourceKey);		
-		if (key!=null) { //post allowed only on /protocol/id/datatemplate
-			int id[] = ReadProtocol.parseIdentifier(Reference.decode(key.toString()));
-			return new ReadFilePointers(id[0],id[1]);
+	protected IQueryRetrieval<DBProtocol> createUpdateQuery(Method method,
+			Context context, Request request, Response response)
+			throws ResourceException {
+		Object key = request.getAttributes().get(FileResource.resourceKey);
+		if (Method.POST.equals(method)) {
+			if (key!=null) { //post allowed only on /protocol/id/datatemplate
+				int id[] = ReadProtocol.parseIdentifier(Reference.decode(key.toString()));
+				return new ReadFilePointers(id[0],id[1]);
+			}
+		} else {
+			//if (key!=null) return super.createUpdateQuery(method, context, request, response);
 		}
-		else throw new ResourceException(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+		throw new ResourceException(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);		
 	}	
 	@Override
 	protected FactoryTaskConvertor getFactoryTaskConvertor(ITaskStorage storage)
