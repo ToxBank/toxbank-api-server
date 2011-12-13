@@ -158,6 +158,13 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 
 	@Override
 	protected CallableProtectedTask<String> createCallable(Method method,
+			Form form, DBProtocol item) throws ResourceException {
+		if (Method.DELETE.equals(method))
+			return createCallable(method,(List<FileItem>) null, item);
+		else throw new ResourceException(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED,method.toString());
+	}
+	@Override
+	protected CallableProtectedTask<String> createCallable(Method method,
 			List<FileItem> input, DBProtocol item) throws ResourceException {
 		/*
 		if ((getRequest().getClientInfo().getUser()==null) ||
@@ -184,7 +191,7 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 
 			String dir = dbc.getDir();
 			if ("".equals(dir)) dir = null;
-			return new CallableProtocolUpload(item,null,input,conn,r,getToken(),getRequest().getRootRef().toString(),
+			return new CallableProtocolUpload(method,item,null,input,conn,r,getToken(),getRequest().getRootRef().toString(),
 						dir==null?null:new File(dir)
 			);
 		} catch (ResourceException x) {
@@ -194,12 +201,6 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 			throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);
 		}
 
-		/*
-		Form form = new Form();
-		form.add(PageParams.params.resulturi.name(),String.format("%s/ProtocolMockup",getRequest().getResourceRef()));
-		form.add(PageParams.params.delay.name(),"1");
-		return new CallableMockup(form,getToken());
-		*/
 	}
 	
 	@Override
@@ -220,6 +221,9 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 	}
 	
 	protected TaskCreator getTaskCreator(Form form, final Method method, boolean async, final Reference reference) throws Exception {
-		throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,"Not multipart web form!");
+		if (Method.DELETE.equals(method))
+			return super.getTaskCreator(form, method, async, reference);
+		else
+			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,"Not multipart web form!");
 	}
 }

@@ -102,7 +102,7 @@ public class DataTemplateResource extends ProtocolDocumentResource {
 
 			String dir = dbc.getDir();
 			if ("".equals(dir)) dir = null;
-			CallableProtocolUpload callable =  new CallableProtocolUpload(item,null,input,conn,r,getToken(),getRequest().getRootRef().toString(),
+			CallableProtocolUpload callable =  new CallableProtocolUpload(method,item,null,input,conn,r,getToken(),getRequest().getRootRef().toString(),
 						dir==null?null:new File(dir));
 			callable.setSetDataTemplateOnly(true);
 			return callable;

@@ -13,6 +13,7 @@ import net.toxbank.client.Resources;
 import net.toxbank.client.resource.User;
 
 import org.apache.commons.fileupload.FileItem;
+import org.restlet.data.Method;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
 import org.toxbank.rest.groups.DBOrganisation;
@@ -20,12 +21,15 @@ import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.groups.db.CreateGroup;
 import org.toxbank.rest.protocol.db.CreateProtocol;
 import org.toxbank.rest.protocol.db.CreateProtocolVersion;
+import org.toxbank.rest.protocol.db.DeleteProtocol;
 import org.toxbank.rest.protocol.db.UpdateKeywords;
 import org.toxbank.rest.protocol.db.template.UpdateDataTemplate;
 import org.toxbank.rest.protocol.resource.db.ProtocolQueryURIReporter;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.author.db.AddAuthors;
 import org.toxbank.rest.user.db.CreateUser;
+
+import com.hp.hpl.jena.reasoner.rulesys.builtins.IsDType;
 
 public class CallableProtocolUpload extends CallableProtectedTask<String> {
 	protected List<FileItem> input;
@@ -37,6 +41,7 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 	protected File dir;
 	protected DBProtocol protocol;
 	protected boolean setDataTemplateOnly = false;
+	protected Method method;
 	public boolean isSetDataTemplateOnly() {
 		return setDataTemplateOnly;
 	}
@@ -56,13 +61,14 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 	 * @param baseReference
 	 * @param dir
 	 */
-	public CallableProtocolUpload(DBProtocol protocol,DBUser user,List<FileItem> input,
+	public CallableProtocolUpload(Method method,DBProtocol protocol,DBUser user,List<FileItem> input,
 					Connection connection,
 					ProtocolQueryURIReporter r,
 					String token,
 					String baseReference,
 					File dir) {
 		super(token);
+		this.method = method;
 		this.protocol = protocol;
 		this.connection = connection;
 		this.input = input;
@@ -71,9 +77,41 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 		this.user = user;
 		this.dir = dir;
 	}
-
 	@Override
 	public TaskResult doCall() throws Exception {
+		if (Method.POST.equals(method)) return create();
+		else if (Method.PUT.equals(method)) return create();
+		else if (Method.DELETE.equals(method)) return delete();
+		throw new ResourceException(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED,method.toString());
+	}	
+	
+	public TaskResult delete() throws Exception {
+		try {
+			connection.setAutoCommit(false);
+			//protocol.setOwner(user);
+			exec = new UpdateExecutor<IQueryUpdate>();
+			exec.setConnection(connection);
+			if (setDataTemplateOnly) {
+				//DeleteProtocol k = new DeleteProtocol(protocol);
+				//exec.process(k);				
+			} else {
+				DeleteProtocol k = new DeleteProtocol(protocol);
+				exec.process(k);
+				connection.commit();
+			}
+			return new TaskResult(null,false);
+			
+		} catch (Exception x) {
+			try {connection.rollback();} catch (Exception xx) {}
+			throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);
+		} finally {
+			try {exec.close();} catch (Exception x) {}
+			try {connection.setAutoCommit(true);} catch (Exception x) {}
+			try {connection.close();} catch (Exception x) {}
+		}
+	}
+
+	public TaskResult create() throws Exception {
 		boolean existing = protocol!=null&&protocol.getID()>0;
 		try {
 			protocol = ProtocolFactory.getProtocol(protocol,input, 10000000,dir);
