@@ -141,18 +141,18 @@ public class TBApplication extends TaskApplication<String> {
 		router.attach(DatasetsResource.datasets, createProtectedResource(allDatasetsRouter,"datasets"));		
  */
 		/**  /task  */
-		router.attach(TBTaskResource.resource, new TBTaskRouter(getContext()));
+		router.attach(TBTaskResource.resource, createOpenSSOVerifiedResource(new TBTaskRouter(getContext())));
 
 		ProtocolRouter protocols = new ProtocolRouter(getContext());
 		/**  /protocol  */
 		//router.attach(Resources.protocol, createProtectedResource(new ProtocolRouter(getContext()),"",false));
-		router.attach(Resources.protocol, protocols);
+		router.attach(Resources.protocol, createOpenSSOVerifiedResource(protocols));
 		
-		router.attach(Resources.project, new ProjectRouter(getContext()));
+		router.attach(Resources.project, createOpenSSOVerifiedResource(new ProjectRouter(getContext())));
 		
-		router.attach(Resources.organisation, new OrganisationRouter(getContext()));
+		router.attach(Resources.organisation, createOpenSSOVerifiedResource(new OrganisationRouter(getContext())));
 		
-		router.attach(Resources.user, new UserRouter(getContext(),protocols));
+		router.attach(Resources.user, createOpenSSOVerifiedResource(new UserRouter(getContext(),protocols)));
 		
 		/**
 		 * Queries
@@ -190,11 +190,18 @@ public class TBApplication extends TaskApplication<String> {
 		 
 		 return router;
 	}
-	
-	protected Restlet createOpenSSOLoginRouter() {
+	protected Restlet createOpenSSOVerifiedResource(Restlet next) {
 		Filter userAuthn = new OpenSSOAuthenticator(getContext(),true,"opentox.org",new OpenSSOVerifierSetUser(false));
-		userAuthn.setNext(TBLoginResource.class);
+		userAuthn.setNext(next);
 		return userAuthn;
+	}
+	protected Restlet createOpenSSOVerifiedResource(Class clazz) {
+		Filter userAuthn = new OpenSSOAuthenticator(getContext(),true,"opentox.org",new OpenSSOVerifierSetUser(false));
+		userAuthn.setNext(clazz);
+		return userAuthn;
+	}
+	protected Restlet createOpenSSOLoginRouter() {
+		return createOpenSSOVerifiedResource(TBLoginResource.class);
 	}
 
 	protected Restlet createProtectedResource(Restlet router) {
