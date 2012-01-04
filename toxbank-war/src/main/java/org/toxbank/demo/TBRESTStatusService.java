@@ -15,6 +15,7 @@ import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.ResourceException;
 import org.restlet.service.StatusService;
+import org.toxbank.rest.protocol.TBHTMLBeauty;
 
 public class TBRESTStatusService extends StatusService {
 	protected HTMLBeauty htmlBeauty;
@@ -50,7 +51,7 @@ public class TBRESTStatusService extends StatusService {
 			if (wrapInHTML) {
 				StringWriter w = new StringWriter();
 				
-				if(htmlBeauty==null) htmlBeauty = new HTMLBeauty();
+				if(htmlBeauty==null) htmlBeauty = new TBHTMLBeauty();
 				htmlBeauty.writeHTMLHeader(w, status.getName(), request,null);
 				
 				
@@ -67,7 +68,7 @@ public class TBRESTStatusService extends StatusService {
 						}
 					});
 					w.write("</blockquote>");
-					if(htmlBeauty==null) htmlBeauty = new HTMLBeauty();
+					if(htmlBeauty==null) htmlBeauty = new TBHTMLBeauty();
 					htmlBeauty.writeHTMLFooter(w, status.getName(), request);
 					
 				 

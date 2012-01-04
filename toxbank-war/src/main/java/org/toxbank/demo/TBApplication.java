@@ -123,7 +123,7 @@ public class TBApplication extends TaskApplication<String> {
 		router.attach(String.format("/%s",TBAdminResource.resource),createProtectedResource(createAdminRouter(),"admin"));
 
 		/** /policy - used for testing only  */
-		router.attach(String.format("/%s",PolicyResource.resource),PolicyResource.class);		
+		//router.attach(String.format("/%s",PolicyResource.resource),PolicyResource.class);		
 		
 		/**
 		 *  List of datasets 

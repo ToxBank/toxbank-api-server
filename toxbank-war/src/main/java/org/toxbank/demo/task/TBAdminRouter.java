@@ -12,14 +12,16 @@ public class TBAdminRouter extends AdminRouter  {
 
 	public TBAdminRouter(Context context) {
 		super(context);
+	}
+	@Override
+	protected void init() {
 		attachDefault(TBAdminResource.class);
-
 		/**
 		 * Policy creation
 		 */
 		attach(String.format("/%s",TBOpenSSOPoliciesResource.resource),TBOpenSSOPoliciesResource.class);
 		attach(String.format("/%s/{%s}",TBOpenSSOPoliciesResource.resource,OpenSSOPolicyResource.policyKey),TBPolicyResource.class);
 		attach(String.format("/%s",DatabaseResource.resource),DatabaseResource.class);
-	}
 
+	}
 }
