@@ -35,5 +35,8 @@ public class TBHTMLBeauty extends HTMLBeauty {
 			w.write(String.format("<a href='%s%s'>Users</a>&nbsp;",baseReference,Resources.user));
 		}
 	
-		
+		@Override
+		public String getLoginLink() {
+			return "Login";
+		}
 }

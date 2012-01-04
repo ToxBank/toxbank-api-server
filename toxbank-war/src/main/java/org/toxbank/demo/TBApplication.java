@@ -8,8 +8,6 @@ import net.idea.restnet.aa.opensso.OpenSSOAuthorizer;
 import net.idea.restnet.aa.opensso.OpenSSOVerifierSetUser;
 import net.idea.restnet.aa.opensso.policy.CallablePolicyCreator;
 import net.idea.restnet.aa.opensso.policy.PolicyProtectedTask;
-import net.idea.restnet.aa.opensso.users.OpenSSOUserResource;
-import net.idea.restnet.aa.resource.PolicyResource;
 import net.idea.restnet.c.ChemicalMediaType;
 import net.idea.restnet.c.TaskApplication;
 import net.idea.restnet.c.routers.MyRouter;
@@ -107,8 +105,16 @@ public class TBApplication extends TaskApplication<String> {
 		Router router = new MyRouter(this.getContext());
 		//router.attach("/help", AmbitResource.class);
 		
-		router.attach("/", TBLoginResource.class);
-		router.attach("", TBLoginResource.class);
+
+		/**
+		 * OpenSSO login / logout
+		 * Sets a cookie with OpenSSO token
+		 */
+		Restlet login = createOpenSSOLoginRouter();
+		router.attach("/login",login );
+		
+		router.attach("/", login);
+		router.attach("", login);
 
 		/**
 		 *  Points to the Ontology service
@@ -160,11 +166,6 @@ public class TBApplication extends TaskApplication<String> {
 		 *  API extensions from this point on
 		 */
 
-		/**
-		 * OpenSSO login / logout
-		 * Sets a cookie with OpenSSO token
-		 */
-		router.attach("/"+OpenSSOUserResource.resource,createOpenSSOLoginRouter() );
 		
 		/**  /bookmark  */
 		//router.attach(BookmarkResource.resource,createBookmarksRouter());				
