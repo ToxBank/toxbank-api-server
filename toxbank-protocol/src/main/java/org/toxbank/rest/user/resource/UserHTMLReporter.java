@@ -1,9 +1,12 @@
 package org.toxbank.rest.user.resource;
 
 import java.io.Writer;
+import java.net.URLEncoder;
 
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
+import net.idea.restnet.aa.opensso.policy.OpenSSOPoliciesResource;
+import net.idea.restnet.aa.resource.AdminResource;
 import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.c.html.HTMLBeauty;
 import net.idea.restnet.db.QueryURIReporter;
@@ -84,14 +87,16 @@ public class UserHTMLReporter extends QueryHTMLReporter<DBUser, IQueryRetrieval<
 				w.write("<h3>Users</h3>");
 				output.write(String.format("<a href='%s%s'>All users</a>",uriReporter.getRequest().getRootRef(),
 							Resources.user));
+				output.write(String.format("&nbsp;|&nbsp;<a href='%s/%s/%s?search=%s'>Access rights</a>",uriReporter.getBaseReference(),AdminResource.resource,OpenSSOPoliciesResource.resource,URLEncoder.encode(uri.toString())));
 				if (!editable)
-					output.write(String.format("&nbsp;<a href='%s%s?new=true'>Create new User</a>",uriReporter.getRequest().getRootRef(),
+					output.write(String.format("&nbsp;|<a href='%s%s?new=true'>Create new User</a>",uriReporter.getRequest().getRootRef(),
 								Resources.user));
 			} else {
 				w.write("<h3>User</h3>");
 				output.write(String.format("<a href='%s%s'>Back to users</a>",
 								uriReporter.getRequest().getRootRef(),Resources.user));
-				output.write(String.format("&nbsp;<a href='%s%s'>Protocols</a>",
+				output.write(String.format("&nbsp;|&nbsp;<a href='%s/%s/%s?search=%s'>Access rights</a>",uriReporter.getBaseReference(),AdminResource.resource,OpenSSOPoliciesResource.resource,URLEncoder.encode(uri.toString())));				
+				output.write(String.format("&nbsp;|<a href='%s%s'>Protocols</a>",
 											uri,Resources.protocol));				
 			}
 			

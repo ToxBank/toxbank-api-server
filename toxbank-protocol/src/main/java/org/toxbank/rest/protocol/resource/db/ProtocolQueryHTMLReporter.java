@@ -2,9 +2,12 @@ package org.toxbank.rest.protocol.resource.db;
 
 import java.io.Writer;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
+import net.idea.restnet.aa.opensso.policy.OpenSSOPoliciesResource;
+import net.idea.restnet.aa.resource.AdminResource;
 import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.c.html.HTMLBeauty;
 import net.idea.restnet.db.QueryURIReporter;
@@ -108,9 +111,11 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 				w.write("<h3>Protocols</h3>");
 				output.write(String.format("<a href='%s%s'>All protocols</a>",uriReporter.getRequest().getRootRef(),
 							Resources.protocol));
+				output.write(String.format("&nbsp;|&nbsp;<a href='%s/%s/%s?search=%s'>Access rights</a>",uriReporter.getBaseReference(),AdminResource.resource,OpenSSOPoliciesResource.resource,URLEncoder.encode(uri.toString())));				
 				if (!editable)
 					output.write(String.format("&nbsp;|&nbsp;<a href='%s%s?new=true'>Create new Protocol</a>",uriReporter.getRequest().getRootRef(),
 								Resources.protocol));
+				
 			} else {
 				w.write("<h3>Protocol</h3>");
 				
@@ -118,6 +123,7 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 					uriReporter.getRequest().getRootRef(),Resources.protocol));
 				output.write(String.format("&nbsp;|&nbsp;<a href='%s%s'>Authors</a>",uri,Resources.authors));
 				output.write(String.format("&nbsp;|&nbsp;<a href='%s%s'>Versions</a>",uri,Resources.versions));
+				output.write(String.format("&nbsp;|&nbsp;<a href='%s/%s/%s?search=%s'>Access rights</a>",uriReporter.getBaseReference(),AdminResource.resource,OpenSSOPoliciesResource.resource,URLEncoder.encode(uri.toString())));
 				output.write(String.format("&nbsp;|&nbsp;<a href='%s%s?new=true'>Create new version</a>",uri,Resources.versions));
 				output.write(String.format("&nbsp;|&nbsp;<form action='%s?method=DELETE' method='POST'><INPUT type='submit' value='Delete this protocol'></form>",uri));
 

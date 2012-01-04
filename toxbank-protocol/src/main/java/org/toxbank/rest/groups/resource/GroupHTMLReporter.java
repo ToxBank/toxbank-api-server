@@ -1,9 +1,12 @@
 package org.toxbank.rest.groups.resource;
 
 import java.io.Writer;
+import java.net.URLEncoder;
 
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
+import net.idea.restnet.aa.opensso.policy.OpenSSOPoliciesResource;
+import net.idea.restnet.aa.resource.AdminResource;
 import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.c.html.HTMLBeauty;
 import net.idea.restnet.db.QueryURIReporter;
@@ -85,15 +88,16 @@ public abstract class GroupHTMLReporter extends QueryHTMLReporter<IDBGroup, IQue
 							uriReporter.getRequest().getRootRef(),
 							getBackLink(),
 							getTitle()));
+				output.write(String.format("&nbsp;|&nbsp;<a href='%s/%s/%s?search=%s'>Access rights</a>",uriReporter.getBaseReference(),AdminResource.resource,OpenSSOPoliciesResource.resource,URLEncoder.encode(uri.toString())));
 				if (!editable)
-					output.write(String.format("&nbsp;<a href='%s%s?new=true'>Create new entry</a>",
+					output.write(String.format("&nbsp;|<a href='%s%s?new=true'>Create new entry</a>",
 							uriReporter.getRequest().getRootRef(),getBackLink()));
 			} else {
-				
 				
 				w.write(String.format("<h3>%s</h3>",getTitle()));
 				output.write(String.format("<a href='%s%s'>Back</a>",
 					uriReporter.getRequest().getRootRef(),getBackLink()));
+				output.write(String.format("&nbsp;|&nbsp;<a href='%s/%s/%s?search=%s'>Access rights</a>",uriReporter.getBaseReference(),AdminResource.resource,OpenSSOPoliciesResource.resource,URLEncoder.encode(uri.toString())));
 			}
 			
 			String curlHint = String.format("curl -X GET -H 'Accept:%s' -H 'subjectid:%s' %s","SUPPORTED-MEDIA-TYPE","TOKEN",uri);
