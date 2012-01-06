@@ -95,6 +95,7 @@ public abstract class GroupDBResource<G extends IDBGroup>	extends QueryResource<
 		Object search = null;
 		try {
 			search = form.getFirstValue("search").toString();
+			if ((search != null) && !"".equals(search)) search = String.format("^%s", search);
 		} catch (Exception x) {
 			search = null;
 		}		
