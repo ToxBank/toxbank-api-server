@@ -87,7 +87,9 @@ public class UserDBResource<T>	extends QueryResource<ReadUser<T>,DBUser> {
 			ReadUser query = new ReadUser();
 			if (search != null) {
 				DBUser user = new DBUser();
-				user.setLastname(search.toString());
+				String s = String.format("^%s", search.toString());
+				user.setLastname(s);
+				user.setFirstname(s);
 				query.setValue(user);
 			}
 			return query;

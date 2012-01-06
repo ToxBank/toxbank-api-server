@@ -78,6 +78,9 @@ public class ReadUser<T>  extends AbstractQuery<T, DBUser, EQCondition, DBUser> 
 			public Object getValue(DBUser protocol) {
 				return protocol==null?null:protocol.getFirstname();
 			}
+			public String getCondition() {
+				return String.format(" %s regexp ? ",name());
+			}
 		},
 		lastname {
 			@Override
@@ -184,8 +187,16 @@ public class ReadUser<T>  extends AbstractQuery<T, DBUser, EQCondition, DBUser> 
 			params = new ArrayList<QueryParam>();
 			if (getValue().getID()>0)
 				params.add(fields.iduser.getParam(getValue()));
-			else if (getValue().getLastname()!=null)
-				params.add(fields.lastname.getParam(getValue()));
+			else try {
+				if (getValue().getLastname()!=null)
+					params.add(fields.lastname.getParam(getValue()));
+				if (getValue().getFirstname()!=null)
+					params.add(fields.firstname.getParam(getValue()));
+				
+			} catch (Exception x) {
+				x.printStackTrace();
+			}
+			
 		} 
 		return params;
 	}
@@ -194,8 +205,19 @@ public class ReadUser<T>  extends AbstractQuery<T, DBUser, EQCondition, DBUser> 
 		if (getValue()!=null) {
 			if (getValue().getID()>0)
 				return String.format(sql,"where ",fields.iduser.getCondition());
-			else if (getValue().getLastname()!= null)
-				return String.format(sql,"where ",fields.lastname.getCondition());
+			else {
+				String where = " ";
+				StringBuilder b = new StringBuilder();
+				if (getValue().getLastname()!= null) {
+					b.append(fields.lastname.getCondition());
+					where = " or ";
+				}
+				if (getValue().getFirstname()!= null) {
+					b.append(where);
+					b.append(fields.firstname.getCondition());
+				}
+				return String.format(sql,"where ",b.toString());
+			}
 		}
 		return String.format(sql,"","");
 			
