@@ -89,5 +89,29 @@
         			<aa.policy>http://opensso.in-silico.ch/Pol/opensso-pol</aa.policy>
 			</properties>			
 	    </profile>
+    <!--  release build, with AA -->
+    <profile>
+      <id>aa-enabled</id>
+
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <toxbank.protected>true</toxbank.protected>
+      </properties>
+    </profile>
+    
+    
+    <!--  release build, without AA -->
+    <profile>
+      <id>aa-disabled</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <toxbank.protected>false</toxbank.protected>
+      </properties>
+    </profile>    
+	    
 </profiles>
 </project>

@@ -1,6 +1,8 @@
 package org.toxbank.demo;
 
+import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.Properties;
 
 import net.idea.modbcum.i.config.Preferences;
 import net.idea.restnet.aa.opensso.OpenSSOAuthenticator;
@@ -32,12 +34,14 @@ import org.restlet.routing.Filter;
 import org.restlet.routing.Route;
 import org.restlet.routing.Router;
 import org.restlet.routing.Template;
+import org.restlet.security.Authorizer;
 import org.restlet.security.ChallengeAuthenticator;
 import org.restlet.security.Enroler;
 import org.restlet.security.Verifier;
 import org.restlet.service.TunnelService;
 import org.restlet.util.RouteList;
 import org.toxbank.demo.aa.TBLoginResource;
+import org.toxbank.demo.aa.UserAuthorizer;
 import org.toxbank.demo.task.TBAdminResource;
 import org.toxbank.demo.task.TBAdminRouter;
 import org.toxbank.demo.task.TBTaskResource;
@@ -60,7 +64,7 @@ import org.toxbank.rest.user.UserRouter;
  *
  */
 public class TBApplication extends TaskApplication<String> {
-
+	protected boolean aaenabled = false;
 	public TBApplication() {
 		super();
 		setName("Toxbank REST services (demo)");
@@ -68,6 +72,7 @@ public class TBApplication extends TaskApplication<String> {
 		setOwner("Ideaconsult Ltd.");
 		setAuthor("Ideaconsult Ltd.");		
 
+		aaenabled = isProtected();
 		/*
 		String tmpDir = System.getProperty("java.io.tmpdir");
         File logFile = new File(tmpDir,"ambit2-www.log");		
@@ -146,13 +151,17 @@ public class TBApplication extends TaskApplication<String> {
 		ProtocolRouter protocols = new ProtocolRouter(getContext());
 		/**  /protocol  */
 		//router.attach(Resources.protocol, createProtectedResource(new ProtocolRouter(getContext()),"",false));
-		router.attach(Resources.protocol, createOpenSSOVerifiedResource(protocols));
-		
-		router.attach(Resources.project, createOpenSSOVerifiedResource(new ProjectRouter(getContext())));
-		
-		router.attach(Resources.organisation, createOpenSSOVerifiedResource(new OrganisationRouter(getContext())));
-		
-		router.attach(Resources.user, createOpenSSOVerifiedResource(new UserRouter(getContext(),protocols)));
+		if (aaenabled) {
+			router.attach(Resources.protocol, createProtectedResource(protocols,"protocol",true));
+			router.attach(Resources.project, createProtectedResource(new ProjectRouter(getContext()),"project",true));
+			router.attach(Resources.organisation, createProtectedResource(new OrganisationRouter(getContext()),"organisation",true));
+			router.attach(Resources.user, createProtectedResource(new UserRouter(getContext(),protocols),"user",new UserAuthorizer()));
+		} else {
+			router.attach(Resources.protocol, createOpenSSOVerifiedResource(protocols));
+			router.attach(Resources.project, createOpenSSOVerifiedResource(new ProjectRouter(getContext())));
+			router.attach(Resources.organisation, createOpenSSOVerifiedResource(new OrganisationRouter(getContext())));
+			router.attach(Resources.user, createOpenSSOVerifiedResource(new UserRouter(getContext(),protocols)));
+		}
 		
 		/**
 		 * Queries
@@ -191,12 +200,12 @@ public class TBApplication extends TaskApplication<String> {
 		 return router;
 	}
 	protected Restlet createOpenSSOVerifiedResource(Restlet next) {
-		Filter userAuthn = new OpenSSOAuthenticator(getContext(),true,"opentox.org",new OpenSSOVerifierSetUser(false));
+		Filter userAuthn = new OpenSSOAuthenticator(getContext(),!aaenabled,"opentox.org",new OpenSSOVerifierSetUser(false));
 		userAuthn.setNext(next);
 		return userAuthn;
 	}
 	protected Restlet createOpenSSOVerifiedResource(Class clazz) {
-		Filter userAuthn = new OpenSSOAuthenticator(getContext(),true,"opentox.org",new OpenSSOVerifierSetUser(false));
+		Filter userAuthn = new OpenSSOAuthenticator(getContext(),!aaenabled,"opentox.org",new OpenSSOVerifierSetUser(false));
 		userAuthn.setNext(clazz);
 		return userAuthn;
 	}
@@ -210,13 +219,15 @@ public class TBApplication extends TaskApplication<String> {
 	protected Restlet createProtectedResource(Restlet router,String prefix) {
 		return createProtectedResource(router, prefix,true);
 	}
-	protected Restlet createProtectedResource(Restlet router,String prefix,boolean authz) {
+	protected Restlet createProtectedResource(Restlet router,String prefix,boolean authzEnabled) {
+		return createProtectedResource(router,prefix, authzEnabled?new OpenSSOAuthorizer():null);
+	}
+	protected Restlet createProtectedResource(Restlet router,String prefix,OpenSSOAuthorizer authz) {
 		Filter authN = new OpenSSOAuthenticator(getContext(),false,"opentox.org",new OpenSSOVerifierSetUser(false));
-		if (authz) {
-			OpenSSOAuthorizer authZ = new OpenSSOAuthorizer();
-			authZ.setPrefix(prefix);
-			authN.setNext(authZ);
-			authZ.setNext(router);
+		if (authz!=null) {
+			authz.setPrefix(prefix);
+			authN.setNext(authz);
+			authz.setNext(router);
 		} else {
 			authN.setNext(router);
 		}
@@ -486,7 +497,19 @@ public class TBApplication extends TaskApplication<String> {
 	 		return b.toString();
 
 	 	}
-
+   
+   	protected boolean isProtected() {
+   		InputStream in = null;
+		try {
+			Properties properties = new Properties();
+			in = this.getClass().getClassLoader().getResourceAsStream("org/toxbank/rest/config/toxbank.properties");
+			properties.load(in);
+			return Boolean.parseBoolean(properties.get("toxbank.protected").toString());	
+		} catch (Exception x) {
+			try {in.close(); } catch (Exception xx) {}	
+		}
+		return false;
+	}   	
 
 }
 
