@@ -32,6 +32,15 @@
     	<version>2.4.8</version>
     	<scope>test</scope>
     </dependency>
+
+  	<dependency>
+  	<groupId>net.bull.javamelody</groupId>
+  	<artifactId>javamelody-core</artifactId>
+  	<version>1.31.0</version>
+  	<scope>runtime</scope>
+	</dependency>
+	 
+
   </dependencies>
     <build>
   <pluginManagement>
