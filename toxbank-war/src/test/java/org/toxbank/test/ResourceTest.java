@@ -39,6 +39,7 @@ import org.restlet.data.Status;
 import org.restlet.representation.ObjectRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
+import org.toxbank.demo.TBApplication;
 import org.toxbank.demo.TBRESTComponent;
 import org.toxbank.rest.protocol.db.test.DbUnitTest;
 import org.w3c.dom.Document;
@@ -62,6 +63,7 @@ public abstract class ResourceTest extends DbUnitTest {
         context.getParameters().add(Preferences.PASSWORD, getPWD());
         context.getParameters().add(Preferences.PORT, getPort());
         context.getParameters().add(Preferences.HOST, getHost());
+        context.getParameters().add(TBApplication._AAENABLED_PROPERTY, "false");
         
         // Create a component
         component = new TBRESTComponent(context);

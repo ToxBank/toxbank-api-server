@@ -1,5 +1,8 @@
 package org.toxbank.test;
 
+import java.io.InputStream;
+import java.util.Properties;
+
 import net.idea.restnet.aa.opensso.OpenSSOServicesConfig;
 
 import org.opentox.aa.opensso.OpenSSOToken;
@@ -8,7 +11,7 @@ import org.opentox.dsl.task.ClientResourceWrapper;
 
 
 public abstract class ProtectedResourceTest extends ResourceTest implements IAuthToken  {
-
+	Properties properties = new Properties();
 	protected String getCreator() {
 		if ((ssoToken!=null) && (ssoToken.getToken()!=null)) 
 			try { return OpenSSOServicesConfig.getInstance().getTestUser();} catch (Exception x) {return null;}
@@ -16,8 +19,17 @@ public abstract class ProtectedResourceTest extends ResourceTest implements IAut
 	}
 
 	protected boolean isAAEnabled() {
-		 try {return (OpenSSOServicesConfig.getInstance().isEnabled()); } catch (Exception x) {return true;}
-	}
+   		InputStream in = null;
+		try {
+			properties = new Properties();
+			in = this.getClass().getClassLoader().getResourceAsStream("org/toxbank/rest/config/toxbank.properties");
+			properties.load(in);
+			return Boolean.parseBoolean(properties.get("toxbank.protected").toString());	
+		} catch (Exception x) {
+			try {in.close(); } catch (Exception xx) {}	
+		}
+		return false;
+	}	
 	@Override
 	public void setUp() throws Exception {
 		setUpAA();
@@ -27,9 +39,11 @@ public abstract class ProtectedResourceTest extends ResourceTest implements IAut
 	public void setUpAA() throws Exception {
 		if (isAAEnabled()) {
 			ssoToken = new OpenSSOToken(OpenSSOServicesConfig.getInstance().getOpenSSOService());
+			String username=properties.getProperty("toxbank.aa.user");
+			String pass=properties.getProperty("toxbank.aa.pass");
 			if (ssoToken.login(
-					OpenSSOServicesConfig.getInstance().getTestUser(),
-					OpenSSOServicesConfig.getInstance().getTestUserPass()
+					username,
+					pass
 					)) {
 				ClientResourceWrapper.setTokenFactory(this);
 			} else

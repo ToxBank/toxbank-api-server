@@ -34,7 +34,6 @@ import org.restlet.routing.Filter;
 import org.restlet.routing.Route;
 import org.restlet.routing.Router;
 import org.restlet.routing.Template;
-import org.restlet.security.Authorizer;
 import org.restlet.security.ChallengeAuthenticator;
 import org.restlet.security.Enroler;
 import org.restlet.security.Verifier;
@@ -64,6 +63,7 @@ import org.toxbank.rest.user.UserRouter;
  *
  */
 public class TBApplication extends TaskApplication<String> {
+	public static final String _AAENABLED_PROPERTY = "toxbank.protected";
 	protected boolean aaenabled = false;
 	public TBApplication() {
 		super();
@@ -72,7 +72,7 @@ public class TBApplication extends TaskApplication<String> {
 		setOwner("Ideaconsult Ltd.");
 		setAuthor("Ideaconsult Ltd.");		
 
-		aaenabled = isProtected();
+		
 		/*
 		String tmpDir = System.getProperty("java.io.tmpdir");
         File logFile = new File(tmpDir,"ambit2-www.log");		
@@ -107,6 +107,7 @@ public class TBApplication extends TaskApplication<String> {
 
 	@Override
 	public Restlet createInboundRoot() {
+		aaenabled = isProtected();
 		Router router = new MyRouter(this.getContext());
 		//router.attach("/help", AmbitResource.class);
 		
@@ -504,8 +505,16 @@ public class TBApplication extends TaskApplication<String> {
 			Properties properties = new Properties();
 			in = this.getClass().getClassLoader().getResourceAsStream("org/toxbank/rest/config/toxbank.properties");
 			properties.load(in);
-			return Boolean.parseBoolean(properties.get("toxbank.protected").toString());	
+			
+			boolean aa = Boolean.parseBoolean(properties.get(_AAENABLED_PROPERTY).toString());
+			
+			if ((getContext()!=null) && 
+				(getContext().getParameters()!=null) && 
+				(getContext().getParameters().getFirstValue(_AAENABLED_PROPERTY)!=null))
+				aa = Boolean.parseBoolean(getContext().getParameters().getFirstValue(_AAENABLED_PROPERTY));
+			return aa;
 		} catch (Exception x) {
+			x.printStackTrace();
 			try {in.close(); } catch (Exception xx) {}	
 		}
 		return false;
