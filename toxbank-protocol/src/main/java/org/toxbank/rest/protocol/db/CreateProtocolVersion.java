@@ -11,8 +11,8 @@ import org.toxbank.rest.protocol.DBProtocol;
 
 public class CreateProtocolVersion  extends AbstractObjectUpdate<DBProtocol>{
 	public static final String[] create_sql = {
-		"insert into protocol (idprotocol,version,title,abstract,iduser,summarySearchable,idproject,idorganisation,filename)\n" +
-		"select idprotocol,max(version)+1,?,?,iduser,summarySearchable,idproject,idorganisation,? from protocol where idprotocol=? group by idprotocol\n"
+		"insert into protocol (idprotocol,version,title,abstract,iduser,summarySearchable,idproject,idorganisation,filename,status)\n" +
+		"select idprotocol,max(version)+1,?,?,iduser,summarySearchable,idproject,idorganisation,?,status from protocol where idprotocol=? group by idprotocol\n"
 	};
 
 	public CreateProtocolVersion(DBProtocol ref) {

@@ -16,6 +16,7 @@ import net.toxbank.client.resource.Document;
 import net.toxbank.client.resource.Organisation;
 import net.toxbank.client.resource.Project;
 import net.toxbank.client.resource.Protocol;
+import net.toxbank.client.resource.Protocol.STATUS;
 import net.toxbank.client.resource.Template;
 
 import org.restlet.data.Status;
@@ -42,6 +43,7 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			fields.author_uri,
 			fields.author_uri,
 			fields.author_uri,
+			fields.status,
 			fields.keywords,
 			fields.summarySearchable,
 			//ReadProtocol.fields.status
@@ -59,6 +61,7 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			fields.title,
 			fields.anabstract,
 			fields.author_uri,
+			fields.status,
 			fields.keywords,
 			fields.summarySearchable,
 			//ReadProtocol.fields.status
@@ -512,6 +515,26 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			@Override
 			public String toString() {
 				return "Data template";
+			}
+		},
+		status {
+			@Override
+			public QueryParam getParam(DBProtocol protocol) {
+				return new QueryParam<String>(String.class,protocol.getStatus().name());
+			}			
+			@Override
+			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
+				try {
+				protocol.setStatus(Protocol.STATUS.valueOf(rs.getString(name())));
+				} catch (Exception x) {protocol.setStatus(STATUS.RESEARCH);}
+			}		
+			@Override
+			public Object getValue(DBProtocol protocol) {
+				return protocol==null?null:protocol.getStatus();
+			}
+			
+			public String getCondition() {
+				return String.format(" %s = ? ",name());
 			}
 		};
 				
