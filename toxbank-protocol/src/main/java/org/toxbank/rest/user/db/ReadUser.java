@@ -11,12 +11,10 @@ import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.conditions.EQCondition;
 import net.idea.modbcum.q.query.AbstractQuery;
-import net.toxbank.client.resource.Protocol;
 
 import org.restlet.data.Reference;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
-import org.toxbank.rest.protocol.db.ReadProtocol;
 import org.toxbank.rest.user.DBUser;
 
 /**

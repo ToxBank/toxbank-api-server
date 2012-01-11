@@ -42,7 +42,35 @@ CREATE TABLE  `project` (
   UNIQUE KEY `Index_2` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- -----------------------------------------------------
+-- User affiliations 
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `user_organisation`;
+CREATE TABLE  `user_organisation` (
+  `iduser` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `idorganisation` int(10) unsigned NOT NULL,
+  `priority` int(2) unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`iduser`,`idorganisation`),
+  KEY `FK_user_organisation_2` (`idorganisation`),
+  KEY `Index_3` (`iduser`,`priority`),
+  CONSTRAINT `FK_user_organisation_2` FOREIGN KEY (`idorganisation`) REFERENCES `organisation` (`idorganisation`) ON UPDATE CASCADE,
+  CONSTRAINT `FK_user_organisation_1` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- -----------------------------------------------------
+-- Projects the user is working on
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `user_project`;
+CREATE TABLE  `user_project` (
+  `iduser` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `idproject` int(10) unsigned NOT NULL,
+  `priority` int(2) unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`iduser`,`idproject`),
+  KEY `FK_user_project_2` (`idproject`),
+  KEY `Index_3` (`iduser`,`priority`),
+  CONSTRAINT `FK_user_project_2` FOREIGN KEY (`idproject`) REFERENCES `project` (`idproject`) ON UPDATE CASCADE,
+  CONSTRAINT `FK_user_project_1` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
 -- Protocols metadata & placeholder for data templates. 
@@ -120,4 +148,4 @@ CREATE TABLE  `version` (
   `comment` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`idmajor`,`idminor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-insert into version (idmajor,idminor,comment) values (1,0,"TB Protocol schema");
+insert into version (idmajor,idminor,comment) values (1,1,"TB Protocol schema");

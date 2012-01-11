@@ -83,8 +83,8 @@ public class DBUser extends User {
 		setFirstname(p.getFirstname());
 		setLastname(p.getLastname());
 		setHomepage(p.getHomepage());
-		setInstitute(p.getInstitute());
-		setSeuratProject(p.getSeuratProject());
+		setOrganisations(p.getOrganisation());
+		setProjects(p.getProjects());
 		setWeblog(p.getWeblog());
 		setResourceURL(p.getResourceURL());
 		this.id = -1;

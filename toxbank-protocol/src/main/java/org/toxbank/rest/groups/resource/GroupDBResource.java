@@ -21,13 +21,13 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Reference;
 import org.restlet.data.Status;
-import org.restlet.representation.EmptyRepresentation;
-import org.restlet.representation.Representation;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
 import org.toxbank.rest.FileResource;
 import org.toxbank.rest.groups.IDBGroup;
 import org.toxbank.rest.groups.db.ReadGroup;
+import org.toxbank.rest.user.DBUser;
+import org.toxbank.rest.user.resource.UserDBResource;
 
 /**
  * Protocol resource
@@ -105,18 +105,27 @@ public abstract class GroupDBResource<G extends IDBGroup>	extends QueryResource<
 		} catch (Exception x) {
 			editable = false;
 		}
-		Object key = request.getAttributes().get(FileResource.resourceKey);		
+		Object key = request.getAttributes().get(FileResource.resourceKey);
+		Object userKey = request.getAttributes().get(UserDBResource.resourceKey);		
+		ReadGroup<G> query = null;
 		try {
 			if (key==null) {
 //				query.setFieldname(search.toString());
-				return createGroupQuery(null,search==null?null:search.toString());
+				query = createGroupQuery(null,search==null?null:search.toString());
 			}			
 			else {
 				if (key.toString().startsWith("G")) {
 					singleItem = true;
-					return createGroupQuery(new Integer(Reference.decode(key.toString().substring(1))),null);
+					query = createGroupQuery(new Integer(Reference.decode(key.toString().substring(1))),null);
 				} else throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
 			}
+			
+			if ((userKey!=null) && userKey.toString().startsWith("U")) try {
+				DBUser user = new DBUser(new Integer(Reference.decode(userKey.toString().substring(1))));
+				query.setFieldname(user);
+			} catch (Exception x) {}
+			
+			return query;
 		}catch (ResourceException x) {
 			throw x;
 		} catch (Exception x) {

@@ -96,8 +96,12 @@ public class UserHTMLReporter extends QueryHTMLReporter<DBUser, IQueryRetrieval<
 				output.write(String.format("<a href='%s%s'>Back to users</a>",
 								uriReporter.getRequest().getRootRef(),Resources.user));
 				output.write(String.format("&nbsp;|&nbsp;<a href='%s/%s/%s?search=%s'>Access rights</a>",uriReporter.getBaseReference(),AdminResource.resource,OpenSSOPoliciesResource.resource,URLEncoder.encode(uri.toString())));				
+				output.write(String.format("&nbsp;|<a href='%s%s'>Organisations</a>",
+											uri,Resources.organisation));
+				output.write(String.format("&nbsp;|<a href='%s%s'>Projects</a>",
+						uri,Resources.project));	
 				output.write(String.format("&nbsp;|<a href='%s%s'>Protocols</a>",
-											uri,Resources.protocol));				
+						uri,Resources.protocol));					
 			}
 			
 			String curlHint = String.format("curl -X GET -H 'Accept:%s' -H 'subjectid:%s' %s","SUPPORTED-MEDIA-TYPE","TOKEN",uri);

@@ -52,7 +52,7 @@ import net.idea.modbcum.p.AbstractDBProcessor;
  */
 public class DbCreateDatabase extends AbstractDBProcessor<String,String> {
 	
-	public final static String version = "1.0";
+	public final static String version = "1.1";
 	
     /**
 	 */

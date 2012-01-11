@@ -21,4 +21,7 @@
   idproject="2" idorganisation="2" filename="file:/C:/Users//xxx//Downloads//eduard.pdf"/>  
   <keywords idprotocol="2" keywords="one;two;three"/>
   <protocol_authors idprotocol="1" version="1" iduser="1"/>
+  <user_organisation iduser="1" idorganisation="1" priority="2" />
+  <user_organisation iduser="1" idorganisation="2" priority="1" />
+  <user_project iduser="1" idproject="1" priority="1" />
 </dataset>
