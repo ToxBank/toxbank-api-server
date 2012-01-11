@@ -95,6 +95,38 @@ public class UserResourceTest extends ResourceTest {
 	}
 	
 	@Test
+	public void testCreateUserFromName() throws Exception {
+		Form form = new Form();
+		form.add(ReadUser.fields.firstname.name(),"Alice");
+		form.add(ReadUser.fields.lastname.name(),"B.");
+
+        IDatabaseConnection c = getConnection();	
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM user");
+		Assert.assertEquals(3,table.getRowCount());
+		c.close();
+
+		RemoteTask task = testAsyncPoll(new Reference(String.format("http://localhost:%d%s", port,
+				Resources.user)),
+				MediaType.TEXT_URI_LIST, form.getWebRepresentation(),
+				Method.POST);
+		//wait to complete
+		while (!task.isDone()) {
+			task.poll();
+			Thread.sleep(100);
+			Thread.yield();
+		}
+		System.out.println(task.getResult());
+		Assert.assertTrue(task.getResult().toString().startsWith(String.format("http://localhost:%d/user/U",port)));
+
+        c = getConnection();	
+		table = 	c.createQueryTable("EXPECTED","SELECT * FROM user");
+		Assert.assertEquals(4,table.getRowCount());
+		table = 	c.createQueryTable("EXPECTED","SELECT iduser,title from user where iduser>3 and firstName='Alice' and lastName='B.'" );
+		Assert.assertEquals(1,table.getRowCount());
+		c.close();
+
+	}		
+	@Test
 	public void testCreateEntryFromWebForm() throws Exception {
 		Form form = new Form();
 		for (ReadUser.fields field : ReadUser.fields.values()) {
