@@ -82,6 +82,9 @@ public class UserResourceTest extends ResourceTest {
 		Assert.assertEquals("http://mypage.com", users.get(0).getHomepage().toString());
 		Assert.assertEquals("abcdef", users.get(0).getFirstname());
 		Assert.assertEquals("ABCDEF", users.get(0).getLastname());
+		Assert.assertNotNull(users.get(0).getOrganisations());
+		Assert.assertEquals(2,users.get(0).getOrganisations().size());
+		Assert.assertEquals(1,users.get(0).getProjects().size());
 		return model;
 	}	
 	

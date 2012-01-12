@@ -3,18 +3,10 @@ package org.toxbank.rest.user.db;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
-import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.query.QueryParam;
-import net.idea.modbcum.q.conditions.EQCondition;
-import net.idea.modbcum.q.query.AbstractQuery;
 
-import org.restlet.data.Reference;
-import org.restlet.data.Status;
-import org.restlet.resource.ResourceException;
 import org.toxbank.rest.user.DBUser;
 
 /**
@@ -22,7 +14,7 @@ import org.toxbank.rest.user.DBUser;
  * @author nina
  *
  */
-public class ReadUser<T>  extends AbstractQuery<T, DBUser, EQCondition, DBUser>  implements IQueryRetrieval<DBUser> {
+public class ReadUser<T>  extends ReadUserID<T> {
 	/**
 	 * 
 	 */
@@ -156,7 +148,14 @@ public class ReadUser<T>  extends AbstractQuery<T, DBUser, EQCondition, DBUser> 
 	protected static String sql = 
 		"SELECT iduser,username,title,firstname,lastname,institute,weblog,homepage from user %s %s";
 
-
+	protected static String sql_withdefaults =
+	"select iduser,username,title,firstname,lastname,institute,weblog,homepage,idproject,p.name as projectname,p.ldapgroup as projectgroup,idorganisation,o.name as orgname,o.ldapgroup as orggroup from user\n"+
+	"left join\n"+
+	"(select iduser,idproject,name from user_project join project using(idproject) order by iduser,priority limit 1) p using(iduser)\n"+
+	"left join\n"+
+	"(select iduser,idorganisation,name from user_organisation join organisation using(idorganisation) order by iduser,priority limit 1) o using(iduser)\n"+
+	"%s %s";
+	
 	public ReadUser(DBUser user) {
 		super();
 		setValue(user);
@@ -170,57 +169,10 @@ public class ReadUser<T>  extends AbstractQuery<T, DBUser, EQCondition, DBUser> 
 	public ReadUser() {
 		this((Integer)null);
 	}
-		
-	public double calculateMetric(DBUser object) {
-		return 1;
+	@Override
+	protected String getSQLTemplate() {
+		return sql;
 	}
-
-	public boolean isPrescreen() {
-		return false;
-	}
-
-	public List<QueryParam> getParameters() throws AmbitException {
-		List<QueryParam> params = null;
-		if (getValue()!=null) {
-			params = new ArrayList<QueryParam>();
-			if (getValue().getID()>0)
-				params.add(fields.iduser.getParam(getValue()));
-			else try {
-				if (getValue().getLastname()!=null)
-					params.add(fields.lastname.getParam(getValue()));
-				if (getValue().getFirstname()!=null)
-					params.add(fields.firstname.getParam(getValue()));
-				
-			} catch (Exception x) {
-				x.printStackTrace();
-			}
-			
-		} 
-		return params;
-	}
-
-	public String getSQL() throws AmbitException {
-		if (getValue()!=null) {
-			if (getValue().getID()>0)
-				return String.format(sql,"where ",fields.iduser.getCondition());
-			else {
-				String where = " ";
-				StringBuilder b = new StringBuilder();
-				if (getValue().getLastname()!= null) {
-					b.append(fields.lastname.getCondition());
-					where = " or ";
-				}
-				if (getValue().getFirstname()!= null) {
-					b.append(where);
-					b.append(fields.firstname.getCondition());
-				}
-				return String.format(sql,"where ",b.toString());
-			}
-		}
-		return String.format(sql,"","");
-			
-	}
-
 	public DBUser getObject(ResultSet rs) throws AmbitException {
 		try {
 			DBUser p =  new DBUser();
@@ -239,12 +191,6 @@ public class ReadUser<T>  extends AbstractQuery<T, DBUser, EQCondition, DBUser> 
 	@Override
 	public String toString() {
 		return getValue()==null?"All users":String.format("User id=U%s",getValue().getID());
-	}
-	public static int parseIdentifier(String key) throws ResourceException {
-		if (key.toString().startsWith("U")) try {
-			return Integer.parseInt(Reference.decode(key.toString().substring(1)));
-		} catch (Exception x) {} 
-	    throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
 	}
 
 }
