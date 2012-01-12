@@ -4,6 +4,7 @@ import java.sql.Connection;
 
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
+import net.idea.modbcum.q.conditions.EQCondition;
 import net.idea.restnet.c.RepresentationConvertor;
 import net.idea.restnet.c.StringConvertor;
 import net.idea.restnet.c.task.CallableProtectedTask;
@@ -83,15 +84,22 @@ public class UserDBResource<T>	extends QueryResource<ReadUser<T>,DBUser> {
 		else throw new ResourceException(Status.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE);
 	}
 
-	protected ReadUser getUserQuery(Object key,Object search) throws ResourceException {
+	protected ReadUser getUserQuery(Object key,String search_name,Object search_value) throws ResourceException {
 		if (key==null) {
 			ReadUser query = new ReadUser();
-			if (search != null) {
-				DBUser user = new DBUser();
-				String s = String.format("^%s", search.toString());
-				user.setLastname(s);
-				user.setFirstname(s);
-				query.setValue(user);
+			if (search_value != null) {
+				if ("search".equals(search_name)) {
+					DBUser user = new DBUser();
+					String s = String.format("^%s", search_value.toString());
+					user.setLastname(s);
+					user.setFirstname(s);
+					query.setValue(user);
+				} else if ("username".equals(search_name)) { 
+					DBUser user = new DBUser();
+					query.setCondition(EQCondition.getInstance());
+					user.setUserName(search_value.toString());
+					query.setValue(user);
+				}
 			}
 			return query;
 		}			
@@ -106,12 +114,21 @@ public class UserDBResource<T>	extends QueryResource<ReadUser<T>,DBUser> {
 	protected ReadUser createQuery(Context context, Request request, Response response)
 			throws ResourceException {
 		Form form = request.getResourceRef().getQueryAsForm();
-		Object search = null;
+		String search_name = null;
+		Object search_value = null;
 		try {
-			search = form.getFirstValue("search").toString();
+			search_name = "search";
+			search_value = form.getFirstValue(search_name);
 		} catch (Exception x) {
-			search = null;
+			search_value = null;
 		}		
+		if (search_value==null)
+		try {
+			search_name = "username";
+			search_value = form.getFirstValue(search_name);
+		} catch (Exception x) {
+			search_value = null;
+		}				
 		try {
 			String n = form.getFirstValue("new");
 			editable = n==null?false:Boolean.parseBoolean(n);
@@ -120,7 +137,7 @@ public class UserDBResource<T>	extends QueryResource<ReadUser<T>,DBUser> {
 		}
 		Object key = request.getAttributes().get(UserDBResource.resourceKey);		
 		try {
-			return getUserQuery(key,search);
+			return getUserQuery(key,search_name,search_value);
 		}catch (ResourceException x) {
 			throw x;
 		} catch (Exception x) {

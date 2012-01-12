@@ -60,7 +60,8 @@ public class ReadUserID<T>  extends AbstractQuery<T, DBUser, EQCondition, DBUser
 					params.add(ReadUser.fields.lastname.getParam(getValue()));
 				if (getValue().getFirstname()!=null)
 					params.add(ReadUser.fields.firstname.getParam(getValue()));
-				
+				if (getValue().getUserName()!=null)
+					params.add(ReadUser.fields.username.getParam(getValue()));
 			} catch (Exception x) {
 				x.printStackTrace();
 			}
@@ -84,6 +85,10 @@ public class ReadUserID<T>  extends AbstractQuery<T, DBUser, EQCondition, DBUser
 					b.append(where);
 					b.append(ReadUser.fields.firstname.getCondition());
 				}
+				if (getValue().getUserName()!= null) {
+					b.append(where);
+					b.append(ReadUser.fields.username.getCondition());
+				}				
 				return String.format(getSQLTemplate(),"where ",b.toString());
 			}
 		}

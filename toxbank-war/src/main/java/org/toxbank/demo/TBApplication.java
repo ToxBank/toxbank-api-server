@@ -49,6 +49,7 @@ import org.toxbank.rest.groups.OrganisationRouter;
 import org.toxbank.rest.groups.ProjectRouter;
 import org.toxbank.rest.protocol.ProtocolRouter;
 import org.toxbank.rest.user.UserRouter;
+import org.toxbank.rest.user.resource.MyAccountResource;
 
 
 /**
@@ -165,7 +166,7 @@ public class TBApplication extends TaskApplication<String> {
 			router.attach(Resources.organisation, createOpenSSOVerifiedResource(org_router));
 			router.attach(Resources.user, createOpenSSOVerifiedResource(new UserRouter(getContext(),protocols,org_router,projectRouter)));
 		}
-		
+		router.attach("/myaccount", createOpenSSOVerifiedResource(MyAccountResource.class));		
 		/**
 		 * Queries
 		 *  /query

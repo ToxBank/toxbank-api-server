@@ -148,13 +148,6 @@ public class ReadUser<T>  extends ReadUserID<T> {
 	protected static String sql = 
 		"SELECT iduser,username,title,firstname,lastname,institute,weblog,homepage from user %s %s";
 
-	protected static String sql_withdefaults =
-	"select iduser,username,title,firstname,lastname,institute,weblog,homepage,idproject,p.name as projectname,p.ldapgroup as projectgroup,idorganisation,o.name as orgname,o.ldapgroup as orggroup from user\n"+
-	"left join\n"+
-	"(select iduser,idproject,name from user_project join project using(idproject) order by iduser,priority limit 1) p using(iduser)\n"+
-	"left join\n"+
-	"(select iduser,idorganisation,name from user_organisation join organisation using(idorganisation) order by iduser,priority limit 1) o using(iduser)\n"+
-	"%s %s";
 	
 	public ReadUser(DBUser user) {
 		super();
