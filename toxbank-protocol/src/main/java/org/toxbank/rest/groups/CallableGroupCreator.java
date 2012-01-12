@@ -14,17 +14,21 @@ import org.toxbank.rest.groups.db.CreateGroup;
 import org.toxbank.rest.groups.db.DeleteGroup;
 import org.toxbank.rest.groups.db.UpdateGroup;
 import org.toxbank.rest.groups.resource.GroupQueryURIReporter;
+import org.toxbank.rest.groups.user.db.AddGroupPerUser;
+import org.toxbank.rest.groups.user.db.DeleteGroupsPerUser;
+import org.toxbank.rest.user.DBUser;
 
 public class CallableGroupCreator extends CallableDBUpdateTask<IDBGroup,Form,String> {
 	protected GroupQueryURIReporter<IQueryRetrieval<IDBGroup>> reporter;
 	protected GroupType type;
-	
+	protected DBUser user;
 	protected IDBGroup item;
 	
 	public CallableGroupCreator(
 						Method method,
 						IDBGroup item,
 						GroupType type,
+						DBUser user,
 						GroupQueryURIReporter<IQueryRetrieval<IDBGroup>> reporter,
 						Form input, Connection connection,String token)  {
 		super(method,input,connection,token);
@@ -32,6 +36,7 @@ public class CallableGroupCreator extends CallableDBUpdateTask<IDBGroup,Form,Str
 		this.item = item;
 		this.reporter = reporter;
 		this.type = type;
+		this.user = user;
 	}
 
 	@Override
@@ -49,8 +54,12 @@ public class CallableGroupCreator extends CallableDBUpdateTask<IDBGroup,Form,Str
 	@Override
 	protected IQueryUpdate<Object, IDBGroup> createUpdate(IDBGroup group)
 			throws Exception {
-		if (Method.POST.equals(method)) return new CreateGroup(group);
-		else if (Method.DELETE.equals(method)) return new DeleteGroup(group);
+		if (Method.POST.equals(method)) {
+			return user==null?new CreateGroup(group):new AddGroupPerUser(user, group);
+		}
+		else if (Method.DELETE.equals(method)) {
+			return user==null?new DeleteGroup(group):new DeleteGroupsPerUser(user,group);
+		}
 		else if (Method.PUT.equals(method)) return new UpdateGroup(group);
 		throw new ResourceException(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
 	}
@@ -60,6 +69,10 @@ public class CallableGroupCreator extends CallableDBUpdateTask<IDBGroup,Form,Str
 		return reporter.getURI(user);
 	}
 
-	
+	@Override
+	protected Object executeQuery(IQueryUpdate<Object, IDBGroup> q)
+			throws Exception {
+		return super.executeQuery(q);
+	}
 
 }

@@ -8,6 +8,7 @@ import net.toxbank.client.Resources;
 
 import org.restlet.data.Form;
 import org.restlet.data.Method;
+import org.restlet.data.Reference;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
 import org.toxbank.rest.groups.CallableGroupCreator;
@@ -15,6 +16,8 @@ import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.groups.GroupType;
 import org.toxbank.rest.groups.db.ReadGroup;
 import org.toxbank.rest.groups.db.ReadProject;
+import org.toxbank.rest.user.DBUser;
+import org.toxbank.rest.user.resource.UserDBResource;
 
 public class ProjectDBResource extends GroupDBResource<DBProject> {
 
@@ -38,12 +41,18 @@ public class ProjectDBResource extends GroupDBResource<DBProject> {
 	@Override
 	protected CallableProtectedTask<String> createCallable(Method method,
 			Form form, DBProject item) throws ResourceException {
+		DBUser user = null;
+		Object userKey = getRequest().getAttributes().get(UserDBResource.resourceKey);		
+		if ((userKey!=null) && userKey.toString().startsWith("U")) try {
+			user = new DBUser(new Integer(Reference.decode(userKey.toString().substring(1))));
+		} catch (Exception x) {}
+		
 		Connection conn = null;
 		try {
 			GroupQueryURIReporter r = new GroupQueryURIReporter(getRequest(),"");
 			DBConnection dbc = new DBConnection(getApplication().getContext(),getConfigFile());
 			conn = dbc.getConnection(getRequest());
-			return new CallableGroupCreator(method,item,GroupType.PROJECT,r,form,conn,getToken());
+			return new CallableGroupCreator(method,item,GroupType.PROJECT,user,r,form,conn,getToken());
 		} catch (Exception x) {
 			try { conn.close(); } catch (Exception xx) {}
 			throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);

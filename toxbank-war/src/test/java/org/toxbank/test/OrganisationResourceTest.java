@@ -168,4 +168,23 @@ public class OrganisationResourceTest extends ResourceTest {
 		Assert.assertEquals(0,table.getRowCount());
 		c.close();			
 	}
+	
+	@Test
+	public void testDeleteFromUserProfile() throws Exception {
+		IDatabaseConnection c = getConnection();	
+		String sql = "SELECT idorganisation FROM user_organisation where idorganisation=1 and iduser=1";
+		ITable table = 	c.createQueryTable("EXPECTED",sql);
+		Assert.assertEquals(1,table.getRowCount());
+		c.close();		
+		String org = String.format("http://localhost:%d%s/U1%s/G1", port,Resources.user,Resources.organisation);
+		RemoteTask task = testAsyncPoll(new Reference(org),
+				MediaType.TEXT_URI_LIST, null,
+				Method.DELETE);
+		Assert.assertEquals(Status.SUCCESS_OK, task.getStatus());
+		//Assert.assertNull(task.getResult());
+		c = getConnection();	
+		table = 	c.createQueryTable("EXPECTED",sql);
+		Assert.assertEquals(0,table.getRowCount());
+		c.close();			
+	}	
 }

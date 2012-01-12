@@ -34,6 +34,7 @@ import net.idea.modbcum.i.query.IQueryUpdate;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
+import org.toxbank.rest.groups.user.db.AddGroupsPerUser;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.db.CreateUser;
 import org.toxbank.rest.user.db.DeleteUser;
@@ -106,7 +107,6 @@ public final class User_crud_test  extends CRUDTest<Object,DBUser>  {
 	@Override
 	protected IQueryUpdate<Object, DBUser> createQueryNew()
 			throws Exception {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

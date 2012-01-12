@@ -8,6 +8,7 @@ import net.toxbank.client.resource.Organisation;
 
 import org.restlet.routing.Template;
 import org.toxbank.rest.FileResource;
+import org.toxbank.rest.groups.resource.OrganisationDBResource;
 
 public class DBOrganisation extends Organisation implements IDBGroup {
 	/**
@@ -55,7 +56,7 @@ public class DBOrganisation extends Organisation implements IDBGroup {
 		Map<String, Object> vars = new HashMap<String, Object>();
 		try {
 			template.parse(getResourceURL().toString(), vars);
-			return Integer.parseInt(vars.get(FileResource.resourceKey).toString().substring(1)); 
+			return Integer.parseInt(vars.get(OrganisationDBResource.resourceKey).toString().substring(1)); 
 		} catch (Exception x) { return -1; }
 	}
 	

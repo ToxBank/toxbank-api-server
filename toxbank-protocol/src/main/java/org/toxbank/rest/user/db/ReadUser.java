@@ -110,8 +110,8 @@ public class ReadUser<T>  extends ReadUserID<T> {
 			public Object getValue(DBUser protocol) {
 				return protocol==null?null:protocol.getHomepage();
 			}				
-		},
-
+		}
+	
 		;
 		public String getCondition() {
 			return String.format(" %s = ? ",name());

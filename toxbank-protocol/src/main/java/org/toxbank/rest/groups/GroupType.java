@@ -29,6 +29,10 @@ public enum GroupType {
 		return String.format("DELETE FROM %s where %s=?", getDBname(), getID());
 	}
 
+	public String getDeleteByUserSQL() {
+		return String.format("DELETE FROM user_%s where iduser=? ", getDBname(), getID());
+	}
+	
 	public String getCreateSQL() {
 		return String.format(
 				"INSERT into %s (%s,name,ldapgroup) values (?,?,?)",

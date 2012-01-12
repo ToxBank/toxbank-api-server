@@ -152,16 +152,18 @@ public class TBApplication extends TaskApplication<String> {
 		ProtocolRouter protocols = new ProtocolRouter(getContext());
 		/**  /protocol  */
 		//router.attach(Resources.protocol, createProtectedResource(new ProtocolRouter(getContext()),"",false));
+		OrganisationRouter org_router = new OrganisationRouter(getContext());
+		ProjectRouter projectRouter = new ProjectRouter(getContext());
 		if (aaenabled) {
 			router.attach(Resources.protocol, createProtectedResource(protocols,"protocol",true));
-			router.attach(Resources.project, createProtectedResource(new ProjectRouter(getContext()),"project",true));
-			router.attach(Resources.organisation, createProtectedResource(new OrganisationRouter(getContext()),"organisation",true));
-			router.attach(Resources.user, createProtectedResource(new UserRouter(getContext(),protocols),"user",new UserAuthorizer()));
+			router.attach(Resources.project, createProtectedResource(projectRouter,"project",true));
+			router.attach(Resources.organisation, createProtectedResource(org_router,"organisation",true));
+			router.attach(Resources.user, createProtectedResource(new UserRouter(getContext(),protocols,org_router,projectRouter),"user",new UserAuthorizer()));
 		} else {
 			router.attach(Resources.protocol, createOpenSSOVerifiedResource(protocols));
-			router.attach(Resources.project, createOpenSSOVerifiedResource(new ProjectRouter(getContext())));
-			router.attach(Resources.organisation, createOpenSSOVerifiedResource(new OrganisationRouter(getContext())));
-			router.attach(Resources.user, createOpenSSOVerifiedResource(new UserRouter(getContext(),protocols)));
+			router.attach(Resources.project, createOpenSSOVerifiedResource(projectRouter));
+			router.attach(Resources.organisation, createOpenSSOVerifiedResource(org_router));
+			router.attach(Resources.user, createOpenSSOVerifiedResource(new UserRouter(getContext(),protocols,org_router,projectRouter)));
 		}
 		
 		/**

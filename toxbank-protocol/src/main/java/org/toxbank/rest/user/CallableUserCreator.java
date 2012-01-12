@@ -11,9 +11,9 @@ import org.restlet.data.Form;
 import org.restlet.data.Method;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
-import org.toxbank.rest.groups.db.CreateGroup;
-import org.toxbank.rest.groups.db.DeleteGroup;
-import org.toxbank.rest.groups.db.UpdateGroup;
+import org.toxbank.rest.groups.DBOrganisation;
+import org.toxbank.rest.groups.DBProject;
+import org.toxbank.rest.groups.user.db.AddGroupsPerUser;
 import org.toxbank.rest.user.db.CreateUser;
 import org.toxbank.rest.user.db.DeleteUser;
 import org.toxbank.rest.user.db.ReadUser;
@@ -25,10 +25,13 @@ public class CallableUserCreator extends CallableDBUpdateTask<DBUser,Form,String
 	protected DBUser user;
 	
 	public CallableUserCreator(Method method,DBUser item,UserURIReporter<IQueryRetrieval<DBUser>> reporter,
-						Form input, Connection connection,String token)  {
+						Form input,
+						String baseReference,
+						Connection connection,String token)  {
 		super(method, input,connection,token);
 		this.reporter = reporter;
 		this.user = item;
+		this.baseReference = baseReference;
 	}
 
 	@Override
@@ -41,7 +44,25 @@ public class CallableUserCreator extends CallableDBUpdateTask<DBUser,Form,String
 		user.setLastname(input.getFirstValue(ReadUser.fields.lastname.name()));
 		user.setTitle(input.getFirstValue(ReadUser.fields.title.name()));
 		try {user.setHomepage(new URL(input.getFirstValue(ReadUser.fields.homepage.name()))); } catch (Exception x) {}
-		try {user.setWeblog(new URL(input.getFirstValue(ReadUser.fields.weblog.name())));} catch (Exception x) {} 
+		try {user.setWeblog(new URL(input.getFirstValue(ReadUser.fields.weblog.name())));} catch (Exception x) {}
+		
+		String[] values = input.getValuesArray("organisation_uri");
+		if (values != null)
+			for (String value:values) try { 
+				DBOrganisation org = new DBOrganisation();
+				org.setResourceURL(new URL(value));
+				org.setID(org.parseURI(baseReference));
+				if (org.getID()>0) user.addOrganisation(org);
+			} catch (Exception x) {}
+
+		values = input.getValuesArray("project_uri");	
+		if (values != null)
+			for (String value:values) try { 
+				DBProject org = new DBProject();
+				org.setResourceURL(new URL(value));
+				org.setID(org.parseURI(baseReference));
+				if (org.getID()>0) user.addProject(org);
+			} catch (Exception x) {}		
  		return user;
 	}
 
@@ -59,6 +80,22 @@ public class CallableUserCreator extends CallableDBUpdateTask<DBUser,Form,String
 		return reporter.getURI(user);
 	}
 
-	
+	@Override
+	protected Object executeQuery(IQueryUpdate<Object, DBUser> query)
+			throws Exception {
+		Object result = super.executeQuery(query);
+		if (Method.POST.equals(method)) {
+			DBUser user = query.getObject();
+			if ((user.getOrganisations()!=null) && (user.getOrganisations().size()>0)) {
+				AddGroupsPerUser q = new AddGroupsPerUser(user,user.getOrganisations());
+				exec.process(q);
+			}
+			if ((user.getProjects()!=null) && (user.getProjects().size()>0)) {
+				AddGroupsPerUser q = new AddGroupsPerUser(user,user.getProjects());
+				exec.process(q);
+			}			
+		}
+		return result;
+	}
 
 }

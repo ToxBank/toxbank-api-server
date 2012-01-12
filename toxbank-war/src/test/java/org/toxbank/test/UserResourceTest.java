@@ -140,7 +140,9 @@ public class UserResourceTest extends ResourceTest {
 			}
 			}
 		}
-
+		form.add("organisation_uri",String.format("http://localhost:%d%s/G1",port,Resources.organisation));
+		form.add("organisation_uri",String.format("http://localhost:%d%s/G2",port,Resources.organisation));
+		form.add("project_uri",String.format("http://localhost:%d%s/G2",port,Resources.project));
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM user");
 		Assert.assertEquals(3,table.getRowCount());
@@ -164,6 +166,10 @@ public class UserResourceTest extends ResourceTest {
 		Assert.assertEquals(4,table.getRowCount());
 		table = 	c.createQueryTable("EXPECTED","SELECT iduser,title from user where iduser>3 and username='username'");
 		Assert.assertEquals(1,table.getRowCount());
+		table = 	c.createQueryTable("EXPECTED","SELECT iduser,idorganisation from user_organisation where iduser>3 and (idorganisation=1 or idorganisation=2)");
+		Assert.assertEquals(2,table.getRowCount());
+		table = 	c.createQueryTable("EXPECTED","SELECT iduser,idproject from user_project where iduser>3 and idproject=2");
+		Assert.assertEquals(1,table.getRowCount());		
 		c.close();
 
 	}	
