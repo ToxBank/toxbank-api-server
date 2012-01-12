@@ -36,4 +36,8 @@ public class DBTextReporter extends QueryReporter<DBVersion,DBVersionQuery,Write
 	public void header(Writer output, DBVersionQuery query) {
 		
 	}
+	@Override
+	public String getFileExtension() {
+		return "txt";
+	}
 }

@@ -53,10 +53,11 @@ public class UserDBResource<T>	extends QueryResource<ReadUser<T>,DBUser> {
 			
 		} else
 		*/ 
+		String filenamePrefix = getRequest().getResourceRef().getPath();
 		if (variant.getMediaType().equals(MediaType.TEXT_URI_LIST)) {
 				return new StringConvertor(	
 						new UserURIReporter<IQueryRetrieval<DBUser>>(getRequest())
-						,MediaType.TEXT_URI_LIST);
+						,MediaType.TEXT_URI_LIST,filenamePrefix);
 				
 		} else if (variant.getMediaType().equals(MediaType.APPLICATION_RDF_XML) ||
 					variant.getMediaType().equals(MediaType.APPLICATION_RDF_TURTLE) ||
@@ -69,7 +70,7 @@ public class UserDBResource<T>	extends QueryResource<ReadUser<T>,DBUser> {
 				return new RDFJenaConvertor<DBUser, IQueryRetrieval<DBUser>>(
 						new UserRDFReporter<IQueryRetrieval<DBUser>>(
 								getRequest(),variant.getMediaType(),getDocumentation())
-						,variant.getMediaType()) {
+						,variant.getMediaType(),filenamePrefix) {
 					@Override
 					protected String getDefaultNameSpace() {
 						return TOXBANK.URI;

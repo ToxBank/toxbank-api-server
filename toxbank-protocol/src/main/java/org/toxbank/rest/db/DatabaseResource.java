@@ -63,9 +63,9 @@ public class DatabaseResource  extends QueryResource<DBVersionQuery,DBVersion> {
 	@Override
 	public IProcessor<DBVersionQuery, Representation> createConvertor(
 			Variant variant) throws AmbitException, ResourceException {
-
+		String filenamePrefix = getRequest().getResourceRef().getPath();
 		if (variant.getMediaType().equals(MediaType.TEXT_PLAIN)) {
-			return new StringConvertor(new DBTextReporter(),MediaType.TEXT_PLAIN);
+			return new StringConvertor(new DBTextReporter(),MediaType.TEXT_PLAIN,filenamePrefix);
 		} if (variant.getMediaType().equals(MediaType.TEXT_HTML)) {
 			return new StringConvertor(new DBHtmlReporter(getRequest(),getHTMLBeauty()),MediaType.TEXT_HTML);
 			/*} 

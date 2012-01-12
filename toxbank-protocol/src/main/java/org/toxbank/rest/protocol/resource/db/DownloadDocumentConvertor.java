@@ -5,6 +5,7 @@ import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.r.QueryReporter;
 import net.idea.restnet.db.convertors.AbstractObjectConvertor;
 
+import org.restlet.data.MediaType;
 import org.restlet.representation.FileRepresentation;
 import org.restlet.representation.Representation;
 import org.toxbank.rest.protocol.DBProtocol;
@@ -12,8 +13,8 @@ import org.toxbank.rest.protocol.DBProtocol;
 public class DownloadDocumentConvertor extends   AbstractObjectConvertor<DBProtocol, IQueryRetrieval<DBProtocol>,FileRepresentation> {
 
 	public DownloadDocumentConvertor(
-			QueryReporter<DBProtocol, IQueryRetrieval<DBProtocol>, FileRepresentation> reporter) {
-		super(reporter);
+			QueryReporter<DBProtocol, IQueryRetrieval<DBProtocol>, FileRepresentation> reporter,MediaType media,String fileNamePrefix) {
+		super(reporter,media,fileNamePrefix);
 	}
 
 	/**

@@ -55,11 +55,11 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 	@Override
 	public RepresentationConvertor createConvertor(Variant variant)
 			throws AmbitException, ResourceException {
-
+		String filenamePrefix = getRequest().getResourceRef().getPath();
 		if (variant.getMediaType().equals(MediaType.TEXT_URI_LIST)) {
 				return new StringConvertor(	
 						new ProtocolQueryURIReporter(getRequest())
-						,MediaType.TEXT_URI_LIST);
+						,MediaType.TEXT_URI_LIST,filenamePrefix);
 				
 		} else if (variant.getMediaType().equals(MediaType.APPLICATION_RDF_XML) ||
 					variant.getMediaType().equals(MediaType.APPLICATION_RDF_TURTLE) ||
@@ -72,7 +72,7 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 				return new RDFJenaConvertor<DBProtocol, IQueryRetrieval<DBProtocol>>(
 						new ProtocolRDFReporter<IQueryRetrieval<DBProtocol>>(
 								getRequest(),variant.getMediaType(),getDocumentation())
-						,variant.getMediaType()) {
+						,variant.getMediaType(),filenamePrefix) {
 					@Override
 					protected String getDefaultNameSpace() {
 						return TOXBANK.URI;

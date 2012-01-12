@@ -36,14 +36,15 @@ public class ProtocolDocumentResource extends QueryResource<IQueryRetrieval<DBPr
 	@Override
 	public IProcessor<IQueryRetrieval<DBProtocol>, Representation> createConvertor(
 			Variant variant) throws AmbitException, ResourceException {
+		String filenamePrefix = getRequest().getResourceRef().getPath();
 		if (variant.getMediaType().equals(MediaType.TEXT_URI_LIST)) 
 			return new StringConvertor(	
 					new ProtocolQueryURIReporter(getRequest(),suffix)
-					,MediaType.TEXT_URI_LIST);
+					,MediaType.TEXT_URI_LIST,filenamePrefix);
 		if (variant.getMediaType().equals(MediaType.TEXT_HTML)) 
-			return new StringConvertor(createHTMLReporter(),MediaType.TEXT_HTML);	
+			return new StringConvertor(createHTMLReporter(),MediaType.TEXT_HTML,filenamePrefix);	
 			else	
-				return new DownloadDocumentConvertor(createFileReporter());
+				return new DownloadDocumentConvertor(createFileReporter(),null,filenamePrefix);
 	}
 	protected QueryHTMLReporter createHTMLReporter() throws ResourceException {
 		throw new ResourceException(Status.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE);

@@ -44,10 +44,11 @@ public abstract class GroupDBResource<G extends IDBGroup>	extends QueryResource<
 	@Override
 	public RepresentationConvertor createConvertor(Variant variant)
 			throws AmbitException, ResourceException {
+		String filenamePrefix = getRequest().getResourceRef().getPath();
 		if (variant.getMediaType().equals(MediaType.TEXT_URI_LIST)) {
 				return new StringConvertor(	
 						new GroupQueryURIReporter(getRequest())
-						,MediaType.TEXT_URI_LIST);
+						,MediaType.TEXT_URI_LIST,filenamePrefix);
 				
 		} else if (variant.getMediaType().equals(MediaType.APPLICATION_RDF_XML) ||
 					variant.getMediaType().equals(MediaType.APPLICATION_RDF_TURTLE) ||
@@ -60,7 +61,7 @@ public abstract class GroupDBResource<G extends IDBGroup>	extends QueryResource<
 				return new RDFJenaConvertor<IDBGroup, IQueryRetrieval<IDBGroup>>(
 						new GroupRDFReporter<IQueryRetrieval<IDBGroup>>(
 								getRequest(),variant.getMediaType(),getDocumentation())
-						,variant.getMediaType()) {
+						,variant.getMediaType(),filenamePrefix) {
 					@Override
 					protected String getDefaultNameSpace() {
 						return TOXBANK.URI;
