@@ -12,4 +12,5 @@ public interface IDBGroup extends Serializable {
 	public void setGroupName(String ldapgroup);
 	public int getID();
 	public void setID(int iD);
+	public int parseURI(String baseReference);
 }

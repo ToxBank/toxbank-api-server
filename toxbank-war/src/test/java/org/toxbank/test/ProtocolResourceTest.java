@@ -370,7 +370,15 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 			case author_uri: {
 				values[i] = String.format("http://localhost:%d%s/%s",port,Resources.user,"U2");
 				break;
-			}				
+			}	
+			case allowReadByGroup: {
+				values[i] = String.format("http://localhost:%d%s/%s",port,Resources.organisation,"G1");
+				break;
+			}	
+			case allowReadByUser: {
+				values[i] = String.format("http://localhost:%d%s/%s",port,Resources.user,"U2");
+				break;
+			}	
 			default: {
 				values[i] = field.name();
 			}

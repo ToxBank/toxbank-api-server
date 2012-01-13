@@ -1,5 +1,6 @@
 package org.toxbank.rest.groups;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +26,11 @@ public class DBProject extends Project implements IDBGroup {
 
 	public DBProject() {
 		this((Integer)null);
+	}
+	public DBProject(URL resourceURL) {
+		this();
+		setResourceURL(resourceURL);
+		this.ID = -1;
 	}
 	public DBProject(Integer id) {
 		if (id!=null) setID(id);

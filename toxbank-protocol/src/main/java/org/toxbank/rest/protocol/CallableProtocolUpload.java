@@ -2,11 +2,15 @@ package org.toxbank.rest.protocol;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.idea.modbcum.i.query.IQueryUpdate;
 import net.idea.modbcum.p.ProcessorException;
+import net.idea.modbcum.p.QueryExecutor;
 import net.idea.modbcum.p.UpdateExecutor;
+import net.idea.restnet.aa.opensso.OpenSSOServicesConfig;
 import net.idea.restnet.c.task.CallableProtectedTask;
 import net.idea.restnet.i.task.TaskResult;
 import net.toxbank.client.Resources;
@@ -18,7 +22,12 @@ import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
 import org.toxbank.rest.groups.DBOrganisation;
 import org.toxbank.rest.groups.DBProject;
+import org.toxbank.rest.groups.IDBGroup;
 import org.toxbank.rest.groups.db.CreateGroup;
+import org.toxbank.rest.groups.db.ReadGroup;
+import org.toxbank.rest.groups.db.ReadOrganisation;
+import org.toxbank.rest.groups.db.ReadProject;
+import org.toxbank.rest.policy.SimpleAccessRights;
 import org.toxbank.rest.protocol.db.CreateProtocol;
 import org.toxbank.rest.protocol.db.CreateProtocolVersion;
 import org.toxbank.rest.protocol.db.DeleteProtocol;
@@ -28,8 +37,7 @@ import org.toxbank.rest.protocol.resource.db.ProtocolQueryURIReporter;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.author.db.AddAuthors;
 import org.toxbank.rest.user.db.CreateUser;
-
-import com.hp.hpl.jena.reasoner.rulesys.builtins.IsDType;
+import org.toxbank.rest.user.db.ReadUser;
 
 public class CallableProtocolUpload extends CallableProtectedTask<String> {
 	protected List<FileItem> input;
@@ -220,7 +228,15 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 			}	
 			
 			connection.commit();
-			return new TaskResult(uri,true);
+			TaskResult result = new TaskResult(uri,true);
+			try {
+				retrieveAccountNames(connection);
+				result.setPolicy(generatePolicy(uri,protocol));
+			} 
+			catch (Exception x) { result.setPolicy(null);}
+		
+		
+			return result;
 		} catch (ProcessorException x) {
 			try {connection.rollback();} catch (Exception xx) {}
 			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);
@@ -235,5 +251,58 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 
 	}
 
+	protected void retrieveAccountNames(Connection connection) throws Exception {
+		QueryExecutor qexec = new QueryExecutor();
+		try {
+			
+			qexec.setConnection(connection);
+			ReadUser getUser = new ReadUser();
+			for (DBUser u: protocol.allowReadByUser) { 
+				    if (u.getID()<=0) u.setID(u.parseURI(baseReference));
+				if (u.getUserName()==null) {
+					getUser.setValue(u);
+					ResultSet rs = null;
+					try { 
+						rs = qexec.process(getUser); 
+						while (rs.next()) { u.setUserName(getUser.getObject(rs).getUserName()); }
+					} catch (Exception x) { if (rs!=null) rs.close(); }
+				}	
+			}
+			ReadGroup getGroup = null;
+			ReadOrganisation readOrg = new ReadOrganisation(null);
+			ReadProject readProject = new ReadProject(null);
+			for (IDBGroup u: protocol.allowReadByGroup) { 
+				    if (u.getID()<=0) u.setID(u.parseURI(baseReference));
+				if (u.getGroupName()==null) {
+					getGroup = u instanceof DBOrganisation?readOrg:readProject;
+					getGroup.setValue(u);
+					ResultSet rs = null;
+					try { 
+						rs = qexec.process(getGroup); 
+						while (rs.next()) { u.setGroupName(getGroup.getObject(rs).getGroupName()); }
+					} catch (Exception x) { if (rs!=null) rs.close(); }
+				}
+			}
+		}
+		finally { try {qexec.close(); } catch (Exception x) {}}			
+	}
+	protected List<String> generatePolicy(String uri,DBProtocol protocol) throws Exception {
+		OpenSSOServicesConfig config = OpenSSOServicesConfig.getInstance();
+		SimpleAccessRights policyTools = new SimpleAccessRights(config.getPolicyService());
+		List<String> policies = new ArrayList<String>();
+		if (protocol.allowReadByGroup!=null)
+			for (IDBGroup group : protocol.allowReadByGroup) { 
+				if (group.getGroupName()==null) continue;
+				String policy = policyTools.createGroupReadPolicyXML(group, uri);
+				if (policy!=null) policies.add(policy);
+			}
+		if (protocol.allowReadByUser!=null)
+			for (DBUser user : protocol.allowReadByUser) { 
+				if (user.getUserName()==null) continue;
+				String policy = policyTools.createUserReadPolicyXML(user, uri);
+				if (policy!=null) policies.add(policy);
+			}		
+		return policies.size()>0?policies:null;
+	}
 }
 

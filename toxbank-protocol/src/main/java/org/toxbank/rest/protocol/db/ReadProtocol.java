@@ -46,10 +46,14 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			fields.status,
 			fields.keywords,
 			fields.summarySearchable,
-			//ReadProtocol.fields.status
+			fields.status,
 			fields.project_uri,
 			fields.organisation_uri,
-			fields.user_uri
+			fields.user_uri,
+			fields.allowReadByUser,
+			fields.allowReadByGroup
+			
+			
 			//ReadProtocol.fields.version
 			//ReadProtocol.fields.accesslevel
 		};
@@ -536,6 +540,12 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			public String getCondition() {
 				return String.format(" %s = ? ",name());
 			}
+		},
+		allowReadByUser {
+			
+		},
+		allowReadByGroup {
+			
 		};
 				
 		public String getCondition() {

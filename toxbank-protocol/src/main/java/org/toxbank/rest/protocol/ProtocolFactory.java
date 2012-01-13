@@ -157,6 +157,25 @@ public class ProtocolFactory {
 						} catch (Exception x) { }
 						break;	
 				}
+				case allowReadByUser: {
+					if ((fi.getString()!=null) && !"".equals(fi.getString()))
+						try {
+							protocol.allowReadByUser.add(new DBUser(new URL(fi.getString().trim())));
+						} catch (Exception x) { }
+					break;						
+				}
+				case allowReadByGroup: {
+					if ((fi.getString()!=null) && !"".equals(fi.getString()))
+						try {
+							String uri = fi.getString().trim();
+							//hack to avoid queries...
+							if (uri.indexOf("/organisation")>0)
+								protocol.allowReadByGroup.add(new DBOrganisation(new URL(fi.getString().trim())));
+							else if (uri.indexOf("/project")>0)
+								protocol.allowReadByGroup.add(new DBProject(new URL(fi.getString().trim())));
+						} catch (Exception x) { }
+					break;	
+				}				
 				} //switch
 			} catch (Exception x) {
 				throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);

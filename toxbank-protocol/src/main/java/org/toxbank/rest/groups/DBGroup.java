@@ -131,4 +131,7 @@ public class DBGroup implements IDBGroup {
 		}
 
 	}	
+	public int parseURI(String baseReference)  {
+		return -1;
+	}
 }

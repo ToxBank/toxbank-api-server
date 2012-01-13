@@ -1,5 +1,6 @@
 package org.toxbank.rest.groups;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +21,11 @@ public class DBOrganisation extends Organisation implements IDBGroup {
 	
 	public DBOrganisation() {
 		this((Integer)null);
+	}
+	public DBOrganisation(URL resourceURL) {
+		this();
+		setResourceURL(resourceURL);
+		this.ID = -1;
 	}
 	public DBOrganisation(Integer id) {
 		super();
