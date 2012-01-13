@@ -289,6 +289,20 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 						break;
 					}
 				}
+				case allowReadByGroup: {
+					if (!editable) {
+						output.write(String.format("<th>%s</th><td><a href='%s%s'>Allow read by</a></td>",
+								field.toString(),uri,Resources.organisation));
+						break;
+					}
+				}			
+				case allowReadByUser: {
+					if (!editable) {
+						output.write(String.format("<th>%s</th><td><a href='%s%s'>Allow read by</a></td>",
+								field.toString(),uri,Resources.user));
+						break;
+					}
+				}						
 				default :  {
 					String help = field.getHelp(uriReporter.getRequest().getRootRef().toString());
 					output.write(String.format("<th>%s</th><td align='left'>%s</td><td align='left'>%s</td>\n",

@@ -43,7 +43,6 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			fields.author_uri,
 			fields.author_uri,
 			fields.author_uri,
-			fields.status,
 			fields.keywords,
 			fields.summarySearchable,
 			fields.status,
@@ -72,7 +71,8 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			fields.idproject,
 			fields.idorganisation,
 			fields.user_uri,
-			fields.template
+			fields.template,
+
 			//ReadProtocol.fields.accesslevel
 		};	
 	public enum fields {
@@ -542,10 +542,25 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			}
 		},
 		allowReadByUser {
-			
+			@Override
+			public Object getValue(DBProtocol protocol) {
+				return "";
+			}
+			@Override
+			public String toString() {
+				return "Allow read by a registered user";
+			}
+
 		},
 		allowReadByGroup {
-			
+			@Override
+			public Object getValue(DBProtocol protocol) {
+				return "";
+			}
+			@Override
+			public String toString() {
+				return "Allow read by members of organisaiton or project";
+			}
 		};
 				
 		public String getCondition() {
