@@ -340,8 +340,9 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 				}	
 				case updated: {
 					
-					output.write(String.format("<td><a href='%s'>%s</a></td>",uri,
+					output.write(String.format("<td>%s</td>",uri,
 							protocol.getTimeModified()==null?"":new Date(protocol.getTimeModified())));
+					break;
 				}
 				case identifier: {
 					output.write(String.format("<td><a href='%s'>%s</a></td>",uri,value));
