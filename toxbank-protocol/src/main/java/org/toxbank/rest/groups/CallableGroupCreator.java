@@ -74,6 +74,12 @@ public class CallableGroupCreator extends CallableDBUpdateTask<IDBGroup,Form,Str
 	 		return group;
 		}
 	}
+	
+	@Override
+	protected boolean isNewResource() {
+		if (Method.POST.equals(method) && (user !=null)) return false;
+		return super.isNewResource();
+	}
 
 	@Override
 	protected IQueryUpdate<Object, IDBGroup> createUpdate(IDBGroup group)
