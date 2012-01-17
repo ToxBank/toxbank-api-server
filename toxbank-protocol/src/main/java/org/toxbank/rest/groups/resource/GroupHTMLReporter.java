@@ -11,13 +11,16 @@ import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.c.html.HTMLBeauty;
 import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.db.convertors.QueryHTMLReporter;
+import net.toxbank.client.Resources;
 
 import org.restlet.Request;
 import org.restlet.data.MediaType;
 import org.restlet.data.Reference;
 import org.toxbank.rest.groups.DBGroup;
 import org.toxbank.rest.groups.IDBGroup;
+import org.toxbank.rest.groups.db.ReadGroup;
 import org.toxbank.rest.protocol.TBHTMLBeauty;
+import org.toxbank.rest.user.DBUser;
 
 
 public abstract class GroupHTMLReporter extends QueryHTMLReporter<IDBGroup, IQueryRetrieval<IDBGroup>> {
@@ -25,7 +28,7 @@ public abstract class GroupHTMLReporter extends QueryHTMLReporter<IDBGroup, IQue
 	 * 
 	 */
 	private static final long serialVersionUID = -7959033048710547839L;
-
+	protected DBUser user = null;
 	
 	protected boolean editable = false;
 	public GroupHTMLReporter() {
@@ -54,23 +57,36 @@ public abstract class GroupHTMLReporter extends QueryHTMLReporter<IDBGroup, IQue
 			//
 			if (collapsed) { 
 
-				
+				user = (DBUser) ((ReadGroup)query).getFieldname();
 				if (editable) {
 					w.write("<h3>Create new entry</h3>");
 					StringBuilder curlHint = new StringBuilder();
-
-					curlHint.append("curl -X POST -H 'subjectid:TOKEN'");
-					curlHint.append(String.format(" -H 'Content-Type:%s'",MediaType.APPLICATION_WWW_FORM.getName()));
-					curlHint.append(String.format(" -d '%s=%s'","title","MANDATORY_VALUE"));
-					curlHint.append(String.format(" -d '%s=%s' ","ldapgroup","OPTIONAL_VALUE"));
-					curlHint.append(uri);
-					output.write("<form method='POST' action=''\">");
+					if (user==null) {
+						curlHint.append("curl -X POST -H 'subjectid:TOKEN'");
+						curlHint.append(String.format(" -H 'Content-Type:%s'",MediaType.APPLICATION_WWW_FORM.getName()));
+						curlHint.append(String.format(" -d '%s=%s'","title","MANDATORY_VALUE"));
+						curlHint.append(String.format(" -d '%s=%s' ","ldapgroup","OPTIONAL_VALUE"));
+						curlHint.append(uri);
+					} else {
+						
+						curlHint.append("curl -X POST -H 'subjectid:TOKEN'");
+						curlHint.append(String.format(" -H 'Content-Type:%s' ",MediaType.APPLICATION_WWW_FORM.getName()));
+						
+						curlHint.append(String.format(" -d '%s_uri=%s_URI' ",getTitle().toLowerCase(),getTitle()));
+						curlHint.append(uri);
+					}
+					if(user==null)
+						output.write(String.format("<form method='POST' action='%s%s'\">",
+											user==null?"":"/",user==null?"":getTitle().toLowerCase()));
+					else	
+						output.write(String.format("<form method='POST' action='%s%s/U%d%s'\">",
+								uriReporter.getRequest().getRootRef(),Resources.user,user.getID(),getBackLink()));		
 					w.write("<table width='99%'>\n");
 					output.write(String.format("<tr><td>API call</td><td title='How to create a new %s via ToxBank API (cURL example)'><h5>%s</h5></td></tr>", 
 									getTitle(),curlHint));
 					printForm(output,uri.toString(),null,true);
 					
-					output.write(String.format("<tr><td></td><td><input type='submit' enabled='false' value='Create new %s'></td></tr>",getTitle()));
+					output.write(String.format("<tr><td></td><td><input type='submit' enabled='false' title='%s' value='Submit'></td></tr>",getTitle()));
 					w.write("</table>\n");
 					output.write("</form>");
 					output.write("<hr>");	
@@ -79,7 +95,9 @@ public abstract class GroupHTMLReporter extends QueryHTMLReporter<IDBGroup, IQue
 				
 				
 			}
-	    } catch (Exception x) {}
+	    } catch (Exception x) {
+	    	x.printStackTrace();
+	    }
 		
 		try {
 			if (collapsed) {
@@ -89,9 +107,13 @@ public abstract class GroupHTMLReporter extends QueryHTMLReporter<IDBGroup, IQue
 							getBackLink(),
 							getTitle()));
 				output.write(String.format("&nbsp;|&nbsp;<a href='%s/%s/%s?search=%s'>Access rights</a>",uriReporter.getBaseReference(),AdminResource.resource,OpenSSOPoliciesResource.resource,URLEncoder.encode(uri.toString())));
-				if (!editable)
-					output.write(String.format("&nbsp;|<a href='%s%s?new=true'>Create new entry</a>",
-							uriReporter.getRequest().getRootRef(),getBackLink()));
+				if (!editable) {
+					if (user==null)
+						output.write(String.format("&nbsp;|<a href='%s%s?new=true'>Create new entry</a>",uriReporter.getRequest().getRootRef(),getBackLink()));
+					else 
+						output.write(String.format("&nbsp;|<a href='%s%s/U%d%s?new=true'>Create new entry</a>",
+															uriReporter.getRequest().getRootRef(),Resources.user,user.getID(),getBackLink()));
+				}
 			} else {
 				
 				w.write(String.format("<h3>%s</h3>",getTitle()));
@@ -175,6 +197,12 @@ public abstract class GroupHTMLReporter extends QueryHTMLReporter<IDBGroup, IQue
 
 	protected void printForm(Writer output, String uri, IDBGroup group, boolean editable) {
 		try {
+			if (user!=null) {
+				output.write("<tr bgcolor='FFFFFF'>\n");	
+				output.write(String.format("<th>%s URI</th><td align='left'><input name='%s_uri' value='' size='80'></td>\n",
+									getTitle(),getTitle().toLowerCase()));
+				output.write("</tr>\n");			
+			} else
 			for (DBGroup.fields field : DBGroup.fields.values()) {
 				output.write("<tr bgcolor='FFFFFF'>\n");	
 				Object value = field.getValue(group);
