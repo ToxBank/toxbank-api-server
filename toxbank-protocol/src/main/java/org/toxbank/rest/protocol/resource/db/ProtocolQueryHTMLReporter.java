@@ -340,7 +340,9 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 				}	
 				case updated: {
 					
-					output.write(String.format("<td>%s</td>",uri,
+					output.write(String.format("<td><a href='%s%s?%s=%s' title='Find protocols modified since this one (Unix time stamp, ms=%s)'>%s</a></td>",
+							uriReporter.getRequest().getRootRef(),Resources.protocol,"modifiedSince",protocol.getTimeModified(),
+							protocol.getTimeModified(),
 							protocol.getTimeModified()==null?"":new Date(protocol.getTimeModified())));
 					break;
 				}
