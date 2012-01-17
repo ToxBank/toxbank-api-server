@@ -90,7 +90,7 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 			   :false;
 	}
 
-	protected Q getProtocolQuery(Object key,int userID,Object search, boolean showCreateLink) throws ResourceException {
+	protected Q getProtocolQuery(Object key,int userID,Object search, Object modified, boolean showCreateLink) throws ResourceException {
 		
 		if (key==null) {
 			ReadProtocol query = new ReadProtocol();
@@ -98,7 +98,11 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 				DBProtocol p = new DBProtocol();
 				p.setTitle(search.toString());
 				query.setValue(p);
-			}
+			} else if (modified != null) try {
+				DBProtocol p = new DBProtocol();
+				p.setTimeModified(Long.parseLong(modified.toString()));
+				query.setValue(p);
+			} catch (Exception x) {x.printStackTrace();}
 //			query.setFieldname(search.toString());
 			editable = showCreateLink;
 			if (userID>0) query.setFieldname(new DBUser(userID));
@@ -124,6 +128,12 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 		} catch (Exception x) {
 			search = null;
 		}		
+		Object modified = null;
+		try {
+			modified = form.getFirstValue("modifiedSince").toString();
+		} catch (Exception x) {
+			modified = null;
+		}			
 		boolean showCreateLink = false;
 		try {
 			String n = form.getFirstValue("new");
@@ -140,7 +150,7 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 		} catch (Exception x) {}
 		
 		try {
-			return getProtocolQuery(key,userID,search,showCreateLink);
+			return getProtocolQuery(key,userID,search,modified,showCreateLink);
 		}catch (ResourceException x) {
 			throw x;
 		} catch (Exception x) {

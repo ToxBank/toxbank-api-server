@@ -3,6 +3,7 @@ package org.toxbank.rest.protocol.resource.db;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Date;
 
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
@@ -236,6 +237,14 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 							uri));		
 					break;
 				}	
+				case updated: {
+					output.write(String.format("<th title='%s'>%s</th><td align='left'>%s</td><td align='left'></td>\n",
+						field.name(),	
+						field.toString(),
+						protocol.getTimeModified()==null?"":new Date(protocol.getTimeModified())
+						));		
+					break;
+				}					
 				case filename: {
 					if (editable)
 					output.write(String.format("<th title='%s'>%s</th><td align='left'><input type=\"file\" name=\"%s\" title='%s' size=\"60\"></td><td align='left'></td>",
@@ -329,6 +338,11 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 					//output.write(String.format("<td><a href='%s'>%s</a></td>",uri,uri));
 					break;
 				}	
+				case updated: {
+					
+					output.write(String.format("<td><a href='%s'>%s</a></td>",uri,
+							protocol.getTimeModified()==null?"":new Date(protocol.getTimeModified())));
+				}
 				case identifier: {
 					output.write(String.format("<td><a href='%s'>%s</a></td>",uri,value));
 					break;

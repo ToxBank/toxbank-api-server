@@ -3,6 +3,7 @@ package org.toxbank.rest.protocol.db;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +61,7 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			fields.idprotocol,
 			fields.identifier,
 			fields.version,
+			fields.updated,
 			fields.filename,
 			fields.title,
 			fields.anabstract,
@@ -541,6 +543,24 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 				return String.format(" %s = ? ",name());
 			}
 		},
+		updated {
+			@Override
+			public Object getValue(DBProtocol protocol) {
+				return protocol.getTimeModified();
+			}
+			@Override
+			public String toString() {
+				return "Date updated";
+			}
+			@Override
+			public QueryParam getParam(DBProtocol protocol) {
+				return new QueryParam<Timestamp>(Timestamp.class,new Timestamp(protocol.getTimeModified()));
+			}
+			@Override
+			public String getCondition() {
+				return String.format(" %s >= ? ",name());
+			}
+		},		
 		allowReadByUser {
 			@Override
 			public Object getValue(DBProtocol protocol) {
@@ -612,7 +632,7 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 	
 	protected static String sql = 
 		"select idprotocol,version,protocol.title,abstract as anabstract,iduser,summarySearchable," +
-		"idproject,project.name as project,idorganisation,organisation.name as organisation,filename,keywords,template\n" +
+		"idproject,project.name as project,idorganisation,organisation.name as organisation,filename,keywords,template,updated\n" +
 		"from protocol join organisation using(idorganisation)\n" +
 		"join project using(idproject)\n" +
 		"left join keywords using(idprotocol) %s %s order by idprotocol,version desc";
@@ -665,6 +685,8 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 					throw new AmbitException("Protocol version not set!");
 			} else if (getValue().getTitle()!=null) {
 				params.add(fields.title.getParam(getValue()));
+			} else if (getValue().getTimeModified()!=null) {
+				params.add(fields.updated.getParam(getValue()));
 			}
 		}
 		if ((getFieldname()!=null) && (getFieldname().getID()>0)) 
@@ -695,6 +717,12 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 												fields.title.getCondition(),
 												byUser==null?"":" and ",
 												byUser==null?"":byUser));
+				else if (getValue().getTimeModified()!=null)
+					return String.format(sql,"where",
+									String.format("%s %s %s",
+											fields.updated.getCondition(),
+											byUser==null?"":" and ",
+											byUser==null?"":byUser));			
 		} 
 		return String.format(sql,byUser==null?"":"where",byUser==null?"":byUser);
 	}
@@ -711,6 +739,8 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 				x.printStackTrace();
 			}
 			
+			Timestamp ts = rs.getTimestamp(fields.updated.name());
+			p.setTimeModified(ts.getTime());
 			return p;
 		} catch (Exception x) {
 			return null;
