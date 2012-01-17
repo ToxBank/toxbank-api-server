@@ -23,6 +23,7 @@ import org.restlet.data.Status;
 import org.restlet.representation.Representation;
 import org.toxbank.rest.groups.DBGroup;
 import org.toxbank.rest.groups.db.ReadProject;
+import org.toxbank.rest.user.db.ReadUser;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -181,4 +182,30 @@ public class ProjectResourceTest  extends ResourceTest {
 		Assert.assertEquals(0,table.getRowCount());
 		c.close();			
 	}
+	
+	@Test
+	public void testAddProjectToUserProfile() throws Exception {
+		IDatabaseConnection c = getConnection();	
+		String sql = "SELECT iduser FROM user_project where idproject=1 and iduser=1";
+		ITable table = 	c.createQueryTable("EXPECTED",sql);
+		Assert.assertEquals(1,table.getRowCount());
+		c.close();		
+		
+		Form form = new Form();
+		form.add("project_uri",String.format("http://localhost:%d%s/G2",port,Resources.project));
+
+		String org = String.format("http://localhost:%d%s/U1%s", port,Resources.user,Resources.project);
+		RemoteTask task = testAsyncPoll(new Reference(org),
+				MediaType.TEXT_URI_LIST, form.getWebRepresentation(),
+				Method.POST);
+		Assert.assertEquals(Status.SUCCESS_OK, task.getStatus());
+		//Assert.assertNull(task.getResult());
+		c = getConnection();	
+		sql = "SELECT iduser FROM user_project where idproject=2 and iduser=1";
+		table = 	c.createQueryTable("EXPECTED",sql);
+		Assert.assertEquals(1,table.getRowCount());
+		c.close();			
+	}	
+	
+	
 }

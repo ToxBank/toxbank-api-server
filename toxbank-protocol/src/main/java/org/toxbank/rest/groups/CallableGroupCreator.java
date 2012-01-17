@@ -1,5 +1,6 @@
 package org.toxbank.rest.groups;
 
+import java.net.URL;
 import java.sql.Connection;
 
 import net.idea.modbcum.i.IQueryRetrieval;
@@ -30,8 +31,10 @@ public class CallableGroupCreator extends CallableDBUpdateTask<IDBGroup,Form,Str
 						GroupType type,
 						DBUser user,
 						GroupQueryURIReporter<IQueryRetrieval<IDBGroup>> reporter,
-						Form input, Connection connection,String token)  {
-		super(method,input,connection,token);
+						Form input, 
+						String baseReference,
+						Connection connection,String token)  {
+		super(method,input,baseReference,connection,token);
 		this.method = method;
 		this.item = item;
 		this.reporter = reporter;
@@ -44,10 +47,31 @@ public class CallableGroupCreator extends CallableDBUpdateTask<IDBGroup,Form,Str
 		if (input==null) {
 			return item;
 		} else {
-			DBGroup user = new DBGroup(type);
-			user.setTitle(input.getFirstValue(DBGroup.fields.name.name()));
-			user.setGroupName(input.getFirstValue(DBGroup.fields.ldapgroup.name()));
-	 		return user;
+			IDBGroup group = null; 
+			switch (type) {
+			case ORGANISATION: {
+				group = new DBOrganisation();
+				String uri = input.getFirstValue("organisation_uri");
+				if (uri!=null)
+				try {((DBOrganisation)group).setResourceURL(new URL(uri));
+					group.setID(((DBOrganisation)group).parseURI(baseReference));
+				} catch (Exception x) {};
+				break;
+			}
+			case PROJECT: {
+				group = new DBProject();
+				String uri = input.getFirstValue("project_uri");
+				if (uri!=null)
+				try {
+					((DBProject)group).setResourceURL(new URL(uri));
+					group.setID(((DBProject)group).parseURI(baseReference));
+				} catch (Exception x) { x.printStackTrace();}
+				break;
+			}
+			}
+			group.setTitle(input.getFirstValue(DBGroup.fields.name.name()));
+			group.setGroupName(input.getFirstValue(DBGroup.fields.ldapgroup.name()));
+	 		return group;
 		}
 	}
 

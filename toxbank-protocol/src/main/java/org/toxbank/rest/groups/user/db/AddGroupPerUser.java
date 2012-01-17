@@ -22,23 +22,24 @@ public class AddGroupPerUser<P extends IDBGroup> extends AbstractUpdate<DBUser,P
 	}
 	@Override
 	public DBUser getGroup() {
-		return wrapped.getGroup();
+		return wrapped == null?wrapped.getGroup():null;
 	}
 	public void setObject(P object) {
+		if (wrapped != null)
 		wrapped.getObject().set(0,object);
 	};
 	@Override
 	public P getObject() {
-		return wrapped.getObject().get(0);
+		return wrapped==null?null:wrapped.getObject().get(0);
 	}
 	@Override
 	public String[] getSQL() throws AmbitException {
-		return wrapped.getSQL();
+		return wrapped==null?null:wrapped.getSQL();
 	}
 
 	@Override
 	public List<QueryParam> getParameters(int index) throws AmbitException {
-		return wrapped.getParameters(index);
+		return wrapped==null?null:wrapped.getParameters(index);
 	}
 
 	@Override
