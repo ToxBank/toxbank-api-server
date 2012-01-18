@@ -8,8 +8,10 @@ import java.util.List;
 import net.toxbank.client.resource.Document;
 import net.toxbank.client.resource.Organisation;
 import net.toxbank.client.resource.Project;
+import net.toxbank.client.resource.Protocol;
 import net.toxbank.client.resource.Template;
 import net.toxbank.client.resource.User;
+import net.toxbank.client.resource.Protocol.STATUS;
 
 import org.apache.commons.fileupload.FileItem;
 import org.restlet.data.Status;
@@ -148,6 +150,12 @@ public class ProtocolFactory {
 					try {
 						protocol.setSearchable(Boolean.parseBoolean(fi.getString()));
 					} catch (Exception x) { protocol.setSearchable(false);}
+					break;					
+				}
+				case status: {
+					try {
+						protocol.setStatus(Protocol.STATUS.valueOf(fi.getString()));
+					} catch (Exception x) { protocol.setStatus(STATUS.RESEARCH);}
 					break;					
 				}
 				case keywords: {

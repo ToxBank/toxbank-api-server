@@ -14,6 +14,7 @@ import net.idea.restnet.i.tools.DownloadTool;
 import net.toxbank.client.Resources;
 import net.toxbank.client.io.rdf.ProtocolIO;
 import net.toxbank.client.resource.Protocol;
+import net.toxbank.client.resource.Protocol.STATUS;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
@@ -327,11 +328,13 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		 IDatabaseConnection c = getConnection();	
 		 ITable  table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
 		Assert.assertEquals(4,table.getRowCount());
-		table = 	c.createQueryTable("EXPECTED","SELECT p.idprotocol,p.version,filename,pa.iduser from protocol p join protocol_authors pa where pa.idprotocol=p.idprotocol and p.version=pa.version and p.idprotocol>2 order by pa.iduser");
+		table = 	c.createQueryTable("EXPECTED","SELECT p.idprotocol,p.version,filename,pa.iduser,status from protocol p join protocol_authors pa where pa.idprotocol=p.idprotocol and p.version=pa.version and p.idprotocol>2 order by pa.iduser");
 		Assert.assertEquals(2,table.getRowCount());
 		Assert.assertEquals(new BigInteger("1"),table.getValue(0,"version"));
 		Assert.assertEquals(new BigInteger("1"),table.getValue(0,"iduser"));
 		Assert.assertEquals(new BigInteger("2"),table.getValue(1,"iduser"));
+		Assert.assertEquals(STATUS.SOP.toString(),table.getValue(0,"status"));
+		
 		File f = new File(new URI(table.getValue(0,"filename").toString()));
 		//System.out.println(f);
 		Assert.assertTrue(f.exists());
@@ -379,6 +382,10 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 				values[i] = String.format("http://localhost:%d%s/%s",port,Resources.user,"U2");
 				break;
 			}	
+			case status: {
+				values[i] = STATUS.SOP.toString();
+				break;
+			}
 			default: {
 				values[i] = field.name();
 			}
