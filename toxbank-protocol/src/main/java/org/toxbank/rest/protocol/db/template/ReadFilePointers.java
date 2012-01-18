@@ -71,7 +71,9 @@ public class ReadFilePointers extends AbstractQuery<String, DBProtocol, EQCondit
 				protocol.setDataTemplate(new Template()); 
 			}
 			try { 
-				protocol.setDocument(new Document(new URL(rs.getString(fields.filename.name()))));
+				String filename = rs.getString(fields.filename.name());
+				//TODO media type should be stored as a separate field, not guessed!
+				protocol.setDocument(new Document(new URL(filename)));					
 			} catch (Exception x) {
 				protocol.setDocument(new Document()); 
 			}			

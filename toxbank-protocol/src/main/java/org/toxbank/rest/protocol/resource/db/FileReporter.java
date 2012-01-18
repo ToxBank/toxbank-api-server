@@ -37,7 +37,7 @@ public class FileReporter extends QueryReporter<DBProtocol, IQueryRetrieval<DBPr
 	public Object processItem(DBProtocol item) throws AmbitException {
 		try {
 			File file = new File(item.getDocument().getResourceURL().toURI());
-			setOutput(new FileRepresentation(file, MediaType.APPLICATION_PDF));
+			setOutput(new FileRepresentation(file, new MediaType(item.getDocument().getMediaType())));
 			return item;
 		} catch (URISyntaxException x) {
 			throw new AmbitException(x);

@@ -34,6 +34,19 @@ public class ProtocolDocumentResource extends QueryResource<IQueryRetrieval<DBPr
 	}
 	
 	@Override
+	protected void customizeVariants(MediaType[] mimeTypes) {
+		super.customizeVariants(mimeTypes);
+		getVariants().add(new Variant(MediaType.APPLICATION_POWERPOINT));
+		getVariants().add(new Variant(MediaType.APPLICATION_MSOFFICE_DOCX));
+		getVariants().add(new Variant(MediaType.APPLICATION_MSOFFICE_PPTX));
+		getVariants().add(new Variant(MediaType.APPLICATION_WORD));
+		getVariants().add(new Variant(MediaType.APPLICATION_OPENOFFICE_ODT));
+		getVariants().add(new Variant(MediaType.APPLICATION_TEX));
+		getVariants().add(new Variant(MediaType.APPLICATION_TAR));
+		getVariants().add(new Variant(MediaType.APPLICATION_ZIP));
+		getVariants().add(new Variant(MediaType.APPLICATION_ALL));
+	}
+	@Override
 	public IProcessor<IQueryRetrieval<DBProtocol>, Representation> createConvertor(
 			Variant variant) throws AmbitException, ResourceException {
 		String filenamePrefix = getRequest().getResourceRef().getPath();
@@ -73,5 +86,31 @@ public class ProtocolDocumentResource extends QueryResource<IQueryRetrieval<DBPr
 					x
 					);
 		}
+	}
+	@Override
+	protected String getExtension(MediaType mediaType) {
+		String ext = super.getExtension(mediaType);
+		if (ext == null) {
+			if (MediaType.APPLICATION_WORD.equals(mediaType))
+				return ".doc";
+			if (MediaType.APPLICATION_EXCEL.equals(mediaType))
+				return ".xls";			
+			else if (MediaType.APPLICATION_GNU_TAR.equals(mediaType))
+				return ".tar";
+			else if (MediaType.APPLICATION_ZIP.equals(mediaType))
+				return ".zip";
+			else if (MediaType.APPLICATION_MSOFFICE_DOCX.equals(mediaType))
+				return ".docx";	
+			else if (MediaType.APPLICATION_MSOFFICE_PPTX.equals(mediaType))
+				return ".pptx";
+			else if (MediaType.APPLICATION_MSOFFICE_XLSX.equals(mediaType))
+				return ".xslx";
+			else if (MediaType.APPLICATION_OPENOFFICE_ODT.equals(mediaType))
+				return ".odt";
+			else if (MediaType.APPLICATION_LATEX.equals(mediaType))
+				return ".tex";
+			else return "";
+		}
+		return ext;
 	}
 }

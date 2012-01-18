@@ -251,18 +251,19 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 							field.name(),	
 							field.toString(),
 							field.name(),
-							"PDF file")); 					
+							"PDF|MS Word file")); 					
 					else 
 						if ((protocol.getDocument()==null) || (protocol.getDocument().getResourceURL()==null))
 							output.write(String.format("<th title='%s'>%s</th><td align='left'>N/A</td><td></td>",
 									field.name(),	
 									field.toString()));							
 						else
-						output.write(String.format("<th title='%s'>%s</th><td align='left'><a href='%s%s'>Download</a></td><td></td>",
+						output.write(String.format("<th title='%s'>%s</th><td align='left'><a href='%s%s?media=%s'>Download</a></td><td></td>",
 									field.name(),	
 									field.toString(),
 									uri,
-									Resources.document));
+									Resources.document,
+									Reference.encode(MediaType.APPLICATION_ALL.toString())));
 
 					break;
 				}	
@@ -355,7 +356,7 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 						output.write("<td>N/A</td>");
 					else					
 						output.write(String.format("<td><a href='%s%s?media=%s'>Download</a></td>",
-								uri,Resources.document,Reference.encode(MediaType.APPLICATION_PDF.toString())));
+								uri,Resources.document,Reference.encode(MediaType.APPLICATION_ALL.toString())));
 					break;
 				}	
 				case template: {
