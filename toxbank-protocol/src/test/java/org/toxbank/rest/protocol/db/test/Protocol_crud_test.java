@@ -34,6 +34,7 @@ import java.net.URL;
 import junit.framework.Assert;
 import net.idea.modbcum.i.query.IQueryUpdate;
 import net.toxbank.client.resource.Document;
+import net.toxbank.client.resource.Protocol.STATUS;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
@@ -62,6 +63,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 		ref.setOrganisation(new DBOrganisation(1));
 		ref.setSearchable(true);
 		ref.setDocument(new Document(new URL(file)));
+		ref.setStatus(STATUS.SOP);
 		return new CreateProtocol(ref);
 	}
 
@@ -70,10 +72,11 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 			throws Exception {
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED",
-				String.format("SELECT idprotocol,summarySearchable FROM protocol where title='title' and abstract='abstract' and iduser='1' and idproject=1 and idorganisation=1 and filename='%s'",file));
+				String.format("SELECT idprotocol,summarySearchable,status FROM protocol where title='title' and abstract='abstract' and iduser='1' and idproject=1 and idorganisation=1 and filename='%s'",file));
 		
 		Assert.assertEquals(1,table.getRowCount());
 		Assert.assertEquals(Boolean.TRUE,table.getValue(0,"summarySearchable"));
+		Assert.assertEquals(STATUS.SOP.toString(),table.getValue(0,"status"));
 		c.close();
 	}
 
