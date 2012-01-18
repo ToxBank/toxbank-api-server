@@ -10,15 +10,15 @@ public enum GroupType {
 		return name().toLowerCase();
 	}
 
-	public String getSearchSQL(boolean user) {
+	public String getSearchSQL(String field,boolean user) {
 		return user
-			?String.format("SELECT %s,name,ldapgroup FROM %s where iduser=? and name regexp ?", getID(),getDBname())	
-			:String.format("SELECT %s,name,ldapgroup FROM %s where name regexp ?", getID(),getDBname());
+			?String.format("SELECT %s,name,ldapgroup FROM %s where iduser=? and %s regexp ?", getID(),getDBname(),field)	
+			:String.format("SELECT %s,name,ldapgroup FROM %s where %s regexp ?", getID(),getDBname(),field);
 	}
 
-	public String getReadSQL(boolean all,String search) {
+	public String getReadSQL(boolean all,String field,String search) {
 		if (all)
-			if (search != null) return getSearchSQL(false);
+			if (search != null) return getSearchSQL(field,false);
 			else return String.format("SELECT %s,name,ldapgroup FROM %s", getID(),getDBname());
 		else
 			return String.format("SELECT %s,name,ldapgroup FROM %s where %s=?",
@@ -40,9 +40,9 @@ public enum GroupType {
 	}
 	
 
-	public String getReadByUserSQL(boolean all,String search) {
+	public String getReadByUserSQL(boolean all,String field,String search) {
 		if (all)
-			if (search != null) return getSearchSQL(true);
+			if (search != null) return getSearchSQL(field,true);
 			else return String.format("SELECT %s,name,ldapgroup FROM %s join user_%s using(%s) where iduser=?", 
 						getID(),getDBname(),getDBname(),getID());
 		else

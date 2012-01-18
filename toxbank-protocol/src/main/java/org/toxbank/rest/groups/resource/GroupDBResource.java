@@ -82,7 +82,7 @@ public abstract class GroupDBResource<G extends IDBGroup>	extends QueryResource<
 		else throw new ResourceException(Status.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE);
 	}
 	
-	public abstract ReadGroup<G> createGroupQuery(Integer key,String search);
+	public abstract ReadGroup<G> createGroupQuery(Integer key,String search, String groupName);
 	public abstract String getGroupBackLink();
 	public abstract String getGroupTitle();
 
@@ -99,7 +99,14 @@ public abstract class GroupDBResource<G extends IDBGroup>	extends QueryResource<
 			if ((search != null) && !"".equals(search)) search = String.format("^%s", search);
 		} catch (Exception x) {
 			search = null;
-		}		
+		}	
+		Object groupname = null;
+		try {
+			groupname = form.getFirstValue("groupname").toString();
+			if ((groupname != null) && !"".equals(groupname)) groupname = String.format("^%s", groupname);
+		} catch (Exception x) {
+			groupname = null;
+		}			
 		try {
 			String n = form.getFirstValue("new");
 			editable = n==null?false:Boolean.parseBoolean(n);
@@ -112,12 +119,12 @@ public abstract class GroupDBResource<G extends IDBGroup>	extends QueryResource<
 		try {
 			if (key==null) {
 //				query.setFieldname(search.toString());
-				query = createGroupQuery(null,search==null?null:search.toString());
+				query = createGroupQuery(null,search==null?null:search.toString(), groupname==null?null:groupname.toString());
 			}			
 			else {
 				if (key.toString().startsWith("G")) {
 					singleItem = true;
-					query = createGroupQuery(new Integer(Reference.decode(key.toString().substring(1))),null);
+					query = createGroupQuery(new Integer(Reference.decode(key.toString().substring(1))),null, null);
 				} else throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
 			}
 			

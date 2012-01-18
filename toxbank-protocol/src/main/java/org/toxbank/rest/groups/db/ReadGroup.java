@@ -29,9 +29,13 @@ public abstract class ReadGroup<G extends IDBGroup> extends AbstractQuery<DBUser
 	@Override
 	public String getSQL() throws AmbitException {
 		if (getValue()==null) throw new AmbitException("No value!");
+		
+		String value = getValue().getTitle()==null?getValue().getGroupName():getValue().getTitle();
+		String field = getValue().getTitle()==null?"ldapgroup":"name";
+		
 		return ((getFieldname()!=null) && (getFieldname().getID()>0))
-				?getValue().getGroupType().getReadByUserSQL(getValue().getID()<=0,getValue().getTitle())
-				:getValue().getGroupType().getReadSQL(getValue().getID()<=0,getValue().getTitle());
+				?getValue().getGroupType().getReadByUserSQL(getValue().getID()<=0,field,value)
+				:getValue().getGroupType().getReadSQL(getValue().getID()<=0,field,value);
 	}
 
 	@Override
@@ -41,11 +45,12 @@ public abstract class ReadGroup<G extends IDBGroup> extends AbstractQuery<DBUser
 		if ((getFieldname()!=null) && (getFieldname().getID()>0))
 			params.add(new QueryParam<Integer>(Integer.class,getFieldname().getID()));
 		
-		if (getValue().getID()>0) {
+		if (getValue().getID()>0) 
 			params.add(new QueryParam<Integer>(Integer.class,getValue().getID()));
-		} else if (getValue().getTitle()!=null) {
+		else if (getValue().getTitle()!=null)
 			params.add(new QueryParam<String>(String.class,getValue().getTitle()));
-		}
+		else if (getValue().getGroupName()!=null) 
+			params.add(new QueryParam<String>(String.class,getValue().getGroupName()));
 		return params;
 	}
 

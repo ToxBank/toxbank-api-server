@@ -22,9 +22,10 @@ import org.toxbank.rest.user.resource.UserDBResource;
 public class OrganisationDBResource extends GroupDBResource<DBOrganisation> {
 
 	@Override
-	public ReadGroup<DBOrganisation> createGroupQuery(Integer key, String search) {
+	public ReadGroup<DBOrganisation> createGroupQuery(Integer key, String search, String groupName) {
 		DBOrganisation p = new DBOrganisation();
 		p.setTitle(search);
+		p.setGroupName(groupName);
 		if (key!=null) p.setID(key);
 		ReadOrganisation q = new ReadOrganisation(p);
 		return q;
