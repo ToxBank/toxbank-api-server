@@ -10,6 +10,7 @@ import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.author.db.ReadAuthor;
+import org.toxbank.rest.user.db.ReadUser;
 import org.toxbank.rest.user.resource.UserDBResource;
 
 public class ProtocolAuthorsResource extends UserDBResource<DBProtocol> {
@@ -20,7 +21,9 @@ public class ProtocolAuthorsResource extends UserDBResource<DBProtocol> {
 		throw new ResourceException(Status.SERVER_ERROR_NOT_IMPLEMENTED);
 	}
 	
-	protected ReadAuthor getUserQuery(Object key) throws ResourceException {
+	@Override
+	protected ReadUser getUserQuery(Object key, String search_name,
+			Object search_value) throws ResourceException {
 		Object protocolKey = getRequest().getAttributes().get(FileResource.resourceKey);	
 		if (protocolKey==null) throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
 		int id[] = ReadProtocol.parseIdentifier(Reference.decode(protocolKey.toString()));
