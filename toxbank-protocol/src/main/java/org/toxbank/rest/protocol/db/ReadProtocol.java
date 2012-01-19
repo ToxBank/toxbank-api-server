@@ -632,7 +632,7 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 	
 	protected static String sql = 
 		"select idprotocol,version,protocol.title,abstract as anabstract,iduser,summarySearchable," +
-		"idproject,project.name as project,idorganisation,organisation.name as organisation,filename,keywords,template,updated\n" +
+		"idproject,project.name as project,idorganisation,organisation.name as organisation,filename,keywords,template,updated,status\n" +
 		"from protocol join organisation using(idorganisation)\n" +
 		"join project using(idproject)\n" +
 		"left join keywords using(idprotocol) %s %s order by idprotocol,version desc";
@@ -650,7 +650,8 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 		fields.organisation,
 		fields.filename,
 		fields.keywords,
-		fields.template
+		fields.template,
+		fields.status
 		//ReadProtocol.fields.accesslevel
 	};	
 	
