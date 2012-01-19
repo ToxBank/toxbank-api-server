@@ -93,7 +93,7 @@ public class UserRDFReporter<Q extends IQueryRetrieval<DBUser>> extends QueryRDF
 	public Object processItem(DBUser item) throws AmbitException {
 		try {
 			item.setResourceURL(new URL(uriReporter.getURI(item)));
-			ioClass.toJena(
+			ioClass.objectToJena(
 				getJenaModel(), // create a new class
 				item
 			);

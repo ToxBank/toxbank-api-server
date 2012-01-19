@@ -62,7 +62,7 @@ public class GroupRDFReporter<Q extends IQueryRetrieval<IDBGroup>> extends Query
 				switch (item.getGroupType()) {
 				case ORGANISATION: {
 					if (oIOClass==null) oIOClass = new OrganisationIO();
-						oIOClass.toJena(
+						oIOClass.objectToJena(
 							getJenaModel(),
 							(Organisation)item
 						);					
@@ -70,7 +70,7 @@ public class GroupRDFReporter<Q extends IQueryRetrieval<IDBGroup>> extends Query
 				}
 				case PROJECT: {
 					if (pIOClass==null) pIOClass = new ProjectIO();
-						pIOClass.toJena(
+						pIOClass.objectToJena(
 							getJenaModel(), 
 							(Project)item
 						);					
