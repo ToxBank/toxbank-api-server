@@ -11,6 +11,7 @@ import net.idea.modbcum.p.MasterDetailsProcessor;
 import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.db.convertors.QueryRDFReporter;
+import net.toxbank.client.Resources;
 import net.toxbank.client.io.rdf.TOXBANK;
 import net.toxbank.client.io.rdf.UserIO;
 
@@ -89,6 +90,10 @@ public class UserRDFReporter<Q extends IQueryRetrieval<DBUser>> extends QueryRDF
 			output.setNsPrefix("dcterms", DCTerms.getURI());
 			output.setNsPrefix("xsd", XSD.getURI());
 			output.setNsPrefix("foaf", FOAF.NS);
+			output.setNsPrefix("tbpt", String.format("%s%s/",uriReporter.getBaseReference().toString(),Resources.project));
+			output.setNsPrefix("tbo", String.format("%s%s/",uriReporter.getBaseReference().toString(),Resources.organisation));
+			output.setNsPrefix("tbu", String.format("%s%s/",uriReporter.getBaseReference().toString(),Resources.user));
+			
 		}
 	}
 	@Override

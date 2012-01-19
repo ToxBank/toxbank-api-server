@@ -8,6 +8,7 @@ import net.idea.modbcum.i.exceptions.DbAmbitException;
 import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.db.convertors.QueryRDFReporter;
+import net.toxbank.client.Resources;
 import net.toxbank.client.io.rdf.OrganisationIO;
 import net.toxbank.client.io.rdf.ProjectIO;
 import net.toxbank.client.io.rdf.TOXBANK;
@@ -51,6 +52,8 @@ public class GroupRDFReporter<Q extends IQueryRetrieval<IDBGroup>> extends Query
 			output.setNsPrefix("tb", TOXBANK.URI);
 			output.setNsPrefix("dcterms", DCTerms.getURI());
 			output.setNsPrefix("xsd", XSD.getURI());
+			output.setNsPrefix("tbpt", String.format("%s%s/",uriReporter.getBaseReference().toString(),Resources.project));
+			output.setNsPrefix("tbo", String.format("%s%s/",uriReporter.getBaseReference().toString(),Resources.organisation));
 		}
 	}
 	@Override
