@@ -24,6 +24,7 @@ import org.toxbank.rest.groups.resource.GroupQueryURIReporter;
 import org.toxbank.rest.user.DBUser;
 
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.sparql.vocabulary.FOAF;
 import com.hp.hpl.jena.vocabulary.DCTerms;
 import com.hp.hpl.jena.vocabulary.XSD;
 
@@ -87,6 +88,7 @@ public class UserRDFReporter<Q extends IQueryRetrieval<DBUser>> extends QueryRDF
 			output.setNsPrefix("tb", TOXBANK.URI);
 			output.setNsPrefix("dcterms", DCTerms.getURI());
 			output.setNsPrefix("xsd", XSD.getURI());
+			output.setNsPrefix("foaf", FOAF.NS);
 		}
 	}
 	@Override
