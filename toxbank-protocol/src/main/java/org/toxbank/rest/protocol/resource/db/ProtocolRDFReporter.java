@@ -2,9 +2,12 @@ package org.toxbank.rest.protocol.resource.db;
 
 import java.net.URL;
 
+import net.idea.modbcum.i.IQueryCondition;
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.exceptions.DbAmbitException;
+import net.idea.modbcum.p.DefaultAmbitProcessor;
+import net.idea.modbcum.p.MasterDetailsProcessor;
 import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.db.convertors.QueryRDFReporter;
@@ -17,9 +20,11 @@ import org.restlet.data.MediaType;
 import org.toxbank.rest.groups.DBOrganisation;
 import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.groups.IDBGroup;
+import org.toxbank.rest.groups.db.ReadProject;
 import org.toxbank.rest.groups.resource.GroupQueryURIReporter;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.user.DBUser;
+import org.toxbank.rest.user.author.db.ReadAuthor;
 import org.toxbank.rest.user.resource.UserURIReporter;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -40,6 +45,26 @@ public class ProtocolRDFReporter<Q extends IQueryRetrieval<DBProtocol>> extends 
 		super(request,mediaType,doc);
 		groupReporter = new GroupQueryURIReporter<IQueryRetrieval<IDBGroup>>(request);
 		userReporter = new UserURIReporter<IQueryRetrieval<DBUser>>(request);
+		getProcessors().clear();
+		IQueryRetrieval<DBUser> queryP = new ReadAuthor(null,null); 
+		MasterDetailsProcessor<DBProtocol,DBUser,IQueryCondition> authersReader = new MasterDetailsProcessor<DBProtocol,DBUser,IQueryCondition>(queryP) {
+			@Override
+			protected DBProtocol processDetail(DBProtocol target, DBUser detail)
+					throws Exception {
+
+				detail.setResourceURL(new URL(userReporter.getURI(detail)));
+				target.addAuthor(detail);
+				return target;
+			}
+		};
+		getProcessors().add(authersReader);
+		processors.add(new DefaultAmbitProcessor<DBProtocol,DBProtocol>() {
+			@Override
+			public DBProtocol process(DBProtocol target) throws AmbitException {
+				processItem(target);
+				return target;
+			};
+		});				
 	}
 	@Override
 	protected QueryURIReporter createURIReporter(Request reference,ResourceDoc doc) {
