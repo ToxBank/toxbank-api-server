@@ -349,8 +349,10 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 						DBProject dbp = new DBProject(); 
 						protocol.setProject(dbp);
 						dbp.setTitle(rs.getString(name()));
+						dbp.setGroupName(rs.getString("pgroupname"));
 					} else if (p instanceof DBProject) {
 						((DBProject)p).setTitle(rs.getString(name()));
+						((DBProject)p).setGroupName(rs.getString("pgroupname"));
 					}
 				} catch (Exception x) {
 					throw new SQLException(x);
@@ -408,8 +410,10 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 						DBOrganisation dbp = new DBOrganisation(); 
 						protocol.setOrganisation(dbp);
 						dbp.setTitle(rs.getString(name()));
+						dbp.setGroupName(rs.getString("ogroupname"));
 					} else if (p instanceof DBOrganisation) {
 						((DBOrganisation)p).setTitle(rs.getString(name()));
+						((DBOrganisation)p).setGroupName(rs.getString("ogroupname"));
 					}
 				} catch (Exception x) {
 					throw new SQLException(x);
@@ -632,7 +636,9 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 	
 	protected static String sql = 
 		"select idprotocol,version,protocol.title,abstract as anabstract,iduser,summarySearchable," +
-		"idproject,project.name as project,idorganisation,organisation.name as organisation,filename,keywords,template,updated,status\n" +
+		"idproject,project.name as project,project.ldapgroup as pgroupname," +
+		"idorganisation,organisation.name as organisation,organisation.ldapgroup as ogroupname," +
+		"filename,keywords,template,updated,status\n" +
 		"from protocol join organisation using(idorganisation)\n" +
 		"join project using(idproject)\n" +
 		"left join keywords using(idprotocol) %s %s order by idprotocol,version desc";
