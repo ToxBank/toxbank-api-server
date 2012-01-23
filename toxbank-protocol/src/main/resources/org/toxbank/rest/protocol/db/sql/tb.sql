@@ -79,7 +79,7 @@ DROP TABLE IF EXISTS `protocol`;
 CREATE TABLE  `protocol` (
   `idprotocol` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `version` int(10) unsigned NOT NULL DEFAULT '1' COMMENT 'Version',
-  `title` varchar(45) NOT NULL COMMENT 'Title',
+  `title` varchar(255) NOT NULL COMMENT 'Title',
   `abstract` text,
   `summarySearchable` tinyint(1) NOT NULL DEFAULT '1',
   `iduser` int(10) unsigned NOT NULL COMMENT 'Link to user table',
