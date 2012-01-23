@@ -90,6 +90,8 @@ CREATE TABLE  `protocol` (
   `status` enum('RESEARCH','SOP') NOT NULL DEFAULT 'RESEARCH' COMMENT 'Research or Standard Operating Procedure',
   `latest` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Is the latest version',
   `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Last updated',
+  `created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `published` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`idprotocol`,`version`) USING BTREE,
   KEY `Index_3` (`title`),
   KEY `FK_protocol_1` (`idproject`),
@@ -101,7 +103,6 @@ CREATE TABLE  `protocol` (
   CONSTRAINT `FK_protocol_2` FOREIGN KEY (`idorganisation`) REFERENCES `organisation` (`idorganisation`),
   CONSTRAINT `FK_protocol_3` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
- 
 -- -----------------------------------------------------
 -- Protocol authors
 -- -----------------------------------------------------
@@ -150,4 +151,4 @@ CREATE TABLE  `version` (
   `comment` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`idmajor`,`idminor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-insert into version (idmajor,idminor,comment) values (1,2,"TB Protocol schema");
+insert into version (idmajor,idminor,comment) values (1,3,"TB Protocol schema");

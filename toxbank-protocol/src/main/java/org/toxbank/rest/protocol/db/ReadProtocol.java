@@ -61,6 +61,8 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			fields.idprotocol,
 			fields.identifier,
 			fields.version,
+			fields.published,
+			fields.created,
 			fields.updated,
 			fields.filename,
 			fields.title,
@@ -547,6 +549,24 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 				return String.format(" %s = ? ",name());
 			}
 		},
+		created {
+			@Override
+			public Object getValue(DBProtocol protocol) {
+				return protocol.getSubmissionDate();
+			}
+			@Override
+			public String toString() {
+				return "Submission date";
+			}
+			@Override
+			public QueryParam getParam(DBProtocol protocol) {
+				return new QueryParam<Timestamp>(Timestamp.class,new Timestamp(protocol.getSubmissionDate()));
+			}
+			@Override
+			public String getCondition() {
+				return String.format(" %s >= ? ",name());
+			}
+		},			
 		updated {
 			@Override
 			public Object getValue(DBProtocol protocol) {
@@ -564,6 +584,39 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			public String getCondition() {
 				return String.format(" %s >= ? ",name());
 			}
+		},		
+		published {
+			@Override
+			public Object getValue(DBProtocol protocol) {
+				return protocol.isPublished();
+			}
+			@Override
+			public String toString() {
+				return "Published status";
+			}
+			@Override
+			public QueryParam getParam(DBProtocol protocol) {
+				return new QueryParam<Boolean>(Boolean.class,new Boolean(protocol.isPublished()));
+			}
+			@Override
+			public String getCondition() {
+				return String.format(" %s = ? ",name());
+			}
+			@Override
+			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
+				protocol.setPublished(rs.getBoolean(name()));
+			}
+			@Override
+			public Class getClassType(DBProtocol protocol) {
+				return Boolean.class;
+			}
+			public String getHTMLField(DBProtocol protocol) {
+				Object value = getValue(protocol);
+				return String.format("<input name='%s' type='checkbox' title='%s' value='%s'>\n",
+						name(),
+						getDescription(),
+						value==null?"":value.toString());
+			}			
 		},		
 		allowReadByUser {
 			@Override
@@ -638,7 +691,7 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 		"select idprotocol,version,protocol.title,abstract as anabstract,iduser,summarySearchable," +
 		"idproject,project.name as project,project.ldapgroup as pgroupname," +
 		"idorganisation,organisation.name as organisation,organisation.ldapgroup as ogroupname," +
-		"filename,keywords,template,updated,status\n" +
+		"filename,keywords,template,updated,status,`created`,published\n" +
 		"from protocol join organisation using(idorganisation)\n" +
 		"join project using(idproject)\n" +
 		"left join keywords using(idprotocol) %s %s order by idprotocol,version desc";
@@ -657,7 +710,9 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 		fields.filename,
 		fields.keywords,
 		fields.template,
-		fields.status
+		fields.status,
+		fields.published
+		
 		//ReadProtocol.fields.accesslevel
 	};	
 	
@@ -745,11 +800,20 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 				System.err.println(field);
 				x.printStackTrace();
 			}
-			
-			Timestamp ts = rs.getTimestamp(fields.updated.name());
-			p.setTimeModified(ts.getTime());
+			try {
+				Timestamp ts = rs.getTimestamp(fields.updated.name());
+				p.setTimeModified(ts.getTime());
+			} catch (Exception x) {}
+			try {
+				Timestamp ts = rs.getTimestamp(fields.created.name());
+				p.setSubmissionDate(ts.getTime());
+			} catch (Exception x) {
+				x.printStackTrace();
+				
+			}
 			return p;
 		} catch (Exception x) {
+			x.printStackTrace();
 			return null;
 		} finally {
 			if (p!=null) p.setIdentifier(String.format("SEURAT-Protocol-%d-%d", p.getID(),p.getVersion()));

@@ -90,7 +90,7 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		Assert.assertEquals("SEURAT-Protocol-1-1", protocols.get(0).getIdentifier());
 		Assert.assertEquals("Very important protocol", protocols.get(0).getTitle());
 		Assert.assertNotNull(protocols.get(0).getAbstract());
-		
+		Assert.assertTrue(protocols.get(0).isPublished());
 		Assert.assertNotNull(protocols.get(0).getOwner());
 		Assert.assertEquals(String.format("http://localhost:%d%s/U1",port,Resources.user),
 				protocols.get(0).getOwner().getResourceURL().toString());

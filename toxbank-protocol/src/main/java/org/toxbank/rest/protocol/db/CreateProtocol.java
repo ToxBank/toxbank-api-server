@@ -40,8 +40,8 @@ import org.toxbank.rest.protocol.DBProtocol;
 
 public class CreateProtocol extends AbstractObjectUpdate<DBProtocol>{
 	public static final String[] create_sql = {
-		"insert into protocol (idprotocol,title,abstract,iduser,summarySearchable,idproject,idorganisation,filename,status) " +
-		"values (?,?,?,?,?,?,?,?,?)"
+		"insert into protocol (idprotocol,title,abstract,iduser,summarySearchable,idproject,idorganisation,filename,status,created) " +
+		"values (?,?,?,?,?,?,?,?,?,now())"
 	};
 
 	public CreateProtocol(DBProtocol ref) {
