@@ -392,6 +392,10 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 				values[i] = "My abstract\u2122";
 				break;
 			}
+			case published: {
+				values[i] = Boolean.TRUE.toString();
+				break;
+			}
 			default: {
 				values[i] = field.name();
 			}

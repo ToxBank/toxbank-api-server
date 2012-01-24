@@ -51,7 +51,8 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			fields.organisation_uri,
 			fields.user_uri,
 			fields.allowReadByUser,
-			fields.allowReadByGroup
+			fields.allowReadByGroup,
+			fields.published
 			
 			
 			//ReadProtocol.fields.version
@@ -588,7 +589,7 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 		published {
 			@Override
 			public Object getValue(DBProtocol protocol) {
-				return protocol.isPublished();
+				return protocol==null?Boolean.FALSE:protocol.isPublished();
 			}
 			@Override
 			public String toString() {

@@ -48,6 +48,13 @@ public class ProtocolFactory {
 						protocol.setIdentifier(s);
 					break;
 				}
+				case published: {
+					String s = fi.getString(utf8);
+					try {
+						protocol.setPublished(Boolean.parseBoolean(s));
+					} catch (Exception x) { protocol.setPublished(true);}
+					break;
+				}
 				case anabstract: {
 					String s = fi.getString(utf8);
 					if ((s!=null) && !"".equals(s))

@@ -40,8 +40,8 @@ import org.toxbank.rest.protocol.DBProtocol;
 
 public class CreateProtocol extends AbstractObjectUpdate<DBProtocol>{
 	public static final String[] create_sql = {
-		"insert into protocol (idprotocol,title,abstract,iduser,summarySearchable,idproject,idorganisation,filename,status,created) " +
-		"values (?,?,?,?,?,?,?,?,?,now())"
+		"insert into protocol (idprotocol,title,abstract,iduser,summarySearchable,idproject,idorganisation,filename,status,published,created) " +
+		"values (?,?,?,?,?,?,?,?,?,?,now())"
 	};
 
 	public CreateProtocol(DBProtocol ref) {
@@ -61,7 +61,8 @@ public class CreateProtocol extends AbstractObjectUpdate<DBProtocol>{
 				ReadProtocol.fields.idproject,
 				ReadProtocol.fields.idorganisation,
 				ReadProtocol.fields.filename,
-				ReadProtocol.fields.status
+				ReadProtocol.fields.status,
+				ReadProtocol.fields.published
 		};
 		for (ReadProtocol.fields field: f) 
 			params1.add(field.getParam(getObject()));

@@ -312,7 +312,15 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 								field.toString(),uri,Resources.user));
 						break;
 					}
-				}						
+				}		
+				case published :  {
+					String help = field.getHelp(uriReporter.getRequest().getRootRef().toString());
+					output.write(String.format("<th>%s</th><td align='left'>%s</td><td align='left'>%s</td>\n",
+									field.toString(),
+									value,
+									help==null?"":help));
+					break;
+				}				
 				default :  {
 					String help = field.getHelp(uriReporter.getRequest().getRootRef().toString());
 					output.write(String.format("<th>%s</th><td align='left'>%s</td><td align='left'>%s</td>\n",
