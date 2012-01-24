@@ -45,7 +45,7 @@ public abstract class CallableFileUpload implements Callable<Reference> {
                         if (fi.isFormField()) {
 
                         	if ((fi.getFieldName()!=null) && (fi.getString()!=null))
-                        		properties.put(fi.getFieldName(), fi.getString());
+                        		properties.put(fi.getFieldName(), fi.getString("UTF-8"));
                         	continue;
                         }
                         if (fi.getSize()>maxSize) {

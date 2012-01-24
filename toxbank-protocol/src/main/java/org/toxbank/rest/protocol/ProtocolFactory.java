@@ -9,9 +9,9 @@ import net.toxbank.client.resource.Document;
 import net.toxbank.client.resource.Organisation;
 import net.toxbank.client.resource.Project;
 import net.toxbank.client.resource.Protocol;
+import net.toxbank.client.resource.Protocol.STATUS;
 import net.toxbank.client.resource.Template;
 import net.toxbank.client.resource.User;
-import net.toxbank.client.resource.Protocol.STATUS;
 
 import org.apache.commons.fileupload.FileItem;
 import org.restlet.data.Status;
@@ -22,13 +22,13 @@ import org.toxbank.rest.protocol.db.ReadProtocol;
 import org.toxbank.rest.user.DBUser;
 
 public class ProtocolFactory {
-	
+	protected static final String utf8= "UTF-8";
 	public static DBProtocol getProtocol(DBProtocol protocol,List<FileItem> items, long maxSize, File dir) throws ResourceException {
 		
 		if (protocol==null) protocol = new DBProtocol();
 		for (final Iterator<FileItem> it = items.iterator(); it.hasNext();) {
 			FileItem fi = it.next();
-		//	System.out.println(String.format("%s\t%s", fi.getFieldName(),fi.getString()));
+
 			try {
 				ReadProtocol.fields field  = null;
 				try { 
@@ -43,18 +43,20 @@ public class ProtocolFactory {
 				switch (field) {
 				case idprotocol: continue;
 				case identifier: {
-					if ((fi.getString()!=null) && !"".equals(fi.getString()))
-						protocol.setIdentifier(fi.getString());
+					String s = fi.getString(utf8);
+					if ((s!=null) && !"".equals(s))
+						protocol.setIdentifier(s);
 					break;
 				}
 				case anabstract: {
-					if ((fi.getString()!=null) && !"".equals(fi.getString()))
-					protocol.setAbstract(fi.getString());
+					String s = fi.getString(utf8);
+					if ((s!=null) && !"".equals(s))
+					protocol.setAbstract(s);
 					break;
 				}
 				case filename: {
 					if (fi.isFormField()) {
-						protocol.setDocument(new Document(new URL(fi.getString())));
+						protocol.setDocument(new Document(new URL(fi.getString(utf8))));
 					} else {	
 						if (fi.getSize()==0)  throw new ResourceException(new Status(Status.CLIENT_ERROR_BAD_REQUEST,"Empty file!"));
 						File file = null;
@@ -76,7 +78,7 @@ public class ProtocolFactory {
 				}
 				case template: {
 					if (fi.isFormField()) {
-						protocol.setDataTemplate(new Template(new URL(fi.getString())));
+						protocol.setDataTemplate(new Template(new URL(fi.getString(utf8))));
 					} else {	
 						if (fi.getSize()==0)  throw new ResourceException(new Status(Status.CLIENT_ERROR_BAD_REQUEST,"Empty file!"));
 						File file = null;
@@ -97,90 +99,98 @@ public class ProtocolFactory {
 			        break;
 				}				
 				case project_uri: {
-					if ((fi.getString()!=null) && !"".equals(fi.getString())) {
+					String s = fi.getString(utf8);
+					if ((s!=null) && !"".equals(s)) {
 						Project p = protocol.getProject();
 						if (p==null) { p = new DBProject(); protocol.setProject(p);}
-						if (fi.getString().startsWith("http"))
-							p.setResourceURL(new URL(fi.getString()));
-						else p.setTitle(fi.getString());
+						if (s.startsWith("http"))
+							p.setResourceURL(new URL(s));
+						else p.setTitle(s);
 					}
 					break;					
 				}
 				case user_uri: {
-					if ((fi.getString()!=null) && !"".equals(fi.getString())) {
+					String s = fi.getString(utf8);
+					if ((s!=null) && !"".equals(s)) {
 						User p = protocol.getOwner();
 						if (p==null) { p = new DBUser(); protocol.setOwner(p);}
-						if (fi.getString().startsWith("http"))
-							p.setResourceURL(new URL(fi.getString()));
-						else p.setUserName(fi.getString());
+						if (s.startsWith("http"))
+							p.setResourceURL(new URL(s));
+						else p.setUserName(s);
 					}
 					break;					
 				}				
 				case organisation_uri: {
-					if ((fi.getString()!=null) && !"".equals(fi.getString())) {
+					String s = fi.getString(utf8);
+					if ((s!=null) && !"".equals(s)) {
 						Organisation p = protocol.getOrganisation();
 						if (p==null) { p = new DBOrganisation(); protocol.setOrganisation(p);}
-						if (fi.getString().startsWith("http"))
-							p.setResourceURL(new URL(fi.getString()));
+						if (s.startsWith("http"))
+							p.setResourceURL(new URL(s));
 						else p.setTitle(fi.getString());
 					}
 					break;					
 				}		
 				case author_uri: {
-					if ((fi.getString()!=null) && fi.getString().startsWith("http"))
-						 protocol.addAuthor(new DBUser(new URL(fi.getString())));
+					String s = fi.getString(utf8);
+					if ((s!=null) && s.startsWith("http"))
+						 protocol.addAuthor(new DBUser(new URL(s)));
 					break;	
 				}
 				case title: {
-					if ((fi.getString()!=null) && !"".equals(fi.getString()))
-						protocol.setTitle(fi.getString());
+					String s = fi.getString(utf8);
+					if ((s!=null) && !"".equals(s)) 
+						protocol.setTitle(s);
 					break;
 				}
 				case iduser: {
-					if ((fi.getString()!=null) && !"".equals(fi.getString())) {
+					String s = fi.getString(utf8);
+					if ((s!=null) && !"".equals(s)) {
 						DBUser user = new DBUser();
-						if (fi.getString().startsWith("http"))
-							user.setResourceURL(new URL(fi.getString()));
-						else user.setTitle(fi.getString());
+						if (s.startsWith("http"))
+							user.setResourceURL(new URL(s));
+						else user.setTitle(s);
 						protocol.setOwner(user);
 					}
 					break;
 				}
 				case summarySearchable: {
 					try {
-						protocol.setSearchable(Boolean.parseBoolean(fi.getString()));
+						protocol.setSearchable(Boolean.parseBoolean(fi.getString(utf8)));
 					} catch (Exception x) { protocol.setSearchable(false);}
 					break;					
 				}
 				case status: {
 					try {
-						protocol.setStatus(Protocol.STATUS.valueOf(fi.getString()));
+						protocol.setStatus(Protocol.STATUS.valueOf(fi.getString(utf8)));
 					} catch (Exception x) { protocol.setStatus(STATUS.RESEARCH);}
 					break;					
 				}
 				case keywords: {
 					try {
-						if ((fi.getString()!=null) && !"".equals(fi.getString()))
+						if ((fi.getString()!=null) && !"".equals(fi.getString(utf8)))
 							protocol.addKeyword(fi.getString().trim());
 						} catch (Exception x) { }
 						break;	
 				}
 				case allowReadByUser: {
-					if ((fi.getString()!=null) && !"".equals(fi.getString()))
+					String s = fi.getString(utf8);
+					if ((s!=null) && !"".equals(s))
 						try {
-							protocol.allowReadByUser.add(new DBUser(new URL(fi.getString().trim())));
+							protocol.allowReadByUser.add(new DBUser(new URL(s.trim())));
 						} catch (Exception x) { }
 					break;						
 				}
 				case allowReadByGroup: {
-					if ((fi.getString()!=null) && !"".equals(fi.getString()))
+					String s = fi.getString(utf8);
+					if ((s!=null) && !"".equals(s))
 						try {
-							String uri = fi.getString().trim();
+							String uri = s.trim();
 							//hack to avoid queries...
 							if (uri.indexOf("/organisation")>0)
-								protocol.allowReadByGroup.add(new DBOrganisation(new URL(fi.getString().trim())));
+								protocol.allowReadByGroup.add(new DBOrganisation(new URL(s.trim())));
 							else if (uri.indexOf("/project")>0)
-								protocol.allowReadByGroup.add(new DBProject(new URL(fi.getString().trim())));
+								protocol.allowReadByGroup.add(new DBProject(new URL(s.trim())));
 						} catch (Exception x) { }
 					break;	
 				}				
