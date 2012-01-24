@@ -90,6 +90,8 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		Assert.assertEquals("SEURAT-Protocol-1-1", protocols.get(0).getIdentifier());
 		Assert.assertEquals("Very important protocol", protocols.get(0).getTitle());
 		Assert.assertNotNull(protocols.get(0).getAbstract());
+		Assert.assertEquals(5,protocols.get(0).getAbstract().indexOf("\u2122")); // TM symbol
+		
 		Assert.assertTrue(protocols.get(0).isPublished());
 		Assert.assertNotNull(protocols.get(0).getOwner());
 		Assert.assertEquals(String.format("http://localhost:%d%s/U1",port,Resources.user),
@@ -384,6 +386,10 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 			}	
 			case status: {
 				values[i] = STATUS.SOP.toString();
+				break;
+			}
+			case anabstract: {
+				values[i] = "My abstract\u2122";
 				break;
 			}
 			default: {
