@@ -43,6 +43,7 @@ import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.CreateProtocol;
 import org.toxbank.rest.protocol.db.DeleteProtocol;
+import org.toxbank.rest.protocol.db.UpdateProtocol;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.author.db.AddAuthors;
 
@@ -52,10 +53,11 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 	@Override
 	protected IQueryUpdate<Object,DBProtocol> createQuery() throws Exception {
 		DBProtocol ref = new DBProtocol();
-		//ref.setID(3);
-		//ref.setVersion(1);
-		ref.setTitle("title");
-		ref.setAbstract("abstract");
+		ref.setID(1);
+		ref.setVersion(1);
+		ref.setAbstract("My abstract");
+		ref.setPublished(true);
+		/*
 		DBUser user = new DBUser();
 		user.setID(1);
 		ref.setOwner(user);
@@ -64,7 +66,8 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 		ref.setSearchable(true);
 		ref.setDocument(new Document(new URL(file)));
 		ref.setStatus(STATUS.SOP);
-		return new CreateProtocol(ref);
+		*/
+		return new UpdateProtocol(ref);
 	}
 
 	@Override
@@ -72,12 +75,12 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 			throws Exception {
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED",
-				String.format("SELECT idprotocol,summarySearchable,status FROM protocol where title='title' and abstract='abstract' and iduser='1' and idproject=1 and idorganisation=1 and filename='%s'",file));
+				String.format("SELECT idprotocol,version,published,abstract FROM protocol where idprotocol=1 and version=1"));
 		
 		Assert.assertEquals(1,table.getRowCount());
-		Assert.assertEquals(Boolean.TRUE,table.getValue(0,"summarySearchable"));
-		Assert.assertEquals(STATUS.SOP.toString(),table.getValue(0,"status"));
-		c.close();
+		Assert.assertEquals(Boolean.TRUE,table.getValue(0,"published"));
+		Assert.assertEquals("My abstract",table.getValue(0,"abstract"));
+		c.close();	
 	}
 
 	@Override
@@ -120,18 +123,34 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 	@Override
 	protected IQueryUpdate<Object, DBProtocol> createQueryNew()
 			throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		DBProtocol ref = new DBProtocol();
+		//ref.setID(3);
+		//ref.setVersion(1);
+		ref.setTitle("title");
+		ref.setAbstract("abstract");
+		DBUser user = new DBUser();
+		user.setID(1);
+		ref.setOwner(user);
+		ref.setProject(new DBProject(1));	
+		ref.setOrganisation(new DBOrganisation(1));
+		ref.setSearchable(true);
+		ref.setDocument(new Document(new URL(file)));
+		ref.setStatus(STATUS.SOP);
+		return new CreateProtocol(ref);
 	}
 
 	@Override
 	protected void createVerifyNew(IQueryUpdate<Object, DBProtocol> query)
 			throws Exception {
+        IDatabaseConnection c = getConnection();	
+		ITable table = 	c.createQueryTable("EXPECTED",
+				String.format("SELECT idprotocol,summarySearchable,status FROM protocol where title='title' and abstract='abstract' and iduser='1' and idproject=1 and idorganisation=1 and filename='%s'",file));
 		
-		
+		Assert.assertEquals(1,table.getRowCount());
+		Assert.assertEquals(Boolean.TRUE,table.getValue(0,"summarySearchable"));
+		Assert.assertEquals(STATUS.SOP.toString(),table.getValue(0,"status"));
+		c.close();		
 	}
-	@Override
-	public void testCreateNew() throws Exception {
-	}
+
 
 }

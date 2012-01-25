@@ -29,6 +29,7 @@
 
 package org.toxbank.rest.protocol.db;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.idea.modbcum.i.exceptions.AmbitException;
@@ -38,10 +39,18 @@ import net.idea.modbcum.q.update.AbstractObjectUpdate;
 import org.toxbank.rest.protocol.DBProtocol;
 
 public class UpdateProtocol extends AbstractObjectUpdate<DBProtocol>{
+	private ReadProtocol.fields[] f = new ReadProtocol.fields[] {
+			ReadProtocol.fields.title,
+			ReadProtocol.fields.anabstract,
+			ReadProtocol.fields.summarySearchable,
+			ReadProtocol.fields.idproject,
+			ReadProtocol.fields.idorganisation,
+			ReadProtocol.fields.filename,
+			ReadProtocol.fields.status,
+			ReadProtocol.fields.published
+	};
+	public static final String update_sql = "update protocol set %s where idprotocol=? and version=?";
 
-	public static final String[] update_sql = {
-		//"update catalog_references set title=?, url=?, type=? where idreference=?"
-		};
 
 	public UpdateProtocol(DBProtocol ref) {
 		super(ref);
@@ -50,21 +59,37 @@ public class UpdateProtocol extends AbstractObjectUpdate<DBProtocol>{
 		this(null);
 	}			
 	public List<QueryParam> getParameters(int index) throws AmbitException {
-		throw new AmbitException("Not implemented");
-/*
-		List<QueryParam> params = new ArrayList<QueryParam>();
-		params.add(new QueryParam<String>(String.class, getObject().getTitle()));
-		params.add(new QueryParam<String>(String.class, getObject().getURL()));
-		params.add(new QueryParam<String>(String.class, getObject().getType().toString()));
-		params.add(new QueryParam<Integer>(Integer.class, getObject().getId()));
-			return params;
-*/
-	
+		List<QueryParam> params1 = new ArrayList<QueryParam>();
+
+		for (ReadProtocol.fields field: f) 
+			if (field.getValue(getObject())!=null)
+				params1.add(field.getParam(getObject()));
+		
+		if (params1.size()==0) throw new AmbitException("Nothing to update!");
+		params1.add(ReadProtocol.fields.idprotocol.getParam(getObject()));
+		params1.add(ReadProtocol.fields.version.getParam(getObject()));
+		return params1;
 		
 	}
-
 	public String[] getSQL() throws AmbitException {
-		return update_sql;
+		StringBuilder b = new StringBuilder();
+		String d = " ";
+		for (ReadProtocol.fields field: f) 
+			if (field.getValue(getObject())!=null) {
+				switch (field) {
+				case anabstract: {
+					b.append(String.format("%s%s=?",d,"abstract"));
+					break;
+				}
+				default: {	
+					b.append(String.format("%s%s=?",d,field.name()));
+				}
+				}
+				d = ",";
+			}
+		String sql = String.format(update_sql,b.toString());
+		System.out.println(sql);
+		return  new String[] { sql};
 	}
 	public void setID(int index, int id) {
 			
