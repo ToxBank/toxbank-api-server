@@ -283,7 +283,11 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 			if (newProtocol.getOrganisation() != null) {
 				DBOrganisation p = (DBOrganisation) newProtocol.getOrganisation();
 				p.setID(p.parseURI(baseReference));
-			}			
+			}		
+			if (newProtocol.getOwner() != null) {
+				DBUser p = (DBUser) newProtocol.getOwner();
+				p.setID(p.parseURI(baseReference));
+			}					
 			if (newProtocol.getAuthors()!=null)
 				for (User u: newProtocol.getAuthors()) { 
 					DBUser author =u instanceof DBUser?(DBUser)u:new DBUser(u);
