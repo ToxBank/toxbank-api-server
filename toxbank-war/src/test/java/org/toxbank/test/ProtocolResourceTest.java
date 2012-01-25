@@ -23,6 +23,7 @@ import org.opentox.dsl.task.RemoteTask;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Reference;
+import org.restlet.data.Status;
 import org.restlet.representation.Representation;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 
@@ -150,18 +151,25 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 	
 	*/
 
-	/*
+
 	@Test
-	public void testDeleteEntry() throws Exception {
-		
-		OTFeature feature = OTFeature.feature(String.format("http://localhost:%d%s/1", port,PropertyResource.featuredef));
-		feature.delete();
+	public void testDelete() throws Exception {
 		IDatabaseConnection c = getConnection();	
-		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM properties where idproperty=1");
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT idprotocol,version FROM protocol where idprotocol=1 and version=1");
+		Assert.assertEquals(new BigInteger("1"),table.getValue(0,"idprotocol"));
+		c.close();		
+		String org = String.format("http://localhost:%d%s/%s-1-1", port,Resources.protocol,Protocol.id_prefix);
+		RemoteTask task = testAsyncPoll(new Reference(org),
+				MediaType.TEXT_URI_LIST, null,
+				Method.DELETE);
+		Assert.assertEquals(Status.SUCCESS_OK, task.getStatus());
+		//Assert.assertNull(task.getResult());
+		c = getConnection();	
+		table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol where idprotocol=1 and version=1");
 		Assert.assertEquals(0,table.getRowCount());
-		c.close();
-	}	
-	
+		c.close();			
+	}
+	/*
 	@Test
 	public void testCopyEntry() throws Exception {
 		
