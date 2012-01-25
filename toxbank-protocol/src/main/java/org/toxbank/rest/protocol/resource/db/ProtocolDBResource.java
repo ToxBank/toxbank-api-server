@@ -232,8 +232,13 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 		Object key = request.getAttributes().get(FileResource.resourceKey);
 		if (Method.POST.equals(method)) {
 			if (key==null) return null;//post allowed only on /protocol level, not on /protocol/id
-		} else {
+		} else if (Method.DELETE.equals(method)) {
 			if (key!=null) return super.createUpdateQuery(method, context, request, response);
+		} else if (Method.PUT.equals(method)) {
+			if (key!=null) {
+				int id[] = ReadProtocol.parseIdentifier(Reference.decode(key.toString()));
+				return (Q)new ReadProtocol(id[0],id[1]);
+			}
 		}
 		throw new ResourceException(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);		
 	}

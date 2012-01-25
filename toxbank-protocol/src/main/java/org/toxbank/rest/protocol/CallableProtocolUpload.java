@@ -32,6 +32,7 @@ import org.toxbank.rest.protocol.db.CreateProtocol;
 import org.toxbank.rest.protocol.db.CreateProtocolVersion;
 import org.toxbank.rest.protocol.db.DeleteProtocol;
 import org.toxbank.rest.protocol.db.UpdateKeywords;
+import org.toxbank.rest.protocol.db.UpdateProtocol;
 import org.toxbank.rest.protocol.db.template.UpdateDataTemplate;
 import org.toxbank.rest.protocol.resource.db.ProtocolQueryURIReporter;
 import org.toxbank.rest.user.DBUser;
@@ -99,7 +100,7 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 	@Override
 	public TaskResult doCall() throws Exception {
 		if (Method.POST.equals(method)) return create();
-		else if (Method.PUT.equals(method)) return create();
+		else if (Method.PUT.equals(method)) return update();
 		else if (Method.DELETE.equals(method)) return delete();
 		throw new ResourceException(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED,method.toString());
 	}	
@@ -138,8 +139,8 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);
 		}
 		//now write
-		
-		if (isSetDataTemplateOnly()) //data template only
+		switch (updateMode) {
+		case dataTemplateOnly:  {
 			try {
 				if ((protocol.getDataTemplate()!=null) && protocol.getDataTemplate().getResourceURL().toString().startsWith("file:")) {
 					connection.setAutoCommit(false);
@@ -163,105 +164,190 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 				try {connection.setAutoCommit(true);} catch (Exception x) {}
 				try {connection.close();} catch (Exception x) {}
 			}
-		else //everything else 
-		try {
-			connection.setAutoCommit(false);
-			//protocol.setOwner(user);
-			exec = new UpdateExecutor<IQueryUpdate>();
-			exec.setConnection(connection);
-			
-			CreateUser quser = new CreateUser(null);
-			//user
-			DBUser user = protocol.getOwner() instanceof DBUser?
-						(DBUser)protocol.getOwner():
-						new DBUser(protocol.getOwner());
-		    protocol.setOwner(user);
-		    if (user.getID()<=0) user.setID(user.parseURI(baseReference));
-			if (user.getID()<=0) {
-				quser.setObject(user);
-				exec.process(quser);
-			}	
-			
-			for (User u: protocol.getAuthors()) { 
-				DBUser author =u instanceof DBUser?(DBUser)u:new DBUser(u);
- 			    if (author.getID()<=0) author.setID(author.parseURI(baseReference));
-					if (author.getID()<=0) {
-						quser.setObject(author);
-						exec.process(quser);
-					}	
-			}
-			//project
-			DBProject p = protocol.getProject() instanceof DBProject?
-						(DBProject)protocol.getProject():
-						new DBProject(protocol.getProject());
-		    protocol.setProject(p);
-		    if (p.getID()<=0) p.setID(p.parseURI(baseReference));
-			if (p.getID()<=0) {
-				CreateGroup q1 = new CreateGroup(p);
-				exec.process(q1);
-			}
-			//organisation
-			DBOrganisation o = protocol.getOrganisation() instanceof DBOrganisation?
-					(DBOrganisation)protocol.getOrganisation():
-					new DBOrganisation(protocol.getOrganisation());
-			protocol.setOrganisation(o);
-		    if (o.getID()<=0) o.setID(o.parseURI(baseReference));
-			if (o.getID()<=0) {
-				CreateGroup q2 = new CreateGroup(o);
-				exec.process(q2);
-			}
-			
-			if (existing) {
-				CreateProtocolVersion q = new CreateProtocolVersion(protocol);
-				exec.process(q);
-			} else {
-				CreateProtocol q = new CreateProtocol(protocol);
-				exec.process(q);
-			}
-			
-			String uri = reporter.getURI(protocol);
-			
-			if (protocol.getKeywords().size()>0) {
-				UpdateKeywords k = new UpdateKeywords(protocol);
-				exec.process(k);
-			}
-			
-			if ((protocol.getAuthors()!=null) && protocol.getAuthors().size()>0) {
-				AddAuthors k = new AddAuthors(protocol);
-				exec.process(k);
-			}
-			
-			if ((protocol.getDataTemplate()!=null) && 
-					(protocol.getDataTemplate().getResourceURL()!=null) &&
-					 protocol.getDataTemplate().getResourceURL().toString().startsWith("file:")) {
-				UpdateDataTemplate k = new UpdateDataTemplate(protocol);
-				exec.process(k);
-			}	
-			
-			connection.commit();
-			TaskResult result = new TaskResult(uri,true);
-			try {
-				retrieveAccountNames(connection);
-				result.setPolicy(generatePolicy(uri,protocol));
-			} 
-			catch (Exception x) { result.setPolicy(null);}
-		
-		
-			return result;
-		} catch (ProcessorException x) {
-			try {connection.rollback();} catch (Exception xx) {}
-			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);
-		} catch (Exception x) {
-			try {connection.rollback();} catch (Exception xx) {}
-			throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);
-		} finally {
-			try {exec.close();} catch (Exception x) {}
-			try {connection.setAutoCommit(true);} catch (Exception x) {}
-			try {connection.close();} catch (Exception x) {}
+//			break;
 		}
+		default: {
+			try {
+				connection.setAutoCommit(false);
+				//protocol.setOwner(user);
+				exec = new UpdateExecutor<IQueryUpdate>();
+				exec.setConnection(connection);
+				
+				CreateUser quser = new CreateUser(null);
+				//user
+				DBUser user = protocol.getOwner() instanceof DBUser?
+							(DBUser)protocol.getOwner():
+							new DBUser(protocol.getOwner());
+			    protocol.setOwner(user);
+			    if (user.getID()<=0) user.setID(user.parseURI(baseReference));
+				if (user.getID()<=0) {
+					quser.setObject(user);
+					exec.process(quser);
+				}	
+				
+				for (User u: protocol.getAuthors()) { 
+					DBUser author =u instanceof DBUser?(DBUser)u:new DBUser(u);
+	 			    if (author.getID()<=0) author.setID(author.parseURI(baseReference));
+						if (author.getID()<=0) {
+							quser.setObject(author);
+							exec.process(quser);
+						}	
+				}
+				//project
+				DBProject p = protocol.getProject() instanceof DBProject?
+							(DBProject)protocol.getProject():
+							new DBProject(protocol.getProject());
+			    protocol.setProject(p);
+			    if (p.getID()<=0) p.setID(p.parseURI(baseReference));
+				if (p.getID()<=0) {
+					CreateGroup q1 = new CreateGroup(p);
+					exec.process(q1);
+				}
+				//organisation
+				DBOrganisation o = protocol.getOrganisation() instanceof DBOrganisation?
+						(DBOrganisation)protocol.getOrganisation():
+						new DBOrganisation(protocol.getOrganisation());
+				protocol.setOrganisation(o);
+			    if (o.getID()<=0) o.setID(o.parseURI(baseReference));
+				if (o.getID()<=0) {
+					CreateGroup q2 = new CreateGroup(o);
+					exec.process(q2);
+				}
+				
+				if (existing) {
+					CreateProtocolVersion q = new CreateProtocolVersion(protocol);
+					exec.process(q);
+				} else {
+					CreateProtocol q = new CreateProtocol(protocol);
+					exec.process(q);
+				}
+				
+				String uri = reporter.getURI(protocol);
+				
+				if (protocol.getKeywords().size()>0) {
+					UpdateKeywords k = new UpdateKeywords(protocol);
+					exec.process(k);
+				}
+				
+				if ((protocol.getAuthors()!=null) && protocol.getAuthors().size()>0) {
+					AddAuthors k = new AddAuthors(protocol);
+					exec.process(k);
+				}
+				
+				if ((protocol.getDataTemplate()!=null) && 
+						(protocol.getDataTemplate().getResourceURL()!=null) &&
+						 protocol.getDataTemplate().getResourceURL().toString().startsWith("file:")) {
+					UpdateDataTemplate k = new UpdateDataTemplate(protocol);
+					exec.process(k);
+				}	
+				
+				connection.commit();
+				TaskResult result = new TaskResult(uri,true);
+				try {
+					retrieveAccountNames(connection);
+					result.setPolicy(generatePolicy(uri,protocol));
+				} 
+				catch (Exception x) { result.setPolicy(null);}
+			
+			
+				return result;
+			} catch (ProcessorException x) {
+				try {connection.rollback();} catch (Exception xx) {}
+				throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);
+			} catch (Exception x) {
+				try {connection.rollback();} catch (Exception xx) {}
+				throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);
+			} finally {
+				try {exec.close();} catch (Exception x) {}
+				try {connection.setAutoCommit(true);} catch (Exception x) {}
+				try {connection.close();} catch (Exception x) {}
+			}
+		}
+		} //switch
 
 	}
 
+	public TaskResult update() throws Exception {
+		if ((protocol==null)||(protocol.getID()<=0)) throw new Exception("Can't update: Not an existing protocol!");
+
+		try {
+			//get only fields from the web form
+			DBProtocol newProtocol = ProtocolFactory.getProtocol(null,input, 10000000,dir);
+			newProtocol.setID(protocol.getID());
+			newProtocol.setVersion(protocol.getVersion());
+			newProtocol.setIdentifier(null);
+			if (newProtocol.getProject() != null) {
+				DBProject p = (DBProject) newProtocol.getProject();
+				p.setID(p.parseURI(baseReference));
+			}
+			if (newProtocol.getOrganisation() != null) {
+				DBOrganisation p = (DBOrganisation) newProtocol.getOrganisation();
+				p.setID(p.parseURI(baseReference));
+			}			
+			if (newProtocol.getAuthors()!=null)
+				for (User u: newProtocol.getAuthors()) { 
+					DBUser author =u instanceof DBUser?(DBUser)u:new DBUser(u);
+	 			    if (author.getID()<=0) author.setID(author.parseURI(baseReference));
+				}
+			
+			protocol = newProtocol;
+		} catch (Exception x) {
+			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);
+		}
+		
+			try {
+				connection.setAutoCommit(false);
+				//protocol.setOwner(user);
+				exec = new UpdateExecutor<IQueryUpdate>();
+				exec.setConnection(connection);
+				
+				UpdateProtocol q = new UpdateProtocol(protocol);
+				exec.process(q);
+				
+				String uri = reporter.getURI(protocol);
+				
+				if (protocol.getKeywords().size()>0) {
+					UpdateKeywords k = new UpdateKeywords(protocol);
+					exec.process(k);
+				}
+				
+				if ((protocol.getAuthors()!=null) && protocol.getAuthors().size()>0) {
+					AddAuthors k = new AddAuthors(protocol);
+					exec.process(k);
+				}
+				
+				if ((protocol.getDataTemplate()!=null) && 
+						(protocol.getDataTemplate().getResourceURL()!=null) &&
+						 protocol.getDataTemplate().getResourceURL().toString().startsWith("file:")) {
+					UpdateDataTemplate k = new UpdateDataTemplate(protocol);
+					exec.process(k);
+				}	
+				
+				connection.commit();
+				TaskResult result = new TaskResult(uri,false);
+				try {
+					retrieveAccountNames(connection);
+					result.setPolicy(generatePolicy(uri,protocol));
+				} 
+				catch (Exception x) { result.setPolicy(null);}
+			
+			
+				return result;
+			} catch (ProcessorException x) {
+				x.printStackTrace();
+				try {connection.rollback();} catch (Exception xx) {}
+				throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);
+			} catch (Exception x) {
+				try {connection.rollback();} catch (Exception xx) {}
+				throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);
+			} finally {
+				try {exec.close();} catch (Exception x) {}
+				try {connection.setAutoCommit(true);} catch (Exception x) {}
+				try {connection.close();} catch (Exception x) {}
+			}
+
+	}
+	
 	protected void retrieveAccountNames(Connection connection) throws Exception {
 		QueryExecutor qexec = new QueryExecutor();
 		try {

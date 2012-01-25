@@ -226,7 +226,7 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			}		
 			@Override
 			public Object getValue(DBProtocol protocol) {
-				return  protocol==null?null:((DBUser) protocol.getOwner()).getID();
+				return  protocol==null?null:protocol.getOwner()==null?null:((DBUser) protocol.getOwner()).getID();
 			}			
 			@Override
 			public String toString() {
@@ -238,7 +238,7 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			@Override
 			public Object getValue(DBProtocol protocol) {
 				return  protocol==null?null:
-						protocol.getOwner()==null?null:protocol.getOwner().getResourceURL().toString();
+						protocol.getOwner()==null?null:protocol.getOwner()==null?null:protocol.getOwner().getResourceURL().toString();
 			}		
 
 			@Override
@@ -319,7 +319,7 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			@Override
 			public Object getValue(DBProtocol protocol) {
 				return  protocol==null?null:
-						protocol.getProject()==null?null:protocol.getProject().getResourceURL().toString();
+						protocol.getProject()==null?null:protocol.getProject().getResourceURL()==null?null:protocol.getProject().getResourceURL().toString();
 			}		
 
 			@Override
@@ -432,7 +432,9 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			@Override
 			public Object getValue(DBProtocol protocol) {
 				return  protocol==null?null:
-						protocol.getOrganisation()==null?null:protocol.getOrganisation().getResourceURL().toString();
+						protocol.getOrganisation()==null?null:
+							protocol.getOrganisation().getResourceURL()==null?null:
+							protocol.getOrganisation().getResourceURL().toString();
 			}		
 
 			@Override
@@ -485,7 +487,7 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			}
 			@Override
 			public Object getValue(DBProtocol protocol) {
-				return  protocol==null?null:protocol.getDocument().getResourceURL();
+				return  protocol==null?null:protocol.getDocument()==null?null:protocol.getDocument().getResourceURL();
 			}				
 			public String getHTMLField(DBProtocol protocol) {
 				Object value = getValue(protocol);

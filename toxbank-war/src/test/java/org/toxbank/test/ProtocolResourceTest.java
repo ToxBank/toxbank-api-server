@@ -310,6 +310,21 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 
 		return o;
 	}
+	
+	@Test
+	public void testUpdateEntryFromMultipartWeb() throws Exception {
+		String uri = String.format("http://localhost:%d%s/%s-2-1", port,Resources.protocol,Protocol.id_prefix);
+		createEntryFromMultipartWeb(new Reference(uri),Method.PUT);
+		
+		IDatabaseConnection c = getConnection();	
+		ITable  table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
+		Assert.assertEquals(3,table.getRowCount());
+		table = 	c.createQueryTable("EXPECTED","SELECT p.idprotocol,p.version,published from protocol p where p.idprotocol=2 and version=1");
+		Assert.assertEquals(1,table.getRowCount());
+		Assert.assertEquals(Boolean.TRUE,table.getValue(0,"published"));
+		
+		c.close();
+	}
 	@Test
 	public void testCreateVersionEntryFromMultipartWeb() throws Exception {
 		createEntryFromMultipartWeb(new Reference(getTestURI()+Resources.versions));
@@ -352,6 +367,9 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		c.close();
 	}
 	public String createEntryFromMultipartWeb(Reference uri) throws Exception {
+		return createEntryFromMultipartWeb(uri,Method.POST);
+	}
+	public String createEntryFromMultipartWeb(Reference uri,Method method) throws Exception {
 		URL url = getClass().getClassLoader().getResource("org/toxbank/protocol/protocol-sample.pdf");
 		File file = new File(url.getFile());
 		
@@ -426,7 +444,7 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 
 		RemoteTask task = testAsyncPoll(uri,
 				MediaType.TEXT_URI_LIST, rep,
-				Method.POST);
+				method);
 		//wait to complete
 		while (!task.isDone()) {
 			task.poll();
