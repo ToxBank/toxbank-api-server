@@ -39,7 +39,9 @@ import org.toxbank.rest.user.author.db.AddAuthors;
 import org.toxbank.rest.user.db.CreateUser;
 import org.toxbank.rest.user.db.ReadUser;
 
+
 public class CallableProtocolUpload extends CallableProtectedTask<String> {
+	public enum UpdateMode {create,update,dataTemplateOnly,createversion}
 	protected List<FileItem> input;
 	protected ProtocolQueryURIReporter reporter;
 	protected Connection connection;
@@ -48,14 +50,23 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 	protected DBUser user;
 	protected File dir;
 	protected DBProtocol protocol;
-	protected boolean setDataTemplateOnly = false;
 	protected Method method;
+	protected UpdateMode updateMode = UpdateMode.create;
+	
+	public UpdateMode getUpdateMode() {
+		return updateMode;
+	}
+
+	public void setUpdateMode(UpdateMode updateMode) {
+		this.updateMode = updateMode;
+	}
+
 	public boolean isSetDataTemplateOnly() {
-		return setDataTemplateOnly;
+		return UpdateMode.dataTemplateOnly.equals(updateMode);
 	}
 
 	public void setSetDataTemplateOnly(boolean setDataTemplateOnly) {
-		this.setDataTemplateOnly = setDataTemplateOnly;
+		this.updateMode = UpdateMode.dataTemplateOnly;
 	}
 
 	/**
@@ -99,7 +110,7 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 			//protocol.setOwner(user);
 			exec = new UpdateExecutor<IQueryUpdate>();
 			exec.setConnection(connection);
-			if (setDataTemplateOnly) {
+			if (isSetDataTemplateOnly()) {
 				//DeleteProtocol k = new DeleteProtocol(protocol);
 				//exec.process(k);				
 			} else {
@@ -128,7 +139,7 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 		}
 		//now write
 		
-		if (setDataTemplateOnly) //data template only
+		if (isSetDataTemplateOnly()) //data template only
 			try {
 				if ((protocol.getDataTemplate()!=null) && protocol.getDataTemplate().getResourceURL().toString().startsWith("file:")) {
 					connection.setAutoCommit(false);
