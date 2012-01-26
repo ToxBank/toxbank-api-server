@@ -44,9 +44,8 @@ public class CallableGroupCreator extends CallableDBUpdateTask<IDBGroup,Form,Str
 
 	@Override
 	protected IDBGroup getTarget(Form input) throws Exception {
-		if (input==null) {
-			return item;
-		} else {
+		if (Method.DELETE.equals(method)) return item;
+		else if (Method.POST.equals(method)) {
 			IDBGroup group = null; 
 			switch (type) {
 			case ORGANISATION: {
@@ -72,7 +71,15 @@ public class CallableGroupCreator extends CallableDBUpdateTask<IDBGroup,Form,Str
 			group.setTitle(input.getFirstValue(DBGroup.fields.name.name()));
 			group.setGroupName(input.getFirstValue(DBGroup.fields.ldapgroup.name()));
 	 		return group;
-		}
+		} else if (Method.PUT.equals(method)) {
+			String newValue = input.getFirstValue(DBGroup.fields.name.name());
+			if (newValue!=null) 
+				item.setTitle(input.getFirstValue(DBGroup.fields.name.name()));
+			newValue = input.getFirstValue(DBGroup.fields.ldapgroup.name());
+			if (newValue!=null)
+				item.setGroupName(input.getFirstValue(DBGroup.fields.ldapgroup.name()));
+			return item;
+		} else throw new ResourceException(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
 	}
 	
 	@Override

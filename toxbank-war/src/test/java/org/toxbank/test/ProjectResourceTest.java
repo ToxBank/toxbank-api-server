@@ -207,5 +207,28 @@ public class ProjectResourceTest  extends ResourceTest {
 		c.close();			
 	}	
 	
+	@Test
+	public void testUpdate() throws Exception {
+		IDatabaseConnection c = getConnection();	
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT name,ldapgroup FROM project where idproject=2");
+		Assert.assertEquals("Toxbank",table.getValue(0,"name"));
+		Assert.assertEquals("toxbank",table.getValue(0,"ldapgroup"));
+		c.close();		
+		
+		Form form = new Form();
+		form.add(DBGroup.fields.name.name(), "ToxBank");
+		
+		String org = String.format("http://localhost:%d%s/G2", port,Resources.project);
+		RemoteTask task = testAsyncPoll(new Reference(org),
+				MediaType.TEXT_URI_LIST,form.getWebRepresentation(),
+				Method.PUT);
+		Assert.assertEquals(Status.SUCCESS_OK, task.getStatus());
+		//Assert.assertNull(task.getResult());
+		c = getConnection();	
+		table = 	c.createQueryTable("EXPECTED","SELECT name,ldapgroup FROM project where idproject=2");
+		Assert.assertEquals("ToxBank",table.getValue(0,"name"));
+		Assert.assertEquals("toxbank",table.getValue(0,"ldapgroup"));
+		c.close();			
+	}
 	
 }

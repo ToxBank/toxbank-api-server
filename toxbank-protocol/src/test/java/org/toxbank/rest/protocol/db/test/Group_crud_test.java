@@ -52,16 +52,13 @@ public class Group_crud_test  extends CRUDTest<Object,IDBGroup>  {
 		
 	}
 
-	@Override
-	public void testUpdate() throws Exception {
-		//TODO Not iplemented
-	}
+
 	@Override
 	protected IQueryUpdate<Object,IDBGroup> updateQuery() throws Exception {
 		DBProject ref = new DBProject();
-
 		ref.setID(2);
-
+		ref.setGroupName(null);
+		ref.setTitle("ToxBank");
 		return new UpdateGroup(ref);
 	}
 
@@ -69,10 +66,11 @@ public class Group_crud_test  extends CRUDTest<Object,IDBGroup>  {
 	protected void updateVerify(IQueryUpdate<Object,IDBGroup> query)
 			throws Exception {
         IDatabaseConnection c = getConnection();	
-		ITable table = 	c.createQueryTable("EXPECTED","SELECT abstract FROM protocol where idprotocol=2");
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT name,ldapgroup FROM project where idproject=2");
 		Assert.assertEquals(1,table.getRowCount());
 
-		Assert.assertEquals("NEW",table.getValue(0,"abstract"));
+		Assert.assertEquals("ToxBank",table.getValue(0,"name"));
+		Assert.assertNull(table.getValue(0,"ldapgroup"));
 		
 		c.close();
 		

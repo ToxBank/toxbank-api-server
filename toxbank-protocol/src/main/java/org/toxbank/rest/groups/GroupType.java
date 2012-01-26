@@ -39,6 +39,11 @@ public enum GroupType {
 				getDBname(), getID());
 	}
 	
+	public String getUpdateSQL() {
+		return String.format(
+				"UPDATE %s set name = ?,ldapgroup=? where %s = ?",
+				getDBname(), getID());
+	}
 
 	public String getReadByUserSQL(boolean all,String field,String search) {
 		if (all)
