@@ -135,6 +135,8 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 		boolean existing = protocol!=null&&protocol.getID()>0;
 		try {
 			protocol = ProtocolFactory.getProtocol(protocol,input, 10000000,dir);
+		} catch (ResourceException x) {
+			throw x;
 		} catch (Exception x) {
 			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);
 		}
