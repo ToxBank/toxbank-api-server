@@ -600,7 +600,7 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 		published {
 			@Override
 			public Object getValue(DBProtocol protocol) {
-				return protocol==null?Boolean.FALSE:protocol.isPublished();
+				return protocol==null||protocol.isPublished()==null?Boolean.FALSE:protocol.isPublished();
 			}
 			@Override
 			public String toString() {
