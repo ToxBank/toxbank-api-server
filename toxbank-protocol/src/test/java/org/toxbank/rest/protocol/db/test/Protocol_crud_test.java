@@ -136,6 +136,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 		ref.setSearchable(true);
 		ref.setDocument(new Document(new URL(file)));
 		ref.setStatus(STATUS.SOP);
+		ref.setPublished(false);
 		return new CreateProtocol(ref);
 	}
 
