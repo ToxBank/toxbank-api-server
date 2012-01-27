@@ -37,6 +37,15 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 	 * 
 	 */
 	private static final long serialVersionUID = 6228939989116141217L;
+	protected Boolean showUnpublished = true;
+	
+	public Boolean getShowUnpublished() {
+		return showUnpublished;
+	}
+	public void setShowUnpublished(Boolean showUnpublished) {
+		this.showUnpublished = showUnpublished;
+	}
+
 	public static final ReadProtocol.fields[] entryFields = new ReadProtocol.fields[] {
 			fields.filename,
 			fields.title,
@@ -756,11 +765,13 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 		}
 		if ((getFieldname()!=null) && (getFieldname().getID()>0)) 
 			params.add(new QueryParam<Integer>(Integer.class, getFieldname().getID()));
-		
+
 		return params;
 	}
 
 	public String getSQL() throws AmbitException {
+		
+		String publishedOnly = getShowUnpublished()?"":" and published=1";
 		String byUser = null;
 		if ((getFieldname()!=null) && (getFieldname().getID()>0)) byUser = fields.iduser.getCondition();
 		
@@ -768,28 +779,34 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			if (getValue().getID()>0) {
 				if (getValue().getVersion()>0)
 					return String.format(sql,"where",
-							String.format("%s and %s %s %s",
+							String.format("%s and %s %s %s %s",
 									fields.idprotocol.getCondition(),
 									fields.version.getCondition(),
 									byUser==null?"":" and ",
-									byUser==null?"":byUser));
+									byUser==null?"":byUser,
+									publishedOnly));
 				else
 					throw new AmbitException("Protocol version not set!");
 			} else 
 				if (getValue().getTitle()!=null)
 					return String.format(sql,"where",
-										String.format("%s %s %s",
+										String.format("%s %s %s %s",
 												fields.title.getCondition(),
 												byUser==null?"":" and ",
-												byUser==null?"":byUser));
+												byUser==null?"":byUser,
+												publishedOnly));
 				else if (getValue().getTimeModified()!=null)
 					return String.format(sql,"where",
-									String.format("%s %s %s",
+									String.format("%s %s %s %s",
 											fields.updated.getCondition(),
 											byUser==null?"":" and ",
-											byUser==null?"":byUser));			
+											byUser==null?"":byUser,
+											publishedOnly));			
 		} 
-		return String.format(sql,byUser==null?"":"where",byUser==null?"":byUser);
+		return getShowUnpublished()?
+				String.format(sql,"where",byUser==null?"":byUser):
+				String.format(sql,"where",byUser==null?"published=1":String.format("%s %s",byUser,publishedOnly)); //published only
+
 	}
 
 	public DBProtocol getObject(ResultSet rs) throws AmbitException {
@@ -800,7 +817,6 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 				field.setParam(p,rs);
 				
 			} catch (Exception x) {
-				System.err.println(field);
 				x.printStackTrace();
 			}
 			try {

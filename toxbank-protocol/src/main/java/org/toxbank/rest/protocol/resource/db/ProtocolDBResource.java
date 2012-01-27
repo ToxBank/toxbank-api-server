@@ -94,6 +94,7 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 		
 		if (key==null) {
 			ReadProtocol query = new ReadProtocol();
+			query.setShowUnpublished(false);
 			if (search != null) {
 				DBProtocol p = new DBProtocol();
 				p.setTitle(search.toString());
@@ -113,6 +114,7 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 			singleItem = true;
 			int id[] = ReadProtocol.parseIdentifier(Reference.decode(key.toString()));
 			ReadProtocol query =  new ReadProtocol(id[0],id[1]);
+			query.setShowUnpublished(true);
 			if (userID>0) query.setFieldname(new DBUser(userID));
 			return (Q)query;
 		}
