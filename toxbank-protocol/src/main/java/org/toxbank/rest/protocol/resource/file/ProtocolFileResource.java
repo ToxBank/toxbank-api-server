@@ -26,10 +26,8 @@ public class ProtocolFileResource extends FileResource<Protocol> {
 		} catch (Exception x) {
 			x.printStackTrace();
 		}
-		System.out.println(directoryPrefix);
 		File file = new File(String.format("%s%s", directoryPrefix,prefix));
 		if (!file.exists()) file.mkdir();
-		System.out.println(file);
 	}
 	@Override
 	protected Reporter createURIReporter() {

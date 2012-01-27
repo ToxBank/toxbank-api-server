@@ -173,7 +173,6 @@ public class ReadUser<T>  extends ReadUserID<T> {
 				field.setParam(p,rs);
 				
 			} catch (Exception x) {
-				System.err.println(field);
 				x.printStackTrace();
 			}
 			return p;

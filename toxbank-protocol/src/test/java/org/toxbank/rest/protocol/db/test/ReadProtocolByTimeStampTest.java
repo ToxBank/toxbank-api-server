@@ -28,7 +28,7 @@ public class ReadProtocolByTimeStampTest extends QueryTest<ReadProtocol> {
 		int records = 0;
 		while (rs.next()) {
 			DBProtocol protocol = query.getObject(rs);
-			System.out.println(String.format("%d\t%s\t%s",protocol.getID(),protocol.getTimeModified(),new Date(protocol.getTimeModified())));
+			//System.out.println(String.format("%d\t%s\t%s",protocol.getID(),protocol.getTimeModified(),new Date(protocol.getTimeModified())));
 			//Assert.assertEquals(2,protocol.getID());
 			//Assert.assertNotNull(protocol.getKeywords());
 			//Assert.assertEquals(new Long(1326699051000L),protocol.getTimeModified());

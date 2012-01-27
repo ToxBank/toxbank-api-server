@@ -132,12 +132,9 @@ public abstract class ResourceTest extends DbUnitTest {
 	
 	protected RemoteTask testAsyncPoll(Reference ref, MediaType media, Representation rep, Method method) throws Exception {
 		RemoteTask task = new RemoteTask(ref,media,rep,method);
-		System.out.println(task.getUrl());
 		while (!task.poll()) {
 			Thread.yield();
 			Thread.sleep(200);
-			System.out.print("poll ");
-			System.out.println(task);
 		}
 		if (task.isERROR()) throw task.getError();
 

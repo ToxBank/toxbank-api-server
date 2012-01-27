@@ -118,7 +118,6 @@ public class UserResourceTest extends ResourceTest {
 			Thread.sleep(100);
 			Thread.yield();
 		}
-		System.out.println(task.getResult());
 		Assert.assertTrue(task.getResult().toString().startsWith(String.format("http://localhost:%d/user/U",port)));
 
         c = getConnection();	
@@ -158,7 +157,6 @@ public class UserResourceTest extends ResourceTest {
 			Thread.sleep(100);
 			Thread.yield();
 		}
-		System.out.println(task.getResult());
 		Assert.assertTrue(task.getResult().toString().startsWith(String.format("http://localhost:%d/user/U",port)));
 
         c = getConnection();	
