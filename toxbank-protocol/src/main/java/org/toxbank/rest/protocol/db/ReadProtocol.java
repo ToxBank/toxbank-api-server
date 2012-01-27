@@ -267,7 +267,8 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 		summarySearchable {
 			@Override
 			public QueryParam getParam(DBProtocol protocol) {
-				return new QueryParam<Boolean>(Boolean.class, (Boolean) getValue(protocol));
+				Object value = getValue(protocol);
+				return new QueryParam<Boolean>(Boolean.class,value==null?null:(Boolean) value);
 			}		
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
@@ -600,7 +601,7 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 		published {
 			@Override
 			public Object getValue(DBProtocol protocol) {
-				return protocol==null||protocol.isPublished()==null?Boolean.FALSE:protocol.isPublished();
+				return protocol==null||protocol.isPublished()==null?null:protocol.isPublished();
 			}
 			@Override
 			public String toString() {
@@ -608,7 +609,7 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			}
 			@Override
 			public QueryParam getParam(DBProtocol protocol) {
-				return new QueryParam<Boolean>(Boolean.class,new Boolean(protocol.isPublished()));
+				return new QueryParam<Boolean>(Boolean.class,protocol==null || (protocol.isPublished()==null) ?Boolean.FALSE:new Boolean(protocol.isPublished()));
 			}
 			@Override
 			public String getCondition() {
