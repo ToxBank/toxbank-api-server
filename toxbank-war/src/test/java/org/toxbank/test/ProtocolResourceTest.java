@@ -327,8 +327,7 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 	}
 	@Test
 	public void testCreateVersionEntryFromMultipartWeb() throws Exception {
-		createEntryFromMultipartWeb(new Reference(getTestURI()+Resources.versions));
-		
+		String url =createEntryFromMultipartWeb(new Reference(getTestURI()+Resources.versions));
 		 IDatabaseConnection c = getConnection();	
 		 ITable  table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
 		Assert.assertEquals(4,table.getRowCount());
@@ -337,7 +336,7 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		Assert.assertEquals(new BigInteger("1"),table.getValue(0,"version"));
 		Assert.assertEquals(new BigInteger("2"),table.getValue(1,"version"));
 		File f = new File(new URI(table.getValue(1,"filename").toString()));
-		//System.out.println(f);
+		Assert.assertNotSame(getTestURI(),url);
 		Assert.assertTrue(f.exists());
 		f.delete();
 		c.close();

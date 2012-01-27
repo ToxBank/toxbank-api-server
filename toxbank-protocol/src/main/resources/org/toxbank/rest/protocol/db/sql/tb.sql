@@ -151,4 +151,46 @@ CREATE TABLE  `version` (
   `comment` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`idmajor`,`idminor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-insert into version (idmajor,idminor,comment) values (1,3,"TB Protocol schema");
+insert into version (idmajor,idminor,comment) values (1,4,"TB Protocol schema");
+
+-- -----------------------------------------------------
+-- Create new protocol version
+-- -----------------------------------------------------
+DROP PROCEDURE IF EXISTS `createProtocolVersion`;
+DELIMITER $$
+CREATE PROCEDURE createProtocolVersion(
+                IN protocol_id INT,
+                IN version_id INT,
+                IN title_new VARCHAR(255),
+                IN abstract_new TEXT,
+                IN filename_new TEXT,
+                OUT version_new INT)
+begin
+    DECLARE no_more_rows BOOLEAN;
+    DECLARE protocols CURSOR FOR
+    select max(version)+1 from protocol where idprotocol=protocol_id group by idprotocol LIMIT 1;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND     SET no_more_rows = TRUE;
+
+    OPEN protocols;
+    the_loop: LOOP
+
+	  FETCH protocols into version_new;
+	  IF no_more_rows THEN
+		  CLOSE protocols;
+		  LEAVE the_loop;
+  	END IF;
+
+    select version_new;
+  	-- create new version
+    insert into protocol (idprotocol,version,title,abstract,iduser,summarySearchable,idproject,idorganisation,filename,status,created)
+    select idprotocol,version_new,title_new,abstract_new,iduser,summarySearchable,idproject,idorganisation,filename_new,status,now() 
+    from protocol where idprotocol=protocol_id and version=version_id;
+   	-- copy authors
+    -- insert into protocol_authors
+    -- select idprotocol,version_new,iduser from protocol_authors where idprotocol=protocol_id and version=version_id;
+
+    END LOOP the_loop;
+
+end $$
+
+DELIMITER ;

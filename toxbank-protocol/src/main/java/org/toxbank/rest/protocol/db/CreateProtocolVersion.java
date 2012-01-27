@@ -1,19 +1,26 @@
 package org.toxbank.rest.protocol.db;
 
+import java.sql.CallableStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.idea.modbcum.i.IStoredProcStatement;
 import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.update.AbstractObjectUpdate;
 
 import org.toxbank.rest.protocol.DBProtocol;
 
-public class CreateProtocolVersion  extends AbstractObjectUpdate<DBProtocol>{
-	public static final String[] create_sql = {
-		"insert into protocol (idprotocol,version,title,abstract,iduser,summarySearchable,idproject,idorganisation,filename,status,created)\n" +
-		"select idprotocol,max(version)+1,?,?,iduser,summarySearchable,idproject,idorganisation,?,status,now() from protocol where idprotocol=? group by idprotocol\n"
+public class CreateProtocolVersion  extends AbstractObjectUpdate<DBProtocol> implements IStoredProcStatement {
+	protected static final ReadProtocol.fields[] f = new ReadProtocol.fields[] {
+			ReadProtocol.fields.idprotocol,
+			ReadProtocol.fields.version,
+			ReadProtocol.fields.title,
+			ReadProtocol.fields.anabstract,
+			ReadProtocol.fields.filename
 	};
+	protected String[] create_sql = {"{CALL createProtocolVersion(?,?,?,?,?,?)}"};
 
 	public CreateProtocolVersion(DBProtocol ref) {
 		super(ref);
@@ -25,14 +32,11 @@ public class CreateProtocolVersion  extends AbstractObjectUpdate<DBProtocol>{
 		if (getObject().getID()<=0) throw new AmbitException("No protocol ID");
 		
 		List<QueryParam> params1 = new ArrayList<QueryParam>();
-		ReadProtocol.fields[] f = new ReadProtocol.fields[] {
-				ReadProtocol.fields.title,
-				ReadProtocol.fields.anabstract,
-				ReadProtocol.fields.filename,
-				ReadProtocol.fields.idprotocol
-		};
+
 		for (ReadProtocol.fields field: f) 
 			params1.add(field.getParam(getObject()));
+		
+		params1.add(new QueryParam<Integer>(Integer.class, -1));
 		
 		return params1;
 		
@@ -46,6 +50,20 @@ public class CreateProtocolVersion  extends AbstractObjectUpdate<DBProtocol>{
 	}
 	@Override
 	public boolean returnKeys(int index) {
+		return false;
+	}
+	
+	@Override
+	public boolean isStoredProcedure() {
 		return true;
+	}
+	
+	/**
+	 * Allows retrieving stored procedure output parameters; 
+	 * Does nothing by default
+	 */
+	@Override
+	public void getStoredProcedureOutVars(CallableStatement statement) throws SQLException {
+		getObject().setVersion(statement.getInt(f.length+1));
 	}
 }
