@@ -39,6 +39,7 @@ import org.restlet.security.Enroler;
 import org.restlet.security.Verifier;
 import org.restlet.service.TunnelService;
 import org.restlet.util.RouteList;
+import org.toxbank.demo.aa.ProtocolAuthorizer;
 import org.toxbank.demo.aa.TBLoginResource;
 import org.toxbank.demo.aa.UserAuthorizer;
 import org.toxbank.demo.task.TBAdminResource;
@@ -156,10 +157,11 @@ public class TBApplication extends TaskApplication<String> {
 		OrganisationRouter org_router = new OrganisationRouter(getContext());
 		ProjectRouter projectRouter = new ProjectRouter(getContext());
 		if (aaenabled) {
-			router.attach(Resources.protocol, createProtectedResource(protocols,"protocol",true));
+			router.attach(Resources.protocol, createProtectedResource(protocols,"protocol",new ProtocolAuthorizer()));
 			router.attach(Resources.project, createProtectedResource(projectRouter,"project",true));
 			router.attach(Resources.organisation, createProtectedResource(org_router,"organisation",true));
-			router.attach(Resources.user, createProtectedResource(new UserRouter(getContext(),protocols,org_router,projectRouter),"user",new UserAuthorizer()));
+			router.attach(Resources.user, createProtectedResource(
+							new UserRouter(getContext(),protocols,org_router,projectRouter),"user",new UserAuthorizer()));
 		} else {
 			router.attach(Resources.protocol, createOpenSSOVerifiedResource(protocols));
 			router.attach(Resources.project, createOpenSSOVerifiedResource(projectRouter));
