@@ -12,26 +12,25 @@ import net.toxbank.client.Resources;
 
 import org.opentox.aa.opensso.OpenSSOToken;
 import org.restlet.Request;
-import org.restlet.data.Method;
 import org.restlet.data.Reference;
 import org.restlet.routing.Template;
 import org.toxbank.rest.user.author.db.VerifyUser;
 import org.toxbank.rest.user.resource.UserDBResource;
 
 public class UserAuthorizer extends OpenSSOAuthorizer {
+	protected int maxDepth = Integer.MAX_VALUE;
+	public int getMaxDepth() {
+		return maxDepth;
+	}
+	public void setMaxDepth(int maxDepth) {
+		this.maxDepth = maxDepth;
+	}
+
 	protected VerifyUser query;
 	protected QueryExecutor<VerifyUser> executor;
 	@Override
 	protected boolean authorize(OpenSSOToken ssoToken, Request request)
 			throws Exception {
-		if (super.authorize(ssoToken, request)) {
-			//parent method only retrieves user name for non-GET
-			if (Method.GET.equals(request.getMethod())){
-				try {retrieveUserAttributes(ssoToken, request);} 
-				catch (Exception x) {}
-			}
-			return true;
-		}
 		Template template1 = new Template(String.format("%s%s/{%s}",request.getRootRef(),Resources.user,UserDBResource.resourceKey));
 		Template template2 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.user,UserDBResource.resourceKey,Resources.protocol));
 		Template template3 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.user,UserDBResource.resourceKey,Resources.project));
@@ -48,7 +47,19 @@ public class UserAuthorizer extends OpenSSOAuthorizer {
 		try {iduser = Integer.parseInt(vars.get(UserDBResource.resourceKey).toString().substring(1));
 		} catch (Exception x) { return super.authorize(ssoToken, request); }
 		try {retrieveUserAttributes(ssoToken, request);} catch (Exception x) { x.printStackTrace();}
-		return verify(iduser,request.getClientInfo().getUser().getIdentifier());
+		if (verify(iduser,request.getClientInfo().getUser().getIdentifier())) return true;
+		
+		setMaxDepth(1);
+		if (super.authorize(ssoToken, request)) {
+			//parent method only retrieves user name for non-GET
+			if (request.getClientInfo().getUser().getIdentifier()==null) { 
+				try {retrieveUserAttributes(ssoToken, request);} 
+				catch (Exception x) {}
+			}			
+			return true;
+		} else return false;
+		
+		
 	}
 	@Override
 	protected boolean isEnabled() {
@@ -82,5 +93,41 @@ public class UserAuthorizer extends OpenSSOAuthorizer {
 			try {if (rs!=null) rs.close();} catch (Exception x) {};
 			try {if (c!=null) c.close();} catch (Exception x) {};
 		}
+	}
+	
+	@Override
+	public String uri2check(Reference root,Reference ref) throws Exception {
+		if (prefix==null) return ref==null?null:ref.toString();
+	    if (ref == null) return null;
+	    
+	    String u = root.toString();
+		Reference fullPrefix = new Reference(String.format("%s%s%s/", 
+					u,
+					u.lastIndexOf("/")==u.length()-1?"":"/",
+					prefix));
+		
+		u = ref.toString();
+		Reference uri = new Reference(String.format("%s%s", 
+				u,
+				u.lastIndexOf("/")==u.length()-1?"":"/"
+				));
+		u = ref.toString();
+		Reference uri2check = new Reference(u==null?null:
+										u.lastIndexOf("/")==u.length()-1?u:String.format("%s/",u)); //add trailing slash
+		int prefix_len = fullPrefix.toString().length();
+		int level = 0;
+		while (!fullPrefix.equals(uri)) {
+			uri2check = uri;
+			if (level>=maxDepth) break;
+			
+			uri = uri.getParentRef();
+			if (uri.toString().length()<prefix_len) return null; //smth wrong
+			level++;
+
+		}
+		u = uri.toString();
+		if (u.lastIndexOf("/")==(u.length()-1))
+			return u.substring(0,u.length()-1);
+		else return u;
 	}
 }
