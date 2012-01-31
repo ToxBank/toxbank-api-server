@@ -11,7 +11,7 @@ import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.conditions.EQCondition;
 import net.idea.modbcum.q.query.AbstractQuery;
 
-import org.toxbank.rest.policy.Policy;
+import org.toxbank.rest.policy.PolicyRule;
 import org.toxbank.rest.protocol.DBProtocol;
 
 /**
@@ -19,14 +19,14 @@ import org.toxbank.rest.protocol.DBProtocol;
  * @author nina
  *
  */
-public class ReadProtocolAccessLocal extends AbstractQuery<DBProtocol, String, EQCondition, Policy> implements IQueryRetrieval<Policy> {
+public class ReadProtocolAccessLocal extends AbstractQuery<DBProtocol, String, EQCondition, PolicyRule> implements IQueryRetrieval<PolicyRule> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6017803463536586392L;
 
-	public double calculateMetric(Policy object) {
+	public double calculateMetric(PolicyRule object) {
 		return 1;
 	}
 
@@ -49,11 +49,11 @@ public class ReadProtocolAccessLocal extends AbstractQuery<DBProtocol, String, E
 	/**
 	 * If found, will return true always. 
 	 */
-	public Policy getObject(ResultSet rs) throws AmbitException {
+	public PolicyRule getObject(ResultSet rs) throws AmbitException {
 		try {
 			boolean sameUsername = getValue().equals(rs.getString("username"));
 			boolean published = rs.getBoolean("published");
-			return new Policy(getValue(),
+			return new PolicyRule(getValue(),
 					null,
 					sameUsername,
 					sameUsername & !published,

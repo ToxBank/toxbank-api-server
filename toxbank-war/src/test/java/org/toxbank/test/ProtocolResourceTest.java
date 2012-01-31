@@ -429,7 +429,7 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 			
 			i++;
 		}
-		//yeat another author
+		//yet another author
 		values[i] = String.format("http://localhost:%d%s/%s",port,Resources.user,"U1");
 		names[i] = ReadProtocol.fields.author_uri.name();
 		values[i+1] = null;

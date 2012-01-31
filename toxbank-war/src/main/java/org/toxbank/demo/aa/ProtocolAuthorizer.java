@@ -16,7 +16,7 @@ import org.restlet.data.Reference;
 import org.restlet.resource.ResourceException;
 import org.restlet.routing.Template;
 import org.toxbank.rest.FileResource;
-import org.toxbank.rest.policy.Policy;
+import org.toxbank.rest.policy.PolicyRule;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocolAccessLocal;
@@ -34,7 +34,7 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 	@Override
 	protected boolean authorize(OpenSSOToken ssoToken, Request request)
 			throws Exception {
-		Policy policy = null;
+		PolicyRule policy = null;
 		
 		//first check if local access is allowed , e.g. same name
 		Template template1 = new Template(String.format("%s%s/{%s}",request.getRootRef(),Resources.protocol,FileResource.resourceKey));
@@ -92,7 +92,7 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 	}
 	
 
-	public Policy verify(DBProtocol protocol, String username) throws Exception {
+	public PolicyRule verify(DBProtocol protocol, String username) throws Exception {
 		//TODO make use of same connection for performance reasons
 		Connection c = null;
 		ResultSet rs = null;
@@ -105,7 +105,7 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 			if (executor==null)  executor = new QueryExecutor<ReadProtocolAccessLocal>();
 			executor.setConnection(c);
 			rs = executor.process(query);
-			Policy policy = null;
+			PolicyRule policy = null;
 			while (rs.next()) {
 				policy = query.getObject(rs);
 				break;
