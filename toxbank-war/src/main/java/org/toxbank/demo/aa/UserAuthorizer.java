@@ -31,6 +31,7 @@ public class UserAuthorizer extends OpenSSOAuthorizer {
 	@Override
 	protected boolean authorize(OpenSSOToken ssoToken, Request request)
 			throws Exception {
+
 		Template template1 = new Template(String.format("%s%s/{%s}",request.getRootRef(),Resources.user,UserDBResource.resourceKey));
 		Template template2 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.user,UserDBResource.resourceKey,Resources.protocol));
 		Template template3 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.user,UserDBResource.resourceKey,Resources.project));
@@ -49,7 +50,8 @@ public class UserAuthorizer extends OpenSSOAuthorizer {
 		try {retrieveUserAttributes(ssoToken, request);} catch (Exception x) { x.printStackTrace();}
 		if (verify(iduser,request.getClientInfo().getUser().getIdentifier())) return true;
 		
-		setMaxDepth(1);
+		//TODO split user resource into user & workspace
+		if (ref.toString().contains("protocol")) setMaxDepth(1); 
 		if (super.authorize(ssoToken, request)) {
 			//parent method only retrieves user name for non-GET
 			if (request.getClientInfo().getUser().getIdentifier()==null) { 
