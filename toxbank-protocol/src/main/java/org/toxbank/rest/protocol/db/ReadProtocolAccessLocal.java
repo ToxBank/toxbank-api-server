@@ -10,8 +10,10 @@ import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.conditions.EQCondition;
 import net.idea.modbcum.q.query.AbstractQuery;
+import net.toxbank.client.policy.Policy;
+import net.toxbank.client.policy.PolicyRule;
+import net.toxbank.client.resource.User;
 
-import org.toxbank.rest.policy.PolicyRule;
 import org.toxbank.rest.protocol.DBProtocol;
 
 /**
@@ -19,14 +21,14 @@ import org.toxbank.rest.protocol.DBProtocol;
  * @author nina
  *
  */
-public class ReadProtocolAccessLocal extends AbstractQuery<DBProtocol, String, EQCondition, PolicyRule> implements IQueryRetrieval<PolicyRule> {
+public class ReadProtocolAccessLocal extends AbstractQuery<DBProtocol, String, EQCondition, Policy> implements IQueryRetrieval<Policy> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6017803463536586392L;
 
-	public double calculateMetric(PolicyRule object) {
+	public double calculateMetric(Policy object) {
 		return 1;
 	}
 
@@ -49,16 +51,19 @@ public class ReadProtocolAccessLocal extends AbstractQuery<DBProtocol, String, E
 	/**
 	 * If found, will return true always. 
 	 */
-	public PolicyRule getObject(ResultSet rs) throws AmbitException {
+	public Policy getObject(ResultSet rs) throws AmbitException {
 		try {
 			boolean sameUsername = getValue().equals(rs.getString("username"));
 			boolean published = rs.getBoolean("published");
-			return new PolicyRule(getValue(),
-					null,
+			User user = new User();
+			user.setUserName(getValue());
+			return new Policy(null,
+					new PolicyRule(user,
 					sameUsername,
 					sameUsername & !published,
 					sameUsername & !published,
 					sameUsername & !published
+					)
 					);
 		} catch (SQLException x) {
 			throw new AmbitException(x);

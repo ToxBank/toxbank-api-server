@@ -9,6 +9,8 @@ import net.idea.modbcum.p.QueryExecutor;
 import net.idea.restnet.aa.opensso.OpenSSOAuthorizer;
 import net.idea.restnet.db.DBConnection;
 import net.toxbank.client.Resources;
+import net.toxbank.client.policy.Policy;
+import net.toxbank.client.policy.PolicyRule;
 
 import org.opentox.aa.opensso.OpenSSOToken;
 import org.restlet.Request;
@@ -16,7 +18,6 @@ import org.restlet.data.Reference;
 import org.restlet.resource.ResourceException;
 import org.restlet.routing.Template;
 import org.toxbank.rest.FileResource;
-import org.toxbank.rest.policy.PolicyRule;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocolAccessLocal;
@@ -34,7 +35,7 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 	@Override
 	protected boolean authorize(OpenSSOToken ssoToken, Request request)
 			throws Exception {
-		PolicyRule policy = null;
+		Policy policy = null;
 		
 		//first check if local access is allowed , e.g. same name
 		Template template1 = new Template(String.format("%s%s/{%s}",request.getRootRef(),Resources.protocol,FileResource.resourceKey));
@@ -67,7 +68,9 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 				 * The policy will allow the user to update the protocol, if he is an owner and the protocol is not published
 				 * Otherwise, we resort to OpenSSO policy
 				 */
-				if ((policy !=null) && policy.isAllow(request.getMethod().toString())) return true;
+				if (policy !=null)
+					for (PolicyRule rule : policy.getRules())
+						if (rule.isAllow(request.getMethod().toString())) return true;
 				
 				
 			} catch (ResourceException x) {
@@ -92,7 +95,7 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 	}
 	
 
-	public PolicyRule verify(DBProtocol protocol, String username) throws Exception {
+	public Policy verify(DBProtocol protocol, String username) throws Exception {
 		//TODO make use of same connection for performance reasons
 		Connection c = null;
 		ResultSet rs = null;
@@ -105,7 +108,7 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 			if (executor==null)  executor = new QueryExecutor<ReadProtocolAccessLocal>();
 			executor.setConnection(c);
 			rs = executor.process(query);
-			PolicyRule policy = null;
+			Policy policy = null;
 			while (rs.next()) {
 				policy = query.getObject(rs);
 				break;

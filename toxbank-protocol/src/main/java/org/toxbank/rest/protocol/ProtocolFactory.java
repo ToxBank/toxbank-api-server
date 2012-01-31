@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
+import net.toxbank.client.policy.Policy;
 import net.toxbank.client.resource.Document;
 import net.toxbank.client.resource.Organisation;
 import net.toxbank.client.resource.Project;
@@ -23,7 +24,7 @@ import org.toxbank.rest.user.DBUser;
 
 public class ProtocolFactory {
 	protected static final String utf8= "UTF-8";
-	public static DBProtocol getProtocol(DBProtocol protocol,List<FileItem> items, long maxSize, File dir) throws ResourceException {
+	public static DBProtocol getProtocol(DBProtocol protocol,List<FileItem> items, long maxSize, File dir, Policy accessRights) throws ResourceException {
 		
 		if (protocol==null) protocol = new DBProtocol();
 		for (final Iterator<FileItem> it = items.iterator(); it.hasNext();) {
@@ -184,7 +185,11 @@ public class ProtocolFactory {
 					String s = fi.getString(utf8);
 					if ((s!=null) && !"".equals(s))
 						try {
-							protocol.allowReadByUser.add(new DBUser(new URL(s.trim())));
+							DBUser user = null;
+							//a bit of heuristic
+							if (s.startsWith("http")) { user = new DBUser(new URL(s.trim())); } 
+							else { user = new DBUser(); user.setUserName(s.trim()); }	
+							protocol.allowReadByUser.add(user);
 						} catch (Exception x) { }
 					break;						
 				}
@@ -194,10 +199,18 @@ public class ProtocolFactory {
 						try {
 							String uri = s.trim();
 							//hack to avoid queries...
-							if (uri.indexOf("/organisation")>0)
-								protocol.allowReadByGroup.add(new DBOrganisation(new URL(s.trim())));
-							else if (uri.indexOf("/project")>0)
+							if (uri.indexOf("/organisation")>0) {
+								DBOrganisation org = null;
+								if (s.startsWith("http")) { org = new DBOrganisation(new URL(s.trim())); } 
+								else { org = new DBOrganisation(); org.setGroupName(s.trim()); }	
+								protocol.allowReadByGroup.add(org);
+								
+							} else if (uri.indexOf("/project")>0) {
+								DBProject org = null;
+								if (s.startsWith("http")) { org = new DBProject(new URL(s.trim())); } 
+								else { org = new DBProject(); org.setGroupName(s.trim()); }
 								protocol.allowReadByGroup.add(new DBProject(new URL(s.trim())));
+							}
 						} catch (Exception x) { }
 					break;	
 				}				

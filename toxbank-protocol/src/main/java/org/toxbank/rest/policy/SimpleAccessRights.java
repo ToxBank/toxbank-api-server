@@ -1,12 +1,19 @@
 package org.toxbank.rest.policy;
 
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+import net.toxbank.client.policy.GroupPolicyRule;
+import net.toxbank.client.policy.Policy;
+import net.toxbank.client.policy.PolicyRule;
+import net.toxbank.client.policy.UserPolicyRule;
+import net.toxbank.client.resource.Group;
 import net.toxbank.client.resource.User;
 
 import org.opentox.aa.opensso.OpenSSOPolicy;
-import org.opentox.aa.opensso.OpenSSOToken;
-import org.toxbank.rest.groups.IDBGroup;
 
 public class SimpleAccessRights extends OpenSSOPolicy {
 	
@@ -14,19 +21,19 @@ public class SimpleAccessRights extends OpenSSOPolicy {
 		super(policyService);
 	}
 
-	public String createGroupPolicyXML(IDBGroup group, String uri, String[] methods) throws Exception {
+	public String createGroupPolicyXML(Group group, URL uri, String[] methods) throws Exception {
 
 		StringBuffer actions = new StringBuffer();
 		for (String method: methods) {
 			actions.append(String.format(policyActionTemplate,method));
 		}
-		return String.format(policyGroupTemplate,UUID.randomUUID(),uri,actions,group.getGroupName(),group.getGroupName());
+		return String.format(policyGroupTemplate,UUID.randomUUID(),uri.toExternalForm(),actions,group.getGroupName(),group.getGroupName());
 	}
-	public String createGroupReadPolicyXML(IDBGroup group, String uri) throws Exception {
+	public String createGroupReadPolicyXML(Group group, URL uri) throws Exception {
 		return createGroupPolicyXML(group,  uri, new String[] {"GET"});
 	}
 
-	public String createUserPolicyXML(User user, String uri, String[] methods) throws Exception {
+	public String createUserPolicyXML(User user, URL uri, String[] methods) throws Exception {
 		
 		StringBuffer actions = new StringBuffer();
 		for (String method: methods) {
@@ -34,8 +41,35 @@ public class SimpleAccessRights extends OpenSSOPolicy {
 		}
 		return String.format(policyUserTemplate,UUID.randomUUID(),uri,actions,user.getUserName(),user.getUserName());
 	}
-	public String createUserReadPolicyXML(User user, String uri) throws Exception {
+	public String createUserReadPolicyXML(User user, URL uri) throws Exception {
 		return createUserPolicyXML(user, uri, new String[] {"GET"});
+	}
+	
+	public String createPolicyXML(UserPolicyRule<? extends User> policy, URL uri) throws Exception {
+		return createUserPolicyXML(policy.getSubject(), uri, policy.getActionsAsArray());
+	}
+	
+	public String createPolicyXML(GroupPolicyRule<? extends Group> policy, URL uri) throws Exception {
+		return createGroupPolicyXML(policy.getSubject(), uri, policy.getActionsAsArray());
+	}
+	
+	public List<String> createPolicyXML(Policy policy) throws Exception {
+		String xmlpolicy = null;
+		if ((policy.getResource()!=null) && (policy.getRules()!=null)) {
+			List<String> xmlpolicies = new ArrayList<String>();
+			for (PolicyRule rule: policy.getRules()) {
+				xmlpolicy = null;
+				if (rule instanceof UserPolicyRule) {
+					xmlpolicy = createPolicyXML((UserPolicyRule)rule,policy.getResource());
+				} else if (rule instanceof GroupPolicyRule) {
+					xmlpolicy = createPolicyXML((GroupPolicyRule)rule,policy.getResource());
+				}
+				if (xmlpolicy!=null) xmlpolicies.add(xmlpolicy);
+			}
+			return xmlpolicies;
+		}
+		return null;
+		
 	}
 
 }

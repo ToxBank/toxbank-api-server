@@ -1,9 +1,9 @@
 package org.toxbank.rest.protocol;
 
 import java.io.File;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.List;
 
 import net.idea.modbcum.i.query.IQueryUpdate;
@@ -14,6 +14,7 @@ import net.idea.restnet.aa.opensso.OpenSSOServicesConfig;
 import net.idea.restnet.c.task.CallableProtectedTask;
 import net.idea.restnet.i.task.TaskResult;
 import net.toxbank.client.Resources;
+import net.toxbank.client.policy.Policy;
 import net.toxbank.client.resource.User;
 
 import org.apache.commons.fileupload.FileItem;
@@ -53,6 +54,7 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 	protected DBProtocol protocol;
 	protected Method method;
 	protected UpdateMode updateMode = UpdateMode.create;
+	
 	
 	public UpdateMode getUpdateMode() {
 		return updateMode;
@@ -133,8 +135,9 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 
 	public TaskResult create() throws Exception {
 		boolean existing = protocol!=null&&protocol.getID()>0;
+		Policy policy = new Policy(null);
 		try {
-			protocol = ProtocolFactory.getProtocol(protocol,input, 10000000,dir);
+			protocol = ProtocolFactory.getProtocol(protocol,input, 10000000,dir,policy);
 		} catch (ResourceException x) {
 			throw x;
 		} catch (Exception x) {
@@ -246,11 +249,13 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 				connection.commit();
 				TaskResult result = new TaskResult(uri,true);
 				try {
-					retrieveAccountNames(connection);
-					result.setPolicy(generatePolicy(uri,protocol));
+					if ((policy.getRules()!=null) && (policy.getRules().size()>0)) {
+						retrieveAccountNames(connection);
+						policy.setResource(new URL(uri));
+						result.setPolicy(generatePolicy(protocol,policy));
+					} else result.setPolicy(null);
 				} 
 				catch (Exception x) { result.setPolicy(null);}
-			
 			
 				return result;
 			} catch (ProcessorException x) {
@@ -271,10 +276,10 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 
 	public TaskResult update() throws Exception {
 		if ((protocol==null)||(protocol.getID()<=0)) throw new Exception("Can't update: Not an existing protocol!");
-
+		Policy policy = new Policy(null);
 		try {
 			//get only fields from the web form
-			DBProtocol newProtocol = ProtocolFactory.getProtocol(null,input, 10000000,dir);
+			DBProtocol newProtocol = ProtocolFactory.getProtocol(null,input, 10000000,dir,policy);
 			newProtocol.setID(protocol.getID());
 			newProtocol.setVersion(protocol.getVersion());
 			newProtocol.setIdentifier(null);
@@ -332,8 +337,11 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 				connection.commit();
 				TaskResult result = new TaskResult(uri,false);
 				try {
-					retrieveAccountNames(connection);
-					result.setPolicy(generatePolicy(uri,protocol));
+					if ((policy.getRules()!=null) && (policy.getRules().size()>0)) {
+						retrieveAccountNames(connection);
+						policy.setResource(new URL(uri));
+						result.setPolicy(generatePolicy(protocol,policy));
+					} else result.setPolicy(null);
 				} 
 				catch (Exception x) { result.setPolicy(null);}
 			
@@ -389,22 +397,10 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 		}
 		finally { try {qexec.close(); } catch (Exception x) {}}			
 	}
-	protected List<String> generatePolicy(String uri,DBProtocol protocol) throws Exception {
+	protected List<String> generatePolicy(DBProtocol protocol, Policy policy) throws Exception {
 		OpenSSOServicesConfig config = OpenSSOServicesConfig.getInstance();
 		SimpleAccessRights policyTools = new SimpleAccessRights(config.getPolicyService());
-		List<String> policies = new ArrayList<String>();
-		if (protocol.allowReadByGroup!=null)
-			for (IDBGroup group : protocol.allowReadByGroup) { 
-				if (group.getGroupName()==null) continue;
-				String policy = policyTools.createGroupReadPolicyXML(group, uri);
-				if (policy!=null) policies.add(policy);
-			}
-		if (protocol.allowReadByUser!=null)
-			for (DBUser user : protocol.allowReadByUser) { 
-				if (user.getUserName()==null) continue;
-				String policy = policyTools.createUserReadPolicyXML(user, uri);
-				if (policy!=null) policies.add(policy);
-			}		
+		List<String> policies = policyTools.createPolicyXML(policy);
 		return policies.size()>0?policies:null;
 	}
 }
