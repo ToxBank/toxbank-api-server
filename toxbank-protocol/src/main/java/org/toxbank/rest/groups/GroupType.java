@@ -12,16 +12,16 @@ public enum GroupType {
 
 	public String getSearchSQL(String field,boolean user) {
 		return user
-			?String.format("SELECT %s,name,ldapgroup FROM %s where iduser=? and %s regexp ?", getID(),getDBname(),field)	
-			:String.format("SELECT %s,name,ldapgroup FROM %s where %s regexp ?", getID(),getDBname(),field);
+			?String.format("SELECT %s,name,ldapgroup,cluster FROM %s where iduser=? and %s regexp ?", getID(),getDBname(),field)	
+			:String.format("SELECT %s,name,ldapgroup,cluster FROM %s where %s regexp ?", getID(),getDBname(),field);
 	}
 
 	public String getReadSQL(boolean all,String field,String search) {
 		if (all)
 			if (search != null) return getSearchSQL(field,false);
-			else return String.format("SELECT %s,name,ldapgroup FROM %s", getID(),getDBname());
+			else return String.format("SELECT %s,name,ldapgroup,cluster FROM %s", getID(),getDBname());
 		else
-			return String.format("SELECT %s,name,ldapgroup FROM %s where %s=?",
+			return String.format("SELECT %s,name,ldapgroup,cluster FROM %s where %s=?",
 					getID(), getDBname(), getID());
 	}
 
@@ -48,10 +48,10 @@ public enum GroupType {
 	public String getReadByUserSQL(boolean all,String field,String search) {
 		if (all)
 			if (search != null) return getSearchSQL(field,true);
-			else return String.format("SELECT %s,name,ldapgroup FROM %s join user_%s using(%s) where iduser=?", 
+			else return String.format("SELECT %s,name,ldapgroup,cluster FROM %s join user_%s using(%s) where iduser=?", 
 						getID(),getDBname(),getDBname(),getID());
 		else
-			return String.format("SELECT %s,name,ldapgroup FROM %s join user_%s using(%s) where iduser=? and %s=?",
+			return String.format("SELECT %s,name,ldapgroup,cluster FROM %s join user_%s using(%s) where iduser=? and %s=?",
 					getID(), getDBname(),getDBname(),getID(), getID());
 	}	
 }

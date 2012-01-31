@@ -26,8 +26,10 @@ CREATE TABLE  `organisation` (
   `idorganisation` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(128) NOT NULL,
   `ldapgroup` varchar(128) DEFAULT NULL,
+  `cluster` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`idorganisation`),
-  UNIQUE KEY `Index_2` (`name`)
+  UNIQUE KEY `Index_2` (`name`),
+  KEY `Index_3` (`cluster`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
@@ -38,10 +40,11 @@ CREATE TABLE  `project` (
   `idproject` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(128) NOT NULL,
   `ldapgroup` varchar(128) DEFAULT NULL,
+  `cluster` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`idproject`),
-  UNIQUE KEY `Index_2` (`name`)
+  UNIQUE KEY `Index_2` (`name`),
+  KEY `Index_3` (`cluster`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 -- -----------------------------------------------------
 -- User affiliations 
 -- -----------------------------------------------------
@@ -151,7 +154,7 @@ CREATE TABLE  `version` (
   `comment` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`idmajor`,`idminor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-insert into version (idmajor,idminor,comment) values (1,4,"TB Protocol schema");
+insert into version (idmajor,idminor,comment) values (1,5,"TB Protocol schema");
 
 -- -----------------------------------------------------
 -- Create new protocol version
