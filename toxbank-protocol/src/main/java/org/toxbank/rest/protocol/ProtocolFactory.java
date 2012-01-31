@@ -5,7 +5,7 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
-import net.toxbank.client.policy.Policy;
+import net.toxbank.client.policy.AccessRights;
 import net.toxbank.client.resource.Document;
 import net.toxbank.client.resource.Organisation;
 import net.toxbank.client.resource.Project;
@@ -24,7 +24,7 @@ import org.toxbank.rest.user.DBUser;
 
 public class ProtocolFactory {
 	protected static final String utf8= "UTF-8";
-	public static DBProtocol getProtocol(DBProtocol protocol,List<FileItem> items, long maxSize, File dir, Policy accessRights) throws ResourceException {
+	public static DBProtocol getProtocol(DBProtocol protocol,List<FileItem> items, long maxSize, File dir, AccessRights accessRights) throws ResourceException {
 		
 		if (protocol==null) protocol = new DBProtocol();
 		for (final Iterator<FileItem> it = items.iterator(); it.hasNext();) {

@@ -9,7 +9,7 @@ import net.idea.modbcum.p.QueryExecutor;
 import net.idea.restnet.aa.opensso.OpenSSOAuthorizer;
 import net.idea.restnet.db.DBConnection;
 import net.toxbank.client.Resources;
-import net.toxbank.client.policy.Policy;
+import net.toxbank.client.policy.AccessRights;
 import net.toxbank.client.policy.PolicyRule;
 
 import org.opentox.aa.opensso.OpenSSOToken;
@@ -35,7 +35,7 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 	@Override
 	protected boolean authorize(OpenSSOToken ssoToken, Request request)
 			throws Exception {
-		Policy policy = null;
+		AccessRights policy = null;
 		
 		//first check if local access is allowed , e.g. same name
 		Template template1 = new Template(String.format("%s%s/{%s}",request.getRootRef(),Resources.protocol,FileResource.resourceKey));
@@ -70,7 +70,7 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 				 */
 				if (policy !=null)
 					for (PolicyRule rule : policy.getRules())
-						if (rule.isAllow(request.getMethod().toString())) return true;
+						if (rule.allows(request.getMethod().toString())) return true;
 				
 				
 			} catch (ResourceException x) {
@@ -95,7 +95,7 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 	}
 	
 
-	public Policy verify(DBProtocol protocol, String username) throws Exception {
+	public AccessRights verify(DBProtocol protocol, String username) throws Exception {
 		//TODO make use of same connection for performance reasons
 		Connection c = null;
 		ResultSet rs = null;
@@ -108,7 +108,7 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 			if (executor==null)  executor = new QueryExecutor<ReadProtocolAccessLocal>();
 			executor.setConnection(c);
 			rs = executor.process(query);
-			Policy policy = null;
+			AccessRights policy = null;
 			while (rs.next()) {
 				policy = query.getObject(rs);
 				break;

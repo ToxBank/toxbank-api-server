@@ -14,10 +14,11 @@ import net.idea.restnet.aa.opensso.OpenSSOServicesConfig;
 import net.idea.restnet.c.task.CallableProtectedTask;
 import net.idea.restnet.i.task.TaskResult;
 import net.toxbank.client.Resources;
-import net.toxbank.client.policy.Policy;
+import net.toxbank.client.policy.AccessRights;
 import net.toxbank.client.resource.User;
 
 import org.apache.commons.fileupload.FileItem;
+import org.opentox.aa.policy.IPolicyHandler;
 import org.restlet.data.Method;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
@@ -120,7 +121,9 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 				DeleteProtocol k = new DeleteProtocol(protocol);
 				exec.process(k);
 				connection.commit();
+				
 			}
+			//TODO delete the policy!
 			return new TaskResult(null,false);
 			
 		} catch (Exception x) {
@@ -135,7 +138,7 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 
 	public TaskResult create() throws Exception {
 		boolean existing = protocol!=null&&protocol.getID()>0;
-		Policy policy = new Policy(null);
+		AccessRights policy = new AccessRights(null);
 		try {
 			protocol = ProtocolFactory.getProtocol(protocol,input, 10000000,dir,policy);
 		} catch (ResourceException x) {
@@ -276,7 +279,7 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 
 	public TaskResult update() throws Exception {
 		if ((protocol==null)||(protocol.getID()<=0)) throw new Exception("Can't update: Not an existing protocol!");
-		Policy policy = new Policy(null);
+		AccessRights policy = new AccessRights(null);
 		try {
 			//get only fields from the web form
 			DBProtocol newProtocol = ProtocolFactory.getProtocol(null,input, 10000000,dir,policy);
@@ -397,11 +400,15 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 		}
 		finally { try {qexec.close(); } catch (Exception x) {}}			
 	}
-	protected List<String> generatePolicy(DBProtocol protocol, Policy policy) throws Exception {
+	protected List<String> generatePolicy(DBProtocol protocol, AccessRights policy) throws Exception {
 		OpenSSOServicesConfig config = OpenSSOServicesConfig.getInstance();
 		SimpleAccessRights policyTools = new SimpleAccessRights(config.getPolicyService());
 		List<String> policies = policyTools.createPolicyXML(policy);
 		return policies.size()>0?policies:null;
+	}
+	
+	protected void deletePolicy(URL url) throws Exception {
+		//TODO
 	}
 }
 

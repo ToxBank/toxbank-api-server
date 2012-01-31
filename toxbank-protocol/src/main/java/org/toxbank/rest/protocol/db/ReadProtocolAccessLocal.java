@@ -10,7 +10,7 @@ import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.conditions.EQCondition;
 import net.idea.modbcum.q.query.AbstractQuery;
-import net.toxbank.client.policy.Policy;
+import net.toxbank.client.policy.AccessRights;
 import net.toxbank.client.policy.PolicyRule;
 import net.toxbank.client.resource.User;
 
@@ -21,14 +21,14 @@ import org.toxbank.rest.protocol.DBProtocol;
  * @author nina
  *
  */
-public class ReadProtocolAccessLocal extends AbstractQuery<DBProtocol, String, EQCondition, Policy> implements IQueryRetrieval<Policy> {
+public class ReadProtocolAccessLocal extends AbstractQuery<DBProtocol, String, EQCondition, AccessRights> implements IQueryRetrieval<AccessRights> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6017803463536586392L;
 
-	public double calculateMetric(Policy object) {
+	public double calculateMetric(AccessRights object) {
 		return 1;
 	}
 
@@ -51,13 +51,13 @@ public class ReadProtocolAccessLocal extends AbstractQuery<DBProtocol, String, E
 	/**
 	 * If found, will return true always. 
 	 */
-	public Policy getObject(ResultSet rs) throws AmbitException {
+	public AccessRights getObject(ResultSet rs) throws AmbitException {
 		try {
 			boolean sameUsername = getValue().equals(rs.getString("username"));
 			boolean published = rs.getBoolean("published");
 			User user = new User();
 			user.setUserName(getValue());
-			return new Policy(null,
+			return new AccessRights(null,
 					new PolicyRule(user,
 					sameUsername,
 					sameUsername & !published,

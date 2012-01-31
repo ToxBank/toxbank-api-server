@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import net.toxbank.client.policy.GroupPolicyRule;
-import net.toxbank.client.policy.Policy;
+import net.toxbank.client.policy.AccessRights;
 import net.toxbank.client.policy.PolicyRule;
 import net.toxbank.client.policy.UserPolicyRule;
 import net.toxbank.client.resource.Group;
@@ -53,7 +53,7 @@ public class SimpleAccessRights extends OpenSSOPolicy {
 		return createGroupPolicyXML(policy.getSubject(), uri, policy.getActionsAsArray());
 	}
 	
-	public List<String> createPolicyXML(Policy policy) throws Exception {
+	public List<String> createPolicyXML(AccessRights policy) throws Exception {
 		String xmlpolicy = null;
 		if ((policy.getResource()!=null) && (policy.getRules()!=null)) {
 			List<String> xmlpolicies = new ArrayList<String>();
