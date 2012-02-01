@@ -3,17 +3,22 @@ package org.toxbank.rest.policy;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
-import java.util.UUID;
 
-import net.toxbank.client.policy.GroupPolicyRule;
 import net.toxbank.client.policy.AccessRights;
+import net.toxbank.client.policy.GroupPolicyRule;
 import net.toxbank.client.policy.PolicyRule;
 import net.toxbank.client.policy.UserPolicyRule;
 import net.toxbank.client.resource.Group;
 import net.toxbank.client.resource.User;
 
+import org.opentox.aa.IOpenToxUser;
+import org.opentox.aa.OpenToxUser;
 import org.opentox.aa.opensso.OpenSSOPolicy;
+import org.opentox.aa.opensso.OpenSSOToken;
+import org.opentox.rest.RestException;
 
 public class SimpleAccessRights extends OpenSSOPolicy {
 	
@@ -53,6 +58,45 @@ public class SimpleAccessRights extends OpenSSOPolicy {
 			return xmlpolicies;
 		}
 		return null;
+		
+	}
+	
+	public void sendPolicy(OpenSSOToken token,AccessRights accessRights) throws Exception {
+		if ((accessRights==null) || (accessRights.getResource()==null) || (accessRights.getRules()==null)) throw new Exception("Invalid Policy");
+		List<String> xmls = createPolicyXML(accessRights);
+		for (String xml : xmls) try {
+			int status = sendPolicy(token, xml);
+			if (200!=status) 
+				throw new RestException(status,String.format("Error when creating policy for URI %s",accessRights.getResource()));
+		} catch (RestException x) {
+			throw x;
+		} catch (Exception x) {
+			throw new Exception(String.format("Error when creating policy for URI %s",accessRights.getResource()),x);
+		}
+
+	}
+	/**
+	 * Remove previous policies and create a new one
+	 * @param ssoToken
+	 * @param accessRights
+	 * @throws Exception
+	 */
+	public void updatePolicy(OpenSSOToken ssoToken,AccessRights accessRights) throws Exception {
+		if ((accessRights==null) || (accessRights.getResource()==null) || (accessRights.getRules()==null)) throw new Exception("Policy");
+		//First remove current policies
+		IOpenToxUser user = new OpenToxUser();
+		
+		Hashtable<String, String> policies = new Hashtable<String, String>();
+		int status = getURIOwner(ssoToken, accessRights.getResource().toExternalForm(), user, policies);
+		if (200 == status) {
+			Enumeration<String> e = policies.keys();
+			while (e.hasMoreElements()) {
+				String policyID = e.nextElement();
+				deletePolicy(ssoToken,policyID);
+			}
+		} 
+		//then send the new policy
+		sendPolicy(ssoToken,accessRights);
 		
 	}
 
