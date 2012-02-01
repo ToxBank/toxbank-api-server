@@ -69,8 +69,10 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 				 * Otherwise, we resort to OpenSSO policy
 				 */
 				if (policy !=null)
-					for (PolicyRule rule : policy.getRules())
-						if (rule.allows(request.getMethod().toString())) return true;
+					for (PolicyRule rule : policy.getRules()) {
+						Boolean allowed = rule.allows(request.getMethod().toString());
+						if ((allowed!=null) && allowed) return true;
+					}
 				
 				
 			} catch (ResourceException x) {
