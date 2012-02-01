@@ -21,36 +21,20 @@ public class SimpleAccessRights extends OpenSSOPolicy {
 		super(policyService);
 	}
 
-	public String createGroupPolicyXML(Group group, URL uri, String[] methods) throws Exception {
-
-		StringBuffer actions = new StringBuffer();
-		for (String method: methods) {
-			actions.append(String.format(policyActionTemplate,method));
-		}
-		return String.format(policyGroupTemplate,UUID.randomUUID(),uri.toExternalForm(),actions,group.getGroupName(),group.getGroupName());
-	}
 	public String createGroupReadPolicyXML(Group group, URL uri) throws Exception {
-		return createGroupPolicyXML(group,  uri, new String[] {"GET"});
+		return createGroupPolicyXML(group.getGroupName(),  uri, new String[] {"GET"});
 	}
 
-	public String createUserPolicyXML(User user, URL uri, String[] methods) throws Exception {
-		
-		StringBuffer actions = new StringBuffer();
-		for (String method: methods) {
-			actions.append(String.format(policyActionTemplate,method));
-		}
-		return String.format(policyUserTemplate,UUID.randomUUID(),uri,actions,user.getUserName(),user.getUserName());
-	}
 	public String createUserReadPolicyXML(User user, URL uri) throws Exception {
-		return createUserPolicyXML(user, uri, new String[] {"GET"});
+		return createUserPolicyXML(user.getUserName(), uri, new String[] {"GET"});
 	}
 	
 	public String createPolicyXML(UserPolicyRule<? extends User> policy, URL uri) throws Exception {
-		return createUserPolicyXML(policy.getSubject(), uri, policy.getActionsAsArray());
+		return createUserPolicyXML(policy.getSubject().getUserName(), uri, policy.getActionsAsArray());
 	}
 	
 	public String createPolicyXML(GroupPolicyRule<? extends Group> policy, URL uri) throws Exception {
-		return createGroupPolicyXML(policy.getSubject(), uri, policy.getActionsAsArray());
+		return createGroupPolicyXML(policy.getSubject().getGroupName(), uri, policy.getActionsAsArray());
 	}
 	
 	public List<String> createPolicyXML(AccessRights policy) throws Exception {
