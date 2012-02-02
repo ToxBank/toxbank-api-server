@@ -41,12 +41,14 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 		Template template1 = new Template(String.format("%s%s/{%s}",request.getRootRef(),Resources.protocol,FileResource.resourceKey));
 		Template template2 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.protocol,FileResource.resourceKey,Resources.authors));
 		Template template3 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.protocol,FileResource.resourceKey,Resources.versions));
+		Template template4 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.protocol,FileResource.resourceKey,Resources.previous));
 		Map<String, Object> vars = new HashMap<String, Object>();
 		Reference ref = request.getResourceRef().clone();
 		ref.setQuery(null);
 		template1.parse(ref.toString(),vars);
 		template2.parse(ref.toString(),vars);
 		template3.parse(ref.toString(),vars);
+		template4.parse(ref.toString(),vars);
 
 		/**
 		 * Try if there is a protocol identifier, or this is a top level query, in the later case, try the OpenSSO AA

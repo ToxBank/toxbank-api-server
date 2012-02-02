@@ -168,7 +168,8 @@ public class TBApplication extends TaskApplication<String> {
 			router.attach(Resources.organisation, createOpenSSOVerifiedResource(org_router));
 			router.attach(Resources.user, createOpenSSOVerifiedResource(new UserRouter(getContext(),protocols,org_router,projectRouter)));
 		}
-		router.attach("/myaccount", createOpenSSOVerifiedResource(MyAccountResource.class));		
+		router.attach("/myaccount", createOpenSSOVerifiedResource(MyAccountResource.class));	
+
 		/**
 		 * Queries
 		 *  /query
