@@ -15,10 +15,14 @@ import net.idea.restnet.c.task.CallableProtectedTask;
 import net.idea.restnet.i.task.TaskResult;
 import net.toxbank.client.Resources;
 import net.toxbank.client.policy.AccessRights;
+import net.toxbank.client.policy.GroupPolicyRule;
+import net.toxbank.client.policy.PolicyRule;
+import net.toxbank.client.policy.UserPolicyRule;
+import net.toxbank.client.resource.Group;
 import net.toxbank.client.resource.User;
 
 import org.apache.commons.fileupload.FileItem;
-import org.opentox.aa.policy.IPolicyHandler;
+import org.opentox.aa.opensso.OpenSSOToken;
 import org.restlet.data.Method;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
@@ -108,7 +112,7 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 		throw new ResourceException(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED,method.toString());
 	}	
 	
-	public TaskResult delete() throws Exception {
+	public TaskResult delete() throws ResourceException {
 		try {
 			connection.setAutoCommit(false);
 			//protocol.setOwner(user);
@@ -123,9 +127,16 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 				connection.commit();
 				
 			}
-			//TODO delete the policy!
+			try {
+				deletePolicy(new URL(reporter.getURI(protocol)));
+			} catch (Exception x) {
+				x.printStackTrace();
+				//ok, what do we do here?
+			}
 			return new TaskResult(null,false);
-			
+		} catch (ResourceException x) {
+			try {connection.rollback();} catch (Exception xx) {}
+			throw x;
 		} catch (Exception x) {
 			try {connection.rollback();} catch (Exception xx) {}
 			throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);
@@ -136,7 +147,7 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 		}
 	}
 
-	public TaskResult create() throws Exception {
+	public TaskResult create() throws ResourceException {
 		boolean existing = protocol!=null&&protocol.getID()>0;
 		AccessRights policy = new AccessRights(null);
 		try {
@@ -164,6 +175,9 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 			} catch (ProcessorException x) {
 				try {connection.rollback();} catch (Exception xx) {}
 				throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);
+			} catch (ResourceException x) {
+				try {connection.rollback();} catch (Exception xx) {}
+				throw x;
 			} catch (Exception x) {
 				try {connection.rollback();} catch (Exception xx) {}
 				throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);
@@ -252,8 +266,11 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 				connection.commit();
 				TaskResult result = new TaskResult(uri,true);
 				try {
+					//adding the owner and the authors
+					addDefaultProtocolRights(policy,protocol.getOwner(),true,true,true,true);
+					//for (User u: protocol.getAuthors())	addDefaultProtocolRights(policy,u,true,true,true,true);
 					if ((policy.getRules()!=null) && (policy.getRules().size()>0)) {
-						retrieveAccountNames(connection);
+						retrieveAccountNames(policy,connection);
 						policy.setResource(new URL(uri));
 						result.setPolicy(generatePolicy(protocol,policy));
 					} else result.setPolicy(null);
@@ -264,6 +281,9 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 			} catch (ProcessorException x) {
 				try {connection.rollback();} catch (Exception xx) {}
 				throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);
+			} catch (ResourceException x) {
+				try {connection.rollback();} catch (Exception xx) {}
+				throw x;
 			} catch (Exception x) {
 				try {connection.rollback();} catch (Exception xx) {}
 				throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);
@@ -277,8 +297,9 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 
 	}
 
-	public TaskResult update() throws Exception {
-		if ((protocol==null)||(protocol.getID()<=0)) throw new Exception("Can't update: Not an existing protocol!");
+	public TaskResult update() throws ResourceException {
+		if ((protocol==null)||(protocol.getID()<=0)) 
+					throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,"Can't update: Not an existing protocol!");
 		AccessRights policy = new AccessRights(null);
 		try {
 			//get only fields from the web form
@@ -340,8 +361,9 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 				connection.commit();
 				TaskResult result = new TaskResult(uri,false);
 				try {
+					addDefaultProtocolRights(policy,protocol.getOwner(),true,true,true,true);
 					if ((policy.getRules()!=null) && (policy.getRules().size()>0)) {
-						retrieveAccountNames(connection);
+						retrieveAccountNames(policy,connection);
 						policy.setResource(new URL(uri));
 						result.setPolicy(generatePolicy(protocol,policy));
 					} else result.setPolicy(null);
@@ -351,9 +373,11 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 			
 				return result;
 			} catch (ProcessorException x) {
-				x.printStackTrace();
 				try {connection.rollback();} catch (Exception xx) {}
 				throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);
+			} catch (ResourceException x) {
+				try {connection.rollback();} catch (Exception xx) {}
+				throw x;				
 			} catch (Exception x) {
 				try {connection.rollback();} catch (Exception xx) {}
 				throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);
@@ -365,37 +389,58 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 
 	}
 	
-	protected void retrieveAccountNames(Connection connection) throws Exception {
+	protected void addDefaultProtocolRights(AccessRights accessRights, User owner, Boolean get, Boolean post, Boolean put, Boolean delete ) throws Exception {
+		/*
+		boolean added = false;
+		for (PolicyRule rule: accessRights.getRules()) { 
+			if (rule instanceof UserPolicyRule)  
+				if (rule.hasSubject(owner)) added = true;
+		}
+		if (!added)
+		*/
+		//it may be added alreayd, but with different rights. We enforce the owner always having full rights
+		accessRights.addUserRule(owner, get,post,put,delete);
+	}
+
+	protected void retrieveAccountNames(AccessRights accessRights,Connection connection) throws Exception {
 		QueryExecutor qexec = new QueryExecutor();
 		try {
 			
 			qexec.setConnection(connection);
 			ReadUser getUser = new ReadUser();
-			for (DBUser u: protocol.allowReadByUser) { 
+			for (PolicyRule rule: accessRights.getRules()) 
+				if (rule instanceof UserPolicyRule)  {
+					DBUser u = ((UserPolicyRule<? extends DBUser>) rule).getSubject();
 				    if (u.getID()<=0) u.setID(u.parseURI(baseReference));
-				if (u.getUserName()==null) {
-					getUser.setValue(u);
-					ResultSet rs = null;
-					try { 
-						rs = qexec.process(getUser); 
-						while (rs.next()) { u.setUserName(getUser.getObject(rs).getUserName()); }
-					} catch (Exception x) { if (rs!=null) rs.close(); }
-				}	
+					if (u.getUserName()==null) {
+						getUser.setValue(u);
+						ResultSet rs = null;
+						try { 
+							rs = qexec.process(getUser); 
+							while (rs.next()) { u.setUserName(getUser.getObject(rs).getUserName()); }
+						} catch (Exception x) { if (rs!=null) rs.close(); }
+					}	
 			}
 			ReadGroup getGroup = null;
 			ReadOrganisation readOrg = new ReadOrganisation(null);
 			ReadProject readProject = new ReadProject(null);
-			for (IDBGroup u: protocol.allowReadByGroup) { 
-				    if (u.getID()<=0) u.setID(u.parseURI(baseReference));
-				if (u.getGroupName()==null) {
-					getGroup = u instanceof DBOrganisation?readOrg:readProject;
-					getGroup.setValue(u);
-					ResultSet rs = null;
-					try { 
-						rs = qexec.process(getGroup); 
-						while (rs.next()) { u.setGroupName(getGroup.getObject(rs).getGroupName()); }
-					} catch (Exception x) { if (rs!=null) rs.close(); }
-				}
+			for (PolicyRule rule: accessRights.getRules()) 
+				if (rule instanceof GroupPolicyRule)  {
+					Group u = ((GroupPolicyRule<? extends Group>) rule).getSubject();
+					
+					if (u instanceof IDBGroup) {
+						IDBGroup u_id = (IDBGroup) u;
+						if (u_id.getID()<=0) u_id.setID(u_id.parseURI(baseReference));
+					}
+					if (u.getGroupName()==null) {
+						getGroup = u instanceof DBOrganisation?readOrg:readProject;
+						getGroup.setValue(u);
+						ResultSet rs = null;
+						try { 
+							rs = qexec.process(getGroup); 
+							while (rs.next()) { u.setGroupName(getGroup.getObject(rs).getGroupName()); }
+						} catch (Exception x) { if (rs!=null) rs.close(); }
+					}
 			}
 		}
 		finally { try {qexec.close(); } catch (Exception x) {}}			
@@ -408,7 +453,16 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 	}
 	
 	protected void deletePolicy(URL url) throws Exception {
-		//TODO
+		if (getToken()==null) return;
+		try {
+			OpenSSOServicesConfig config = OpenSSOServicesConfig.getInstance();
+			SimpleAccessRights policyTools = new SimpleAccessRights(config.getPolicyService());
+			OpenSSOToken ssoToken = new OpenSSOToken(config.getOpenSSOService());
+			ssoToken.setToken(getToken());
+			policyTools.deleteAllPolicies(ssoToken,url);
+		} catch (Exception x) {
+			throw new ResourceException(Status.SERVER_ERROR_BAD_GATEWAY,String.format("Error deleting policies for %s",url),x);
+		}
 	}
 }
 

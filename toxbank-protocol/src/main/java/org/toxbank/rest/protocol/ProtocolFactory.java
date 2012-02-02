@@ -189,8 +189,10 @@ public class ProtocolFactory {
 							//a bit of heuristic
 							if (s.startsWith("http")) { user = new DBUser(new URL(s.trim())); } 
 							else { user = new DBUser(); user.setUserName(s.trim()); }	
-							protocol.allowReadByUser.add(user);
-						} catch (Exception x) { }
+							accessRights.addUserRule(user,true,null,null,null);
+						} catch (Exception x) { 
+							x.printStackTrace(); 
+						}
 					break;						
 				}
 				case allowReadByGroup: {
@@ -203,15 +205,15 @@ public class ProtocolFactory {
 								DBOrganisation org = null;
 								if (s.startsWith("http")) { org = new DBOrganisation(new URL(s.trim())); } 
 								else { org = new DBOrganisation(); org.setGroupName(s.trim()); }	
-								protocol.allowReadByGroup.add(org);
+								accessRights.addGroupRule(org,true,null,null,null);
 								
 							} else if (uri.indexOf("/project")>0) {
 								DBProject org = null;
 								if (s.startsWith("http")) { org = new DBProject(new URL(s.trim())); } 
 								else { org = new DBProject(); org.setGroupName(s.trim()); }
-								protocol.allowReadByGroup.add(new DBProject(new URL(s.trim())));
+								accessRights.addGroupRule(org,true,null,null,null);
 							}
-						} catch (Exception x) { }
+						} catch (Exception x) { x.printStackTrace(); }
 					break;	
 				}				
 				} //switch
