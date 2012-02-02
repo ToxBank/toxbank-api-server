@@ -112,7 +112,10 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 				catch (Exception x) {}
 			}
 			return true;
-		} else return false;
+		} else {
+			
+			return ref.toString().endsWith(Resources.document)?false:true;
+		}
 	}
 	@Override
 	protected boolean isEnabled() {
