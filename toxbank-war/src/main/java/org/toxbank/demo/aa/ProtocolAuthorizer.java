@@ -65,8 +65,7 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 		 * Try if there is a protocol identifier, or this is a top level query, in the later case, try the OpenSSO AA
 		 */
 		if (vars.get(FileResource.resourceKey)!=null) { 
-			//not a top level
-			setMaxDepth(1);
+			
 			String uri = String.format("%s%s/%s",request.getRootRef(),Resources.protocol,vars.get(FileResource.resourceKey));
 			try {
 				int[] ids = ReadProtocol.parseIdentifier(vars.get(FileResource.resourceKey).toString());
@@ -75,7 +74,9 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 
 				try {retrieveUserAttributes(ssoToken, request);} catch (Exception x) { return super.authorize(ssoToken, request); }
 				DBProtocol protocol = new DBProtocol(ids[0],ids[1]);
-				policy = verify(protocol,request.getClientInfo().getUser().getIdentifier());
+				String username = request.getClientInfo().getUser().getIdentifier();
+				policy = verify(protocol,username);
+				
 				
 				/**
 				 * The policy will let the user read the protocol, if he is an owner
@@ -88,7 +89,13 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 						if ((allowed!=null) && allowed) return true;
 					}
 				
-				
+				//not a top level
+				//this is a hack; we need wild card policies for admin users and non-wild card for the rest!
+				if ("protocol_service".equals(username)) {
+					setPrefix("protocol");
+					setMaxDepth(Integer.MAX_VALUE);
+				} else
+					setMaxDepth(1);
 			} catch (ResourceException x) {
 				return super.authorize(ssoToken, request);
 			}
