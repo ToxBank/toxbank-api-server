@@ -12,7 +12,7 @@ import org.toxbank.rest.protocol.DBProtocol;
 public class UpdateKeywords extends AbstractObjectUpdate<DBProtocol>{
 
 	public static final String[] update_sql = {
-		"insert into keywords (idprotocol,keywords) values (?,?) ON DUPLICATE key update keywords=values(keywords)"
+		"insert into keywords (idprotocol,version,keywords) values (?,?,?) ON DUPLICATE key update keywords=values(keywords)"
 		};
 
 	public UpdateKeywords(DBProtocol ref) {
@@ -25,6 +25,7 @@ public class UpdateKeywords extends AbstractObjectUpdate<DBProtocol>{
 
 		List<QueryParam> params = new ArrayList<QueryParam>();
 		params.add(new QueryParam<Integer>(Integer.class, getObject().getID()));
+		params.add(new QueryParam<Integer>(Integer.class, getObject().getVersion()));
 		params.add(new QueryParam<String>(String.class, 
 						ReadProtocol.fields.keywords.getValue(getObject()).toString()));
 		return params;

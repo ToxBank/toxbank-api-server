@@ -707,7 +707,7 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 		"filename,keywords,template,updated,status,`created`,published\n" +
 		"from protocol join organisation using(idorganisation)\n" +
 		"join project using(idproject)\n" +
-		"left join keywords using(idprotocol) %s %s order by idprotocol,version desc";
+		"left join keywords using(idprotocol,version) %s %s order by idprotocol,version desc";
 
 	public static final ReadProtocol.fields[] sqlFields = new ReadProtocol.fields[] {
 		fields.idprotocol,

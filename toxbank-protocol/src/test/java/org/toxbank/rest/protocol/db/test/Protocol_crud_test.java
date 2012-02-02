@@ -93,7 +93,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 	protected void deleteVerify(IQueryUpdate<Object,DBProtocol> query)
 			throws Exception {
         IDatabaseConnection c = getConnection();	
-		ITable table = 	c.createQueryTable("EXPECTED","SELECT idprotocol FROM protocol where idprotocol=2");
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT idprotocol FROM protocol where idprotocol=2 and version=1");
 		Assert.assertEquals(0,table.getRowCount());
 		c.close();
 		

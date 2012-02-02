@@ -41,9 +41,9 @@ import org.toxbank.rest.protocol.DBProtocol;
 public class DeleteProtocol extends AbstractObjectUpdate<DBProtocol> {
 
 	public static final String[] delete_sql = {
-		"delete from keywords where idprotocol=?",
-		"delete from protocol_authors where idprotocol=?",
-		"delete from protocol where idprotocol=?"
+		"delete from keywords where idprotocol=? and version=?",
+		"delete from protocol_authors where idprotocol=? and version=?",
+		"delete from protocol where idprotocol=? and version=?"
 		};
 
 	public DeleteProtocol(DBProtocol ref) {
@@ -54,8 +54,11 @@ public class DeleteProtocol extends AbstractObjectUpdate<DBProtocol> {
 	}		
 	public List<QueryParam> getParameters(int index) throws AmbitException {
 		if (getObject()==null || getObject().getID()<=0) throw new AmbitException("No protocol id!");
+		if (getObject()==null || getObject().getVersion()<=0) throw new AmbitException("Invalid version!");
 		List<QueryParam> params = new ArrayList<QueryParam>();
 		params.add(new QueryParam<Integer>(Integer.class, getObject().getID()));
+		params.add(new QueryParam<Integer>(Integer.class, getObject().getVersion()));
+		
 		return params;
 		
 	}

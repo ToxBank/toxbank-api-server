@@ -138,8 +138,9 @@ CREATE TABLE  `protocol_authors` (
 DROP TABLE IF EXISTS `keywords`;
 CREATE TABLE  `keywords` (
   `idprotocol` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `version` int(10) unsigned NOT NULL DEFAULT '1',
   `keywords` text NOT NULL COMMENT 'All keywords semicolon delimited',
-  PRIMARY KEY (`idprotocol`),
+  PRIMARY KEY (`idprotocol`,`version`) USING BTREE,
   FULLTEXT KEY `Index_2` (`keywords`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -154,7 +155,7 @@ CREATE TABLE  `version` (
   `comment` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`idmajor`,`idminor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-insert into version (idmajor,idminor,comment) values (1,5,"TB Protocol schema");
+insert into version (idmajor,idminor,comment) values (1,6,"TB Protocol schema");
 
 -- -----------------------------------------------------
 -- Create new protocol version
