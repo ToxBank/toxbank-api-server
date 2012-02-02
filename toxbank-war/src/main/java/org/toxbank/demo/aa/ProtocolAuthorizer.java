@@ -30,6 +30,13 @@ import org.toxbank.rest.protocol.db.ReadProtocolAccessLocal;
  * Otherwise, we resort to the OpenSSO policy
  */
 public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
+	protected int maxDepth = Integer.MAX_VALUE;
+	public int getMaxDepth() {
+		return maxDepth;
+	}
+	public void setMaxDepth(int maxDepth) {
+		this.maxDepth = maxDepth;
+	}
 	protected ReadProtocolAccessLocal query;
 	protected QueryExecutor<ReadProtocolAccessLocal> executor;
 	@Override
@@ -42,6 +49,8 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 		Template template2 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.protocol,FileResource.resourceKey,Resources.authors));
 		Template template3 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.protocol,FileResource.resourceKey,Resources.versions));
 		Template template4 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.protocol,FileResource.resourceKey,Resources.previous));
+		Template template5 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.protocol,FileResource.resourceKey,Resources.document));
+		Template template6 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.protocol,FileResource.resourceKey,Resources.datatemplate));
 		Map<String, Object> vars = new HashMap<String, Object>();
 		Reference ref = request.getResourceRef().clone();
 		ref.setQuery(null);
@@ -49,13 +58,16 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 		template2.parse(ref.toString(),vars);
 		template3.parse(ref.toString(),vars);
 		template4.parse(ref.toString(),vars);
+		template5.parse(ref.toString(),vars);
+		template6.parse(ref.toString(),vars);
 
 		/**
 		 * Try if there is a protocol identifier, or this is a top level query, in the later case, try the OpenSSO AA
 		 */
 		if (vars.get(FileResource.resourceKey)!=null) { 
-			
-			
+			//not a top level
+			setMaxDepth(1);
+			String uri = String.format("%s%s/%s",request.getRootRef(),Resources.protocol,vars.get(FileResource.resourceKey));
 			try {
 				int[] ids = ReadProtocol.parseIdentifier(vars.get(FileResource.resourceKey).toString());
 				if (ids==null || ids.length!=2 || (ids[0]<=0) || (ids[1] <=0) )
@@ -80,6 +92,8 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 			} catch (ResourceException x) {
 				return super.authorize(ssoToken, request);
 			}
+		} else {
+			setPrefix(null);
 		}
 		/**
 		 *  otherwise try if there is an OpenSSO policy to let me in
@@ -125,5 +139,42 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 			try {if (rs!=null) rs.close();} catch (Exception x) {};
 			try {if (c!=null) c.close();} catch (Exception x) {};
 		}
+		
+	}
+	
+	@Override
+	public String uri2check(Reference root,Reference ref) throws Exception {
+		if (prefix==null) return ref==null?null:ref.toString();
+	    if (ref == null) return null;
+	    
+	    String u = root.toString();
+		Reference fullPrefix = new Reference(String.format("%s%s%s/", 
+					u,
+					u.lastIndexOf("/")==u.length()-1?"":"/",
+					prefix));
+		
+		u = ref.toString();
+		Reference uri = new Reference(String.format("%s%s", 
+				u,
+				u.lastIndexOf("/")==u.length()-1?"":"/"
+				));
+		u = ref.toString();
+		Reference uri2check = new Reference(u==null?null:
+										u.lastIndexOf("/")==u.length()-1?u:String.format("%s/",u)); //add trailing slash
+		int prefix_len = fullPrefix.toString().length();
+		int level = 0;
+		while (!fullPrefix.equals(uri)) {
+			uri2check = uri;
+			if (level>=maxDepth) break;
+			
+			uri = uri.getParentRef();
+			if (uri.toString().length()<prefix_len) return null; //smth wrong
+			level++;
+
+		}
+		u = uri.toString();
+		if (u.lastIndexOf("/")==(u.length()-1))
+			return u.substring(0,u.length()-1);
+		else return u;
 	}
 }
