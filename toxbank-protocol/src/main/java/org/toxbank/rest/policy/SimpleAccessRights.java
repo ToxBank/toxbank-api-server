@@ -84,20 +84,29 @@ public class SimpleAccessRights extends OpenSSOPolicy {
 	public void updatePolicy(OpenSSOToken ssoToken,AccessRights accessRights) throws Exception {
 		if ((accessRights==null) || (accessRights.getResource()==null) || (accessRights.getRules()==null)) throw new Exception("Policy");
 		//First remove current policies
+		deleteAllPolicies(ssoToken, accessRights.getResource());
+		//then send the new policy
+		sendPolicy(ssoToken,accessRights);
+		
+	}
+	
+	/**
+	 * Deletes all policies for an URI
+	 * @param url
+	 * @throws Exception
+	 */
+	public void deleteAllPolicies(OpenSSOToken ssoToken,URL url) throws Exception {
 		IOpenToxUser user = new OpenToxUser();
 		
 		Hashtable<String, String> policies = new Hashtable<String, String>();
-		int status = getURIOwner(ssoToken, accessRights.getResource().toExternalForm(), user, policies);
+		int status = getURIOwner(ssoToken, url.toExternalForm(), user, policies);
 		if (200 == status) {
 			Enumeration<String> e = policies.keys();
 			while (e.hasMoreElements()) {
 				String policyID = e.nextElement();
 				deletePolicy(ssoToken,policyID);
 			}
-		} 
-		//then send the new policy
-		sendPolicy(ssoToken,accessRights);
-		
+		} //else throw new RestException(status);
 	}
 
 }
