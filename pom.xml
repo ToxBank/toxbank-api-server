@@ -13,8 +13,8 @@
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   	<junit.version>4.8.1</junit.version>
 	<restlet.version>2.0-M6</restlet.version>
-	<modbcum.version>0.0.2-SNAPSHOT</modbcum.version>
-	<restnet.version>0.0.5-SNAPSHOT</restnet.version>
+	<modbcum.version>0.0.2</modbcum.version>
+	<restnet.version>0.0.5</restnet.version>
   </properties>
  <issueManagement>
  <!-- 
