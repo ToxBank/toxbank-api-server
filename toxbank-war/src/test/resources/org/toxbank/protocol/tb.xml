@@ -22,6 +22,7 @@
   <keywords idprotocol="2" version="1" keywords="one;two;three"/>
   <keywords idprotocol="2" version="2" keywords="one;two;four"/>
   <protocol_authors idprotocol="1" version="1" iduser="1"/>
+  <protocol_authors idprotocol="2" version="1" iduser="3"/>
   <user_organisation iduser="1" idorganisation="1" priority="2" />
   <user_organisation iduser="1" idorganisation="2" priority="1" />
   <user_project iduser="1" idproject="1" priority="1" />

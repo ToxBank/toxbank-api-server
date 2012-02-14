@@ -43,6 +43,7 @@ import org.toxbank.rest.protocol.db.template.UpdateDataTemplate;
 import org.toxbank.rest.protocol.resource.db.ProtocolQueryURIReporter;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.author.db.AddAuthors;
+import org.toxbank.rest.user.author.db.DeleteAuthor;
 import org.toxbank.rest.user.db.CreateUser;
 import org.toxbank.rest.user.db.ReadUser;
 
@@ -346,9 +347,13 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 					exec.process(k);
 				}
 				
-				if ((protocol.getAuthors()!=null) && protocol.getAuthors().size()>0) {
-					AddAuthors k = new AddAuthors(protocol);
-					exec.process(k);
+				if (protocol.getAuthors()!=null) {
+					DeleteAuthor da = new DeleteAuthor(protocol, null);
+					exec.process(da);
+					if (protocol.getAuthors().size()>0) {
+						AddAuthors k = new AddAuthors(protocol);
+						exec.process(k);
+					}
 				}
 				
 				if ((protocol.getDataTemplate()!=null) && 

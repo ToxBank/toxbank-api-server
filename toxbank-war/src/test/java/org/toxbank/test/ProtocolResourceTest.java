@@ -314,15 +314,24 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 	@Test
 	public void testUpdateEntryFromMultipartWeb() throws Exception {
 		String uri = String.format("http://localhost:%d%s/%s-2-1", port,Resources.protocol,Protocol.id_prefix);
+		IDatabaseConnection c = getConnection();	
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT idprotocol,version,iduser from protocol_authors p where p.idprotocol=2 and version=1");
+		Assert.assertEquals(1,table.getRowCount());
+		Assert.assertEquals(new BigInteger("3"),table.getValue(0,"iduser"));
+		c.close();
+
 		createEntryFromMultipartWeb(new Reference(uri),Method.PUT);
 		
-		IDatabaseConnection c = getConnection();	
-		ITable  table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
+		c = getConnection();	
+		table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
 		Assert.assertEquals(3,table.getRowCount());
 		table = 	c.createQueryTable("EXPECTED","SELECT p.idprotocol,p.version,published from protocol p where p.idprotocol=2 and version=1");
 		Assert.assertEquals(1,table.getRowCount());
 		Assert.assertEquals(Boolean.TRUE,table.getValue(0,"published"));
-		
+		table = 	c.createQueryTable("EXPECTED","SELECT idprotocol,version,iduser from protocol_authors p where p.idprotocol=2 and version=1 order by iduser");
+		Assert.assertEquals(2,table.getRowCount());
+		Assert.assertEquals(new BigInteger("1"),table.getValue(0,"iduser"));
+		Assert.assertEquals(new BigInteger("2"),table.getValue(1,"iduser"));
 		c.close();
 	}
 	@Test
