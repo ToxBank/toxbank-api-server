@@ -18,8 +18,12 @@ import org.toxbank.rest.user.DBUser;
  *
  */
 public class DeleteAuthor  extends AbstractUpdate<DBProtocol,DBUser> {
-	protected static final String[] sql = new String[] {"DELETE from protocol_authors where idprotocol=? and version=? and iduser=?"};
-	
+	protected static final String[] sql = new String[] {
+		"DELETE from protocol_authors where idprotocol=? and version=? and iduser=?"
+	};
+	protected static final String[] sql_all = new String[] {
+		"DELETE from protocol_authors where idprotocol=? and version=?"
+	};
 	public DeleteAuthor(DBProtocol protocol,DBUser author) {
 		super(author);
 		setGroup(protocol);
@@ -28,21 +32,21 @@ public class DeleteAuthor  extends AbstractUpdate<DBProtocol,DBUser> {
 		this(null,null);
 	}		
 	public List<QueryParam> getParameters(int index) throws AmbitException {
-		if (getObject()==null || getObject().getID()<=0) throw new InvalidUserException();
 		if (getGroup()==null || getGroup().getID()<=0 || getGroup().getVersion()<=0) throw new InvalidProtocolException();
 
 		List<QueryParam> params = new ArrayList<QueryParam>();
 		params.add(new QueryParam<Integer>(Integer.class, getGroup().getID()));
 		params.add(new QueryParam<Integer>(Integer.class, getGroup().getVersion()));
-		params.add(new QueryParam<Integer>(Integer.class, getObject().getID()));
+		if ((getObject()!=null) && (getObject().getID()>0))
+			params.add(new QueryParam<Integer>(Integer.class, getObject().getID()));
 		return params;
 		
 	}
 
 	public String[] getSQL() throws AmbitException {
-		if (getObject()==null || getObject().getID()<=0) throw new InvalidUserException();
+		//if (getObject()==null || getObject().getID()<=0) throw new InvalidUserException();
 		if (getGroup()==null || getGroup().getID()<=0 || getGroup().getVersion()<=0) throw new InvalidProtocolException();
-		return sql;
+		return ((getObject()!=null) && (getObject().getID()>0))?sql:sql_all;
 	}
 	public void setID(int index, int id) {
 			
