@@ -56,7 +56,7 @@ public class UserResourceTest extends ResourceTest {
 			Assert.assertTrue(line.startsWith(String.format("http://localhost:%d%s/U",port,Resources.user)));
 			count++;
 		}
-		return count==3;
+		return count==4;
 	}	
 	
 	
@@ -105,7 +105,7 @@ public class UserResourceTest extends ResourceTest {
 
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM user");
-		Assert.assertEquals(3,table.getRowCount());
+		Assert.assertEquals(4,table.getRowCount());
 		c.close();
 
 		RemoteTask task = testAsyncPoll(new Reference(String.format("http://localhost:%d%s", port,
@@ -122,7 +122,7 @@ public class UserResourceTest extends ResourceTest {
 
         c = getConnection();	
 		table = 	c.createQueryTable("EXPECTED","SELECT * FROM user");
-		Assert.assertEquals(4,table.getRowCount());
+		Assert.assertEquals(5,table.getRowCount());
 		table = 	c.createQueryTable("EXPECTED","SELECT iduser,title from user where iduser>3 and firstName='Alice' and lastName='B.'" );
 		Assert.assertEquals(1,table.getRowCount());
 		c.close();
@@ -144,7 +144,7 @@ public class UserResourceTest extends ResourceTest {
 		form.add("project_uri",String.format("http://localhost:%d%s/G2",port,Resources.project));
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM user");
-		Assert.assertEquals(3,table.getRowCount());
+		Assert.assertEquals(4,table.getRowCount());
 		c.close();
 
 		RemoteTask task = testAsyncPoll(new Reference(String.format("http://localhost:%d%s", port,
@@ -161,7 +161,7 @@ public class UserResourceTest extends ResourceTest {
 
         c = getConnection();	
 		table = 	c.createQueryTable("EXPECTED","SELECT * FROM user");
-		Assert.assertEquals(4,table.getRowCount());
+		Assert.assertEquals(5,table.getRowCount());
 		table = 	c.createQueryTable("EXPECTED","SELECT iduser,title from user where iduser>3 and username='username'");
 		Assert.assertEquals(1,table.getRowCount());
 		table = 	c.createQueryTable("EXPECTED","SELECT iduser,idorganisation from user_organisation where iduser>3 and (idorganisation=1 or idorganisation=2)");
@@ -176,17 +176,17 @@ public class UserResourceTest extends ResourceTest {
 	@Test
 	public void testDelete() throws Exception {
 		IDatabaseConnection c = getConnection();	
-		ITable table = 	c.createQueryTable("EXPECTED","SELECT iduser FROM user where iduser=3");
-		Assert.assertEquals(new BigInteger("3"),table.getValue(0,"iduser"));
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT iduser FROM user where iduser=4");
+		Assert.assertEquals(new BigInteger("4"),table.getValue(0,"iduser"));
 		c.close();		
-		String org = String.format("http://localhost:%d%s/U3", port,Resources.user);
+		String org = String.format("http://localhost:%d%s/U4", port,Resources.user);
 		RemoteTask task = testAsyncPoll(new Reference(org),
 				MediaType.TEXT_URI_LIST, null,
 				Method.DELETE);
 		Assert.assertEquals(Status.SUCCESS_OK, task.getStatus());
 		//Assert.assertNull(task.getResult());
 		c = getConnection();	
-		table = 	c.createQueryTable("EXPECTED","SELECT * FROM user where iduser=3");
+		table = 	c.createQueryTable("EXPECTED","SELECT * FROM user where iduser=4");
 		Assert.assertEquals(0,table.getRowCount());
 		c.close();			
 	}
