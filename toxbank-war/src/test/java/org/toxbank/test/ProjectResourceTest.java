@@ -23,7 +23,6 @@ import org.restlet.data.Status;
 import org.restlet.representation.Representation;
 import org.toxbank.rest.groups.DBGroup;
 import org.toxbank.rest.groups.db.ReadProject;
-import org.toxbank.rest.user.db.ReadUser;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;

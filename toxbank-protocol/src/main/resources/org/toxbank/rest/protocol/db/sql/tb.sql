@@ -121,6 +121,24 @@ CREATE TABLE  `protocol_authors` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
+-- Saved queries
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `alert`;
+CREATE TABLE  `alert` (
+  `idquery` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL COMMENT 'query name',
+  `query` text NOT NULL COMMENT 'query content',
+  `qformat` enum('FREETEXT','SPARQL') NOT NULL DEFAULT 'FREETEXT' COMMENT 'query format',
+  `rfrequency` enum('secondly','minutely','hourly','daily','weekly','monthly','yearly') NOT NULL DEFAULT 'weekly',
+  `rinterval` int(10) unsigned NOT NULL DEFAULT '1',
+  `iduser` int(10) unsigned NOT NULL,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`idquery`),
+  KEY `FK_query_1` (`iduser`),
+  CONSTRAINT `FK_query_1` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
 -- Trigger 
 -- -----------------------------------------------------
 -- DELIMITER $
@@ -155,7 +173,7 @@ CREATE TABLE  `version` (
   `comment` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`idmajor`,`idminor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-insert into version (idmajor,idminor,comment) values (1,6,"TB Protocol schema");
+insert into version (idmajor,idminor,comment) values (1,7,"TB Protocol schema");
 
 -- -----------------------------------------------------
 -- Create new protocol version

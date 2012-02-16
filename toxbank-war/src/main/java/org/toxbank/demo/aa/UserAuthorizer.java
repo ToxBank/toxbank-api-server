@@ -36,6 +36,7 @@ public class UserAuthorizer extends OpenSSOAuthorizer {
 		Template template2 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.user,UserDBResource.resourceKey,Resources.protocol));
 		Template template3 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.user,UserDBResource.resourceKey,Resources.project));
 		Template template4 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.user,UserDBResource.resourceKey,Resources.organisation));
+		Template template5 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.user,UserDBResource.resourceKey,Resources.alert));
 		Map<String, Object> vars = new HashMap<String, Object>();
 		Reference ref = request.getResourceRef().clone();
 		ref.setQuery(null);
@@ -43,6 +44,7 @@ public class UserAuthorizer extends OpenSSOAuthorizer {
 		template2.parse(ref.toString(),vars);
 		template3.parse(ref.toString(),vars);
 		template4.parse(ref.toString(),vars);
+		template5.parse(ref.toString(),vars);
 		if (vars.get(UserDBResource.resourceKey)==null) return super.authorize(ssoToken, request);
 		Integer iduser  = null;
 		try {iduser = Integer.parseInt(vars.get(UserDBResource.resourceKey).toString().substring(1));

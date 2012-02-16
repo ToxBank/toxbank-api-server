@@ -50,6 +50,7 @@ import org.toxbank.rest.groups.OrganisationRouter;
 import org.toxbank.rest.groups.ProjectRouter;
 import org.toxbank.rest.protocol.ProtocolRouter;
 import org.toxbank.rest.user.UserRouter;
+import org.toxbank.rest.user.alerts.resource.AlertRouter;
 import org.toxbank.rest.user.resource.MyAccountResource;
 
 
@@ -156,17 +157,20 @@ public class TBApplication extends TaskApplication<String> {
 		//router.attach(Resources.protocol, createProtectedResource(new ProtocolRouter(getContext()),"",false));
 		OrganisationRouter org_router = new OrganisationRouter(getContext());
 		ProjectRouter projectRouter = new ProjectRouter(getContext());
+		AlertRouter alertRouter = new AlertRouter(getContext());
 		if (aaenabled) {
 			router.attach(Resources.protocol, createProtectedResource(protocols,"protocol",new ProtocolAuthorizer()));
 			router.attach(Resources.project, createProtectedResource(projectRouter,"project",true));
 			router.attach(Resources.organisation, createProtectedResource(org_router,"organisation",true));
+			router.attach(Resources.alert, createProtectedResource(org_router,"alert",true));
 			router.attach(Resources.user, createProtectedResource(
-							new UserRouter(getContext(),protocols,org_router,projectRouter),"user",new UserAuthorizer()));
+							new UserRouter(getContext(),protocols,org_router,projectRouter,alertRouter),"user",new UserAuthorizer()));
 		} else {
 			router.attach(Resources.protocol, createOpenSSOVerifiedResource(protocols));
 			router.attach(Resources.project, createOpenSSOVerifiedResource(projectRouter));
 			router.attach(Resources.organisation, createOpenSSOVerifiedResource(org_router));
-			router.attach(Resources.user, createOpenSSOVerifiedResource(new UserRouter(getContext(),protocols,org_router,projectRouter)));
+			router.attach(Resources.alert, createOpenSSOVerifiedResource(alertRouter));
+			router.attach(Resources.user, createOpenSSOVerifiedResource(new UserRouter(getContext(),protocols,org_router,projectRouter,alertRouter)));
 		}
 		router.attach("/myaccount", createOpenSSOVerifiedResource(MyAccountResource.class));	
 
