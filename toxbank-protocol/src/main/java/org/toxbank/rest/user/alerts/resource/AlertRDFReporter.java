@@ -13,6 +13,7 @@ import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.db.convertors.QueryRDFReporter;
 import net.toxbank.client.Resources;
 import net.toxbank.client.io.rdf.AlertIO;
+import net.toxbank.client.io.rdf.NCAL;
 import net.toxbank.client.io.rdf.TOXBANK;
 import net.toxbank.client.io.rdf.UserIO;
 
@@ -67,6 +68,7 @@ public class AlertRDFReporter<Q extends IQueryRetrieval<DBAlert>> extends QueryR
 			output.setNsPrefix("foaf", FOAF.NS);
 			output.setNsPrefix("tba", String.format("%s%s/",uriReporter.getBaseReference().toString(),Resources.alert));
 			output.setNsPrefix("tbu", String.format("%s%s/",uriReporter.getBaseReference().toString(),Resources.user));
+			output.setNsPrefix("ncal",NCAL.URI);
 			
 		}
 	}
