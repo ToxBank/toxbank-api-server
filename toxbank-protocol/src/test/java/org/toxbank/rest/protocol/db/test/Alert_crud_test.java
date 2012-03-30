@@ -1,6 +1,7 @@
 package org.toxbank.rest.protocol.db.test;
 
 import java.math.BigInteger;
+import java.util.Date;
 
 import junit.framework.Assert;
 import net.idea.modbcum.i.query.IQueryUpdate;
@@ -12,6 +13,7 @@ import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.alerts.db.AddAlert;
 import org.toxbank.rest.user.alerts.db.DBAlert;
 import org.toxbank.rest.user.alerts.db.DeleteAlert;
+import org.toxbank.rest.user.alerts.db.UpdateAlertSentTimeStamp;
 
 public class Alert_crud_test  extends CRUDTest<DBUser,DBAlert>  {
 
@@ -58,30 +60,21 @@ public class Alert_crud_test  extends CRUDTest<DBUser,DBAlert>  {
 	}
 
 	@Override
-	public void testUpdate() throws Exception {
-		//TODO Not implemented
-	}
-	@Override
 	protected IQueryUpdate<DBUser,DBAlert> updateQuery() throws Exception {
 		DBAlert ref = new DBAlert();
-		ref.setQueryString("NEW");
 		ref.setID(2);
 
-		return null; //new UpdateAlert(ref);
+		return new UpdateAlertSentTimeStamp(ref,null);
 	}
 
 	@Override
 	protected void updateVerify(IQueryUpdate<DBUser,DBAlert> query)
 			throws Exception {
-		/*
-        IDatabaseConnection c = getConnection();	
-		ITable table = 	c.createQueryTable("EXPECTED","SELECT lastname FROM user where iduser=3");
-		Assert.assertEquals(1,table.getRowCount());
 
-		Assert.assertEquals("NEW",table.getValue(0,"lastname"));
-		
+        IDatabaseConnection c = getConnection();	
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT sent FROM alert where idquery=2");
+		Assert.assertEquals(1,table.getRowCount());
 		c.close();
-		*/
 		
 	}
 
