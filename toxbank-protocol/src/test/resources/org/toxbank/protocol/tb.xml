@@ -24,6 +24,6 @@
   <protocol_authors idprotocol="1" version="1" iduser="1"/>
   <user_organisation iduser="1" idorganisation="2" priority="1" />
   <user_project iduser="1" idproject="1" priority="1" />
-  <alert idquery="1" name="cell" query="cell" qformat="FREETEXT" rfrequency="daily" rinterval="1" iduser="1"/>
-  <alert idquery="2" name="toxicity" query="toxicity" qformat="FREETEXT" rfrequency="weekly" rinterval="1" iduser="1"/>
+  <alert idquery="1" name="cell" query="cell" qformat="FREETEXT" rfrequency="daily" rinterval="1" iduser="1" sent="2012-01-16 09:30:51.000000000"/>
+  <alert idquery="2" name="toxicity" query="toxicity" qformat="FREETEXT" rfrequency="weekly" rinterval="1" iduser="1" sent="2012-01-16 09:30:51.000000000"/>
 </dataset>

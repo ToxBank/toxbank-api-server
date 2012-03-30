@@ -133,8 +133,9 @@ CREATE TABLE  `alert` (
   `rinterval` int(10) unsigned NOT NULL DEFAULT '1',
   `iduser` int(10) unsigned NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `sent` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`idquery`),
-  KEY `FK_query_1` (`iduser`),
+  KEY `FK_query_1` (`iduser`,`rfrequency`) USING BTREE,
   CONSTRAINT `FK_query_1` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -173,7 +174,7 @@ CREATE TABLE  `version` (
   `comment` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`idmajor`,`idminor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-insert into version (idmajor,idminor,comment) values (1,7,"TB Protocol schema");
+insert into version (idmajor,idminor,comment) values (1,8,"TB Protocol schema");
 
 -- -----------------------------------------------------
 -- Create new protocol version

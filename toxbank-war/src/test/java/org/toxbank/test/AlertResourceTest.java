@@ -148,7 +148,7 @@ public class AlertResourceTest extends ResourceTest {
 		Assert.assertTrue(task.getResult().toString().startsWith(String.format("http://localhost:%d%s/A",port,Resources.alert)));
 
         c = getConnection();	
-		table = 	c.createQueryTable("EXPECTED","SELECT * FROM alert");
+		table = 	c.createQueryTable("EXPECTED","SELECT idquery,name,query,qformat,rfrequency,rinterval,iduser,created FROM alert");
 		Assert.assertEquals(3,table.getRowCount());
 		table = 	c.createQueryTable("EXPECTED","SELECT idquery,iduser,query from alert where idquery>2");
 		Assert.assertEquals(1,table.getRowCount());

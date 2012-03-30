@@ -15,7 +15,7 @@ import org.toxbank.rest.db.exceptions.InvalidUserException;
 import org.toxbank.rest.user.DBUser;
 
 public class ReadAlert extends AbstractQuery<DBUser, DBAlert, EQCondition, DBAlert>  implements IQueryRetrieval<DBAlert> {
-	protected String sql = "select idquery,name,query,qformat,rfrequency,rinterval,iduser,created,username from alert join user using(iduser) where username is not null ";
+	protected String sql = "select idquery,name,query,qformat,rfrequency,rinterval,iduser,created,username,sent from alert join user using(iduser) where username is not null ";
 
  
 	/**

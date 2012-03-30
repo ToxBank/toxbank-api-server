@@ -28,6 +28,8 @@ public class ReadAlertTest  extends QueryTest<ReadAlert> {
 		while (rs.next()) {
 			DBAlert alert = query.getObject(rs);
 			Assert.assertEquals(1,alert.getUser().getID());
+			Assert.assertNotNull(alert.getUser().getUserName());
+			Assert.assertNotNull(alert.getSentAt());
 			records++;
 		}
 		Assert.assertEquals(2,records);

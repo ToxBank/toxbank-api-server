@@ -90,6 +90,21 @@ public class DBAlert extends Alert<DBUser> {
 				return alert.getRecurrenceInterval();
 			}
 		},
+		sent {
+			@Override
+			public void setValue(DBAlert alert, String value)
+					throws SQLException {
+				alert.setSentAt(Long.parseLong(value));
+			}
+			@Override
+			public void setParam(DBAlert alert, ResultSet rs) throws SQLException {
+				alert.setSentAt(rs.getLong(name()));
+			}			
+			@Override
+			public Object getValue(DBAlert alert) {
+				return alert.getSentAt();
+			}
+		},		
 		iduser {
 			@Override
 			public void setValue(DBAlert alert, String value)
@@ -101,6 +116,7 @@ public class DBAlert extends Alert<DBUser> {
 			public void setParam(DBAlert alert, ResultSet rs) throws SQLException {
 				DBUser user = new DBUser(rs.getInt(name()));
 				user.setUserName(rs.getString("username"));
+				user.setID(rs.getInt("iduser"));
 				alert.setUser(user);
 			}
 			@Override
