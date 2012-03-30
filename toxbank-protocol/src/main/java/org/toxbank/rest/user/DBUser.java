@@ -2,6 +2,7 @@ package org.toxbank.rest.user;
 
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.toxbank.client.Resources;
@@ -9,8 +10,17 @@ import net.toxbank.client.resource.User;
 
 import org.restlet.routing.Template;
 import org.toxbank.rest.FileResource;
+import org.toxbank.rest.user.alerts.db.DBAlert;
 
 public class DBUser extends User {
+	protected List<DBAlert> alerts;
+	
+	public List<DBAlert> getAlerts() {
+		return alerts;
+	}
+	public void setAlerts(List<DBAlert> alerts) {
+		this.alerts = alerts;
+	}
 	public enum fields {
 		iduser {
 			@Override
