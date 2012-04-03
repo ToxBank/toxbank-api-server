@@ -66,6 +66,7 @@ public class CallableNotification extends CallableDBUpdateTask<DBUser,Form,Strin
 			user.addAccount(account);
 			if (notification.sendAlerts(user,user.getAlerts())) {
 			//		return new UpdateAlertSentTimeStamp(user.getAlerts());
+				//TODO
 			}	
 			return null;
 		} catch (ResourceException x) {
@@ -87,18 +88,9 @@ public class CallableNotification extends CallableDBUpdateTask<DBUser,Form,Strin
 	@Override
 	protected Object executeQuery(IQueryUpdate<Object, DBUser> query)
 			throws Exception {
-		/*
+		/*TODO
 		Object result = super.executeQuery(query);
 		if (Method.POST.equals(method)) {
-			DBUser user = query.getObject();
-			if ((user.getOrganisations()!=null) && (user.getOrganisations().size()>0)) {
-				AddGroupsPerUser q = new AddGroupsPerUser(user,user.getOrganisations());
-				exec.process(q);
-			}
-			if ((user.getProjects()!=null) && (user.getProjects().size()>0)) {
-				AddGroupsPerUser q = new AddGroupsPerUser(user,user.getProjects());
-				exec.process(q);
-			}			
 		}
 		*/
 		return null;
