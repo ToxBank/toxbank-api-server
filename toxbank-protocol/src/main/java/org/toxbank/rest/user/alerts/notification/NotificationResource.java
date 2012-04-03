@@ -11,6 +11,7 @@ import net.idea.modbcum.i.IQueryCondition;
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.p.MasterDetailsProcessor;
+import net.idea.restnet.c.TaskApplication;
 import net.idea.restnet.c.task.CallableProtectedTask;
 import net.idea.restnet.c.task.FactoryTaskConvertor;
 import net.idea.restnet.c.task.TaskCreator;
@@ -166,5 +167,22 @@ public class NotificationResource<T> extends UserDBResource<T> {
 		};
 		reporter.getProcessors().add(0,alertsReader);
 		return reporter;
+	}
+	
+	@Override
+	protected Task<Reference, Object> addTask(ICallableTask callable,
+			DBUser item, Reference reference) throws ResourceException {
+
+			if (item.getAlerts()==null) return null;
+			
+			return ((TaskApplication)getApplication()).addTask(
+				String.format("Send notification [%d alert(s)] %s %s ",
+						item.getAlerts().size(),
+						item==null?"":"to",
+						item==null?"":String.format("%s %s",item.getFirstname(),item.getLastname())),									
+				callable,
+				getRequest().getRootRef(),
+				getToken());		
+		
 	}
 }
