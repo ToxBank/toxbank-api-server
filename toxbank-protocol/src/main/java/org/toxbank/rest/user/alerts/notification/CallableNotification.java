@@ -64,7 +64,7 @@ public class CallableNotification extends CallableDBUpdateTask<DBUser,Form,Strin
 			account.setAccountName(email);
 			account.setResourceURL(new URL(String.format("%s:%s",account.getService(),URLEncoder.encode(email))));
 			user.addAccount(account);
-			if (notification.sendAlerts(user,user.getAlerts())) {
+			if (notification.sendAlerts(user,user.getAlerts(), getToken())) {
 			//		return new UpdateAlertSentTimeStamp(user.getAlerts());
 				//TODO
 			}	
