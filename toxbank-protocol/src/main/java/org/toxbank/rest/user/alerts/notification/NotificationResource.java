@@ -13,22 +13,18 @@ import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.p.MasterDetailsProcessor;
 import net.idea.restnet.c.TaskApplication;
 import net.idea.restnet.c.task.CallableProtectedTask;
-import net.idea.restnet.c.task.FactoryTaskConvertor;
 import net.idea.restnet.c.task.TaskCreator;
 import net.idea.restnet.c.task.TaskCreatorForm;
 import net.idea.restnet.db.DBConnection;
 import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.i.task.ICallableTask;
-import net.idea.restnet.i.task.ITaskStorage;
 import net.idea.restnet.i.task.Task;
-import net.idea.restnet.rdf.FactoryTaskConvertorRDF;
 import net.toxbank.client.resource.Alert.RecurrenceFrequency;
 
 import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Form;
-import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Reference;
 import org.restlet.data.Status;
@@ -101,7 +97,9 @@ public class NotificationResource<T> extends UserDBResource<T> {
 			UserURIReporter reporter = new UserURIReporter(getRequest(),"");
 			DBConnection dbc = new DBConnection(getApplication().getContext(),getConfigFile());
 			conn = dbc.getConnection(getRequest());
-			return new CallableNotification(method,item,reporter, form,getRequest().getRootRef().toString(),conn,getToken());
+			CallableNotification callable = new CallableNotification(method,item,reporter, form,getRequest().getRootRef().toString(),conn,getToken());
+			callable.setNotification(new SimpleNotificationEngine());
+			return callable;
 		} catch (Exception x) {
 			try { conn.close(); } catch (Exception xx) {}
 			throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);
