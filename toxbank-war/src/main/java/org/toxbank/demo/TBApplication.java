@@ -50,6 +50,7 @@ import org.toxbank.rest.groups.OrganisationRouter;
 import org.toxbank.rest.groups.ProjectRouter;
 import org.toxbank.rest.protocol.ProtocolRouter;
 import org.toxbank.rest.user.UserRouter;
+import org.toxbank.rest.user.alerts.notification.NotificationResource;
 import org.toxbank.rest.user.alerts.resource.AlertRouter;
 import org.toxbank.rest.user.resource.MyAccountResource;
 
@@ -158,6 +159,8 @@ public class TBApplication extends TaskApplication<String> {
 		OrganisationRouter org_router = new OrganisationRouter(getContext());
 		ProjectRouter projectRouter = new ProjectRouter(getContext());
 		AlertRouter alertRouter = new AlertRouter(getContext());
+		MyRouter notificationRouter = new MyRouter(getContext());
+		notificationRouter.attachDefault(NotificationResource.class);
 		if (aaenabled) {
 			router.attach(Resources.protocol, createProtectedResource(protocols,"protocol",new ProtocolAuthorizer()));
 			router.attach(Resources.project, createProtectedResource(projectRouter,"project",true));
@@ -165,12 +168,16 @@ public class TBApplication extends TaskApplication<String> {
 			router.attach(Resources.alert, createProtectedResource(org_router,"alert",true));
 			router.attach(Resources.user, createProtectedResource(
 							new UserRouter(getContext(),protocols,org_router,projectRouter,alertRouter),"user",new UserAuthorizer()));
+			router.attach(NotificationResource.resourceKey, createProtectedResource(notificationRouter,"notification",true));	
+			
 		} else {
 			router.attach(Resources.protocol, createOpenSSOVerifiedResource(protocols));
 			router.attach(Resources.project, createOpenSSOVerifiedResource(projectRouter));
 			router.attach(Resources.organisation, createOpenSSOVerifiedResource(org_router));
 			router.attach(Resources.alert, createOpenSSOVerifiedResource(alertRouter));
 			router.attach(Resources.user, createOpenSSOVerifiedResource(new UserRouter(getContext(),protocols,org_router,projectRouter,alertRouter)));
+			router.attach(NotificationResource.resourceKey, createOpenSSOVerifiedResource(notificationRouter));	
+
 		}
 		router.attach("/myaccount", createOpenSSOVerifiedResource(MyAccountResource.class));	
 
