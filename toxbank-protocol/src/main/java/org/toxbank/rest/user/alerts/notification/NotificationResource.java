@@ -21,13 +21,19 @@ import net.idea.restnet.i.task.ICallableTask;
 import net.idea.restnet.i.task.Task;
 import net.toxbank.client.resource.Alert.RecurrenceFrequency;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Form;
+import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Reference;
 import org.restlet.data.Status;
+import org.restlet.ext.fileupload.RestletFileUpload;
+import org.restlet.representation.Representation;
+import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.alerts.db.DBAlert;
@@ -39,6 +45,7 @@ import org.toxbank.rest.user.resource.UserURIReporter;
 
 
 public class NotificationResource<T> extends UserDBResource<T> {
+	protected Form params = null;
 	public static final String resourceKey = "/notification";
 	protected Set<RecurrenceFrequency> frequency;
 	public NotificationResource() {
@@ -51,7 +58,8 @@ public class NotificationResource<T> extends UserDBResource<T> {
 		//Object key = request.getAttributes().get(UserDBResource.resourceKey);
 		editable = false;
 		singleItem = false;
-		Form form = request.getResourceRef().getQueryAsForm();
+		Form form = getParams();
+		if (form==null) return null; //on post
 		String[] search = null;
 		try {
 			search = form.getValuesArray("search");
@@ -84,11 +92,6 @@ public class NotificationResource<T> extends UserDBResource<T> {
 		return new UserURIReporter(getRequest());
 	}
 
-	@Override
-	public String getConfigFile() {
-		return "conf/tbprotocol-db.pref";
-	}
-	
 	@Override
 	protected CallableProtectedTask<String> createCallable(Method method,
 			Form form, DBUser item) throws ResourceException {
@@ -128,7 +131,7 @@ public class NotificationResource<T> extends UserDBResource<T> {
 			@Override
 			protected ICallableTask getCallable(Form form,
 					DBUser item) throws ResourceException {
-				return createCallable(method,form,item);
+				return createCallable(method,(Form)null,item);
 			}
 			@Override
 			protected Task<Reference, Object> createTask(
@@ -149,7 +152,7 @@ public class NotificationResource<T> extends UserDBResource<T> {
 				return super.processItem(item);
 			}
 		};
-		
+				
 		ReadAlert queryP = new ReadAlert(null); 
 		queryP.setFrequency(frequency);
 		MasterDetailsProcessor<DBUser,DBAlert,IQueryCondition> alertsReader = new MasterDetailsProcessor<DBUser,DBAlert,IQueryCondition>(queryP) {
@@ -183,4 +186,23 @@ public class NotificationResource<T> extends UserDBResource<T> {
 				getToken());		
 		
 	}
+	@Override
+	protected Form getParams() {
+		if (params == null) {
+			if (Method.GET.equals(getRequest().getMethod())) 
+					params = getRequest().getResourceRef().getQueryAsForm();
+		}
+		return params;
+	}
+	
+	@Override
+	protected Representation post(Representation entity, Variant variant)
+			throws ResourceException {
+		params = new Form(entity);
+		synchronized (this) {
+			return processAndGenerateTask(Method.POST, null, variant,true);
+		}
+	}
+		
+	
 }
