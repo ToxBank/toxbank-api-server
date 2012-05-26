@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd-cpd>
+<duplication lines="29" tokens="238">
+<file line="268" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\protocol\CallableProtocolUpload.java"/>
+<file line="367" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\protocol\CallableProtocolUpload.java"/>
+<codefragment>
+<![CDATA[
+				TaskResult result = new TaskResult(uri,false);
+				try {
+					addDefaultProtocolRights(policy,protocol.getOwner(),true,true,true,true);
+					if ((policy.getRules()!=null) && (policy.getRules().size()>0)) {
+						retrieveAccountNames(policy,connection);
+						policy.setResource(new URL(uri));
+						result.setPolicy(generatePolicy(protocol,policy));
+					} else result.setPolicy(null);
+				} 
+				catch (Exception x) { result.setPolicy(null);}
+			
+			
+				return result;
+			} catch (ProcessorException x) {
+				try {connection.rollback();} catch (Exception xx) {}
+				throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);
+			} catch (ResourceException x) {
+				try {connection.rollback();} catch (Exception xx) {}
+				throw x;				
+			} catch (Exception x) {
+				try {connection.rollback();} catch (Exception xx) {}
+				throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);
+			} finally {
+				try {exec.close();} catch (Exception x) {}
+				try {connection.setAutoCommit(true);} catch (Exception x) {}
+				try {connection.close();} catch (Exception x) {}
+			}
+
+	}
+]]>
+</codefragment>
+</duplication>
+<duplication lines="60" tokens="232">
+<file line="104" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\user\alerts\resource\AlertHTMLReporter.java"/>
+<file line="109" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\user\resource\UserHTMLReporter.java"/>
+<codefragment>
+<![CDATA[
+			output.write(String.format("<table><tr><td>API call</td><td title='How to retrieve an user via ToxBank API (cURL example)'><h5>%s</h5></td></tr></table>",
+					curlHint));
+			output.write("<br>Download User metadata in supported Media Types:&nbsp;");
+			//nmimes
+			String paging = "page=0&pagesize=10";
+			MediaType[] mimes = {
+					MediaType.TEXT_URI_LIST,
+					MediaType.APPLICATION_RDF_XML,
+					MediaType.TEXT_RDF_N3,
+					MediaType.APPLICATION_JSON,
+					MediaType.TEXT_CSV
+					};
+			
+			String[] image = {
+					"link.png",
+					"rdf.gif",
+					"rdf.gif",
+					"json.png",
+					"excel.png"
+			};	
+			
+
+			
+			for (int i=0;i<mimes.length;i++) {
+				MediaType mime = mimes[i];
+				output.write("&nbsp;");
+				
+				
+				curlHint = String.format("curl -X GET -H 'Accept:%s' -H 'subjectid:%s' %s",mime,
+						"TOKEN",
+						uri);
+
+				output.write(String.format(
+						"\n<a href=\"%s%s?media=%s&%s\"  ><img src=\"%s/images/%s\" alt=\"%s\" title=\"%s\" border=\"0\"/></a>\n",
+						uriReporter.getRequest().getResourceRef(),
+						"",
+						Reference.encode(mime.toString()),
+						paging,
+						getUriReporter().getBaseReference().toString(),
+						image[i],
+						mime,
+						curlHint
+						));	
+			}				
+			//tables
+			
+			w.write("<table bgcolor='EEEEEE' width='99%'>\n");
+			if (collapsed) {
+				output.write("<tr bgcolor='FFFFFF' >\n");	
+				for (DBUser.fields field : DBUser.fields.values()) {
+					output.write(String.format("<th>%s</th>",field.toString()));
+				}
+				output.write("</tr>\n");
+			} else {
+				
+			}
+		} catch (Exception x) {}
+	}
+	@Override
+	public Object processItem(DBUser protocol) throws AmbitException  {
+]]>
+</codefragment>
+</duplication>
+<duplication lines="14" tokens="181">
+<file line="192" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\protocol\resource\db\ProtocolQueryHTMLReporter.java"/>
+<file line="86" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\protocol\resource\db\ProtocolRDFReporter.java"/>
+<codefragment>
+<![CDATA[
+		}
+	}
+	@Override
+	public Object processItem(DBProtocol item) throws AmbitException {
+		try {
+			if ((item.getProject()!=null) && (item.getProject().getResourceURL()==null))
+				item.getProject().setResourceURL(new URL(groupReporter.getURI((DBProject)item.getProject())));
+			if ((item.getOrganisation()!=null) && (item.getOrganisation().getResourceURL()==null))
+				item.getOrganisation().setResourceURL(new URL(groupReporter.getURI((DBOrganisation)item.getOrganisation())));
+			if ((item.getOwner()!=null) && (item.getOwner().getResourceURL()==null))
+				item.getOwner().setResourceURL(new URL(userReporter.getURI((DBUser)item.getOwner())));
+						
+		
+			String uri = uriReporter.getURI(item);
+]]>
+</codefragment>
+</duplication>
+<duplication lines="48" tokens="166">
+<file line="129" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\groups\resource\GroupHTMLReporter.java"/>
+<file line="137" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\protocol\resource\db\ProtocolQueryHTMLReporter.java"/>
+<file line="106" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\user\alerts\resource\AlertHTMLReporter.java"/>
+<codefragment>
+<![CDATA[
+			output.write("<br>Download User metadata in supported Media Types:&nbsp;");
+			//nmimes
+			String paging = "page=0&pagesize=10";
+			MediaType[] mimes = {
+					MediaType.TEXT_URI_LIST,
+					MediaType.APPLICATION_RDF_XML,
+					MediaType.TEXT_RDF_N3,
+					MediaType.APPLICATION_JSON,
+					MediaType.TEXT_CSV
+					};
+			
+			String[] image = {
+					"link.png",
+					"rdf.gif",
+					"rdf.gif",
+					"json.png",
+					"excel.png"
+			};	
+			
+
+			
+			for (int i=0;i<mimes.length;i++) {
+				MediaType mime = mimes[i];
+				output.write("&nbsp;");
+				
+				
+				curlHint = String.format("curl -X GET -H 'Accept:%s' -H 'subjectid:%s' %s",mime,
+						"TOKEN",
+						uri);
+
+				output.write(String.format(
+						"\n<a href=\"%s%s?media=%s&%s\"  ><img src=\"%s/images/%s\" alt=\"%s\" title=\"%s\" border=\"0\"/></a>\n",
+						uriReporter.getRequest().getResourceRef(),
+						"",
+						Reference.encode(mime.toString()),
+						paging,
+						getUriReporter().getBaseReference().toString(),
+						image[i],
+						mime,
+						curlHint
+						));	
+			}				
+			//tables
+			
+			w.write("<table bgcolor='EEEEEE' width='99%'>\n");
+			if (collapsed) {
+				output.write("<tr bgcolor='FFFFFF' >\n");	
+				for (DBUser.fields field : DBUser.fields.values()) {
+]]>
+</codefragment>
+</duplication>
+<duplication lines="17" tokens="139">
+<file line="67" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\protocol\ProtocolFactory.java"/>
+<file line="89" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\protocol\ProtocolFactory.java"/>
+<codefragment>
+<![CDATA[
+						protocol.setDataTemplate(new Template(new URL(fi.getString(utf8))));
+					} else {	
+						if (fi.getSize()==0)  throw new ResourceException(new Status(Status.CLIENT_ERROR_BAD_REQUEST,"Empty file!"));
+						File file = null;
+				        if (fi.getName()==null)
+				           	throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,"File name can't be empty!");
+				        else {
+				        	try { 
+				        		if ((dir!=null) && !dir.exists())  dir.mkdir();
+				        	} catch (Exception x) {dir = null; }
+				          	file = new File(
+				            		String.format("%s/%s",
+				            				dir==null?System.getProperty("java.io.tmpdir"):dir,
+				            				fi.getName()));
+				        }
+				        fi.write(file);
+				        protocol.setDataTemplate(new Template(file.toURI().toURL()));		
+]]>
+</codefragment>
+</duplication>
+<duplication lines="15" tokens="139">
+<file line="176" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\protocol\CallableProtocolUpload.java"/>
+<file line="282" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\protocol\CallableProtocolUpload.java"/>
+<codefragment>
+<![CDATA[
+			} catch (ProcessorException x) {
+				try {connection.rollback();} catch (Exception xx) {}
+				throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);
+			} catch (ResourceException x) {
+				try {connection.rollback();} catch (Exception xx) {}
+				throw x;
+			} catch (Exception x) {
+				try {connection.rollback();} catch (Exception xx) {}
+				throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);
+			} finally {
+				try {exec.close();} catch (Exception x) {}
+				try {connection.setAutoCommit(true);} catch (Exception x) {}
+				try {connection.close();} catch (Exception x) {}
+			}
+		}
+]]>
+</codefragment>
+</duplication>
+<duplication lines="25" tokens="135">
+<file line="133" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\user\alerts\resource\AlertDBResource.java"/>
+<file line="114" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\user\resource\UserDBResource.java"/>
+<codefragment>
+<![CDATA[
+	protected ReadUser createQuery(Context context, Request request, Response response)
+			throws ResourceException {
+		Form form = request.getResourceRef().getQueryAsForm();
+		String search_name = null;
+		Object search_value = null;
+		try {
+			search_name = "search";
+			search_value = form.getFirstValue(search_name);
+		} catch (Exception x) {
+			search_value = null;
+		}		
+		if (search_value==null)
+		try {
+			search_name = "username";
+			search_value = form.getFirstValue(search_name);
+		} catch (Exception x) {
+			search_value = null;
+		}				
+		try {
+			String n = form.getFirstValue("new");
+			editable = n==null?false:Boolean.parseBoolean(n);
+		} catch (Exception x) {
+			editable = false;
+		}
+		Object key = request.getAttributes().get(UserDBResource.resourceKey);		
+]]>
+</codefragment>
+</duplication>
+<duplication lines="24" tokens="132">
+<file line="191" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\protocol\resource\db\ProtocolDBResource.java"/>
+<file line="81" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\protocol\resource\db\template\DataTemplateResource.java"/>
+<codefragment>
+<![CDATA[
+		return MediaType.MULTIPART_FORM_DATA.equals(mediaType);
+	}
+
+	@Override
+	protected CallableProtectedTask<String> createCallable(Method method,
+			List<FileItem> input, DBProtocol item) throws ResourceException {
+
+		Connection conn = null;
+		try {
+			ProtocolQueryURIReporter r = new ProtocolQueryURIReporter(getRequest(),"");
+			class TDBConnection extends DBConnection {
+				public TDBConnection(Context context,String configFile) {
+					super(context,configFile);
+				}
+				public String getDir() {
+					loadProperties();
+					return properties.getProperty("dir.protocol");
+				}
+			};
+			TDBConnection dbc = new TDBConnection(getApplication().getContext(),getConfigFile());
+			conn = dbc.getConnection(getRequest());
+
+			String dir = dbc.getDir();
+			if ("".equals(dir)) dir = null;
+]]>
+</codefragment>
+</duplication>
+<duplication lines="26" tokens="119">
+<file line="184" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\user\alerts\resource\AlertHTMLReporter.java"/>
+<file line="189" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\user\resource\UserHTMLReporter.java"/>
+<codefragment>
+<![CDATA[
+					value = field.getHTMLField(user);
+				} else 
+					if (value==null) value = "";
+							
+				switch (field) {
+				case iduser: {
+					if (!editable)
+						output.write(String.format("<th>%s</th><td align='left'><a href='%s'>%s</a></td>\n",
+							field.toString(),
+							uri,
+							uri));		
+					break;
+				}	
+				default :
+					output.write(String.format("<th>%s</th><td align='left'>%s</td>\n",
+						field.toString(),value));
+				}
+							
+				output.write("</tr>\n");				
+			}
+			output.write("<tr bgcolor='FFFFFF'>\n");
+			output.write("</tr>\n");
+			output.flush();
+		} catch (Exception x) {x.printStackTrace();} 
+	}	
+	protected void printTable(Writer output, String uri, DBUser user) {
+]]>
+</codefragment>
+</duplication>
+<duplication lines="29" tokens="109">
+<file line="144" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\groups\resource\GroupHTMLReporter.java"/>
+<file line="96" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\protocol\resource\db\template\DataTemplateHTMLReporter.java"/>
+<codefragment>
+<![CDATA[
+					"pdf.png",
+					"excel.png"
+			};	
+			
+
+			
+			for (int i=0;i<mimes.length;i++) {
+				MediaType mime = mimes[i];
+				output.write("&nbsp;");
+				
+				
+				curlHint = String.format("curl -X GET -H 'Accept:%s' -H 'subjectid:%s' %s",mime,
+						"TOKEN",
+						uri);
+				output.write(String.format(
+						"\n<a href=\"%s%s?media=%s&%s\"  ><img src=\"%s/images/%s\" alt=\"%s\" title=\"%s\" border=\"0\"/></a>\n",
+						uriReporter.getRequest().getResourceRef(),
+						"",
+						Reference.encode(mime.toString()),
+						paging,
+						getUriReporter().getBaseReference().toString(),
+						image[i],
+						mime,
+						curlHint
+						));	
+			}				
+			//tables
+			
+			w.write("<table bgcolor='EEEEEE' width='99%'>\n");
+]]>
+</codefragment>
+</duplication>
+<duplication lines="14" tokens="108">
+<file line="137" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\protocol\CallableProtocolUpload.java"/>
+<file line="178" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\protocol\CallableProtocolUpload.java"/>
+<codefragment>
+<![CDATA[
+				throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);
+			} catch (ResourceException x) {
+				try {connection.rollback();} catch (Exception xx) {}
+				throw x;
+			} catch (Exception x) {
+				try {connection.rollback();} catch (Exception xx) {}
+				throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);
+			} finally {
+				try {exec.close();} catch (Exception x) {}
+				try {connection.setAutoCommit(true);} catch (Exception x) {}
+				try {connection.close();} catch (Exception x) {}
+			}
+//			break;
+		}
+]]>
+</codefragment>
+</duplication>
+<duplication lines="16" tokens="105">
+<file line="214" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\user\alerts\resource\AlertHTMLReporter.java"/>
+<file line="219" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\user\resource\UserHTMLReporter.java"/>
+<codefragment>
+<![CDATA[
+				Object value = field.getValue(user);
+				switch (field) {
+				case iduser: {
+					output.write(String.format("<td><a href='%s'>%s</a></td>",uri,uri));
+					break;
+				}	
+		
+				default:
+					output.write(String.format("<td>%s</td>",value==null?"":value.toString().length()>40?value.toString().substring(0,40):value.toString()));
+				}
+			}
+			output.write("</tr>\n");
+		} catch (Exception x) {} 
+	}
+	@Override
+	public void footer(Writer output, IQueryRetrieval<DBUser> query) {
+]]>
+</codefragment>
+</duplication>
+<duplication lines="12" tokens="101">
+<file line="61" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\user\alerts\resource\AlertDBResource.java"/>
+<file line="60" path="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\user\resource\UserDBResource.java"/>
+<codefragment>
+<![CDATA[
+						new UserURIReporter<IQueryRetrieval<DBUser>>(getRequest())
+						,MediaType.TEXT_URI_LIST,filenamePrefix);
+				
+		} else if (variant.getMediaType().equals(MediaType.APPLICATION_RDF_XML) ||
+					variant.getMediaType().equals(MediaType.APPLICATION_RDF_TURTLE) ||
+					variant.getMediaType().equals(MediaType.TEXT_RDF_N3) ||
+					variant.getMediaType().equals(MediaType.TEXT_RDF_NTRIPLES) ||
+					variant.getMediaType().equals(MediaType.APPLICATION_JSON) ||
+					variant.getMediaType().equals(MediaType.TEXT_CSV) 
+					
+					) {
+				return new RDFJenaConvertor<DBUser, IQueryRetrieval<DBUser>>(
+]]>
+</codefragment>
+</duplication>
+</pmd-cpd>

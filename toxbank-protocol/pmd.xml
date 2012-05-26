@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd version="4.2.5" timestamp="2012-05-26T16:45:36.758">
+<file name="D:\src-pol\toxbank-api-server\toxbank-protocol\src\main\java\org\toxbank\rest\user\UserRouter.java">
+<violation beginline="15" endline="24" begincolumn="16" endcolumn="9" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.toxbank.rest.user" class="UserRouter" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
+Avoid unused constructor parameters such as 'protocols'.
+</violation>
+</file>
+</pmd>
