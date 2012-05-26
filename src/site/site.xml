@@ -18,11 +18,11 @@
       <item name="ToxBank plugin for ISAcreator" href="http://toxbank.github.com/toxbank-isa-plugin"/>
       <item name="ISA2RDF" href="http://toxbank.github.com/isa2rdf"/>
       <item name="OpenTox AA" href="http://vedina.github.com/opentox-aa-cli"/>
+      <item name="ToxBank" href="http://toxbank.net"/>
     </links>
 
-    <menu name="Toxbank API beans">
+    <menu name="ToxBank Protocols">
       <item name="Home" href="/index.html"/>
-      <item name="Maven dependency" href="/maven.html"/>
       <!-- 
       <item name="Command line" href="/cli.html"/>
       -->
@@ -32,7 +32,6 @@
 
   </body>
   <poweredBy>
-    <logo name="Toxbank" href="http://toxbank.net"/>
   </poweredBy>    
   <publishDate position="navigation-bottom" format="MM-dd-yy"/>
 
@@ -48,14 +47,14 @@
       <sourceLineNumbersEnabled>true</sourceLineNumbersEnabled>
       <topBarEnabled>false</topBarEnabled>
       <topBarIcon>
-      <name>ToxBank API Beans</name>
-      <alt>The Java ToxBank API client software</alt>
+      <name>ToxBank Protocols</name>
+      <alt>ToxBank Protocol REST service</alt>
       <src>/images/toxbank_rgb-72.png</src>
       <href>/index.html</href>
       </topBarIcon>
 
 	  <googleSearch>
-        <sitesearch>http://github.com/ToxBank/toxbank-api-beans</sitesearch>
+        <sitesearch>http://toxbank.github.com/toxbank-api-server/</sitesearch>
       </googleSearch>
 
       <sideBarEnabled>true</sideBarEnabled>
@@ -64,7 +63,7 @@
       <googlePlusOne />
        -->
        <gitHub>
-        <projectId>toxbank/toxbank-api-beans</projectId>
+        <projectId>toxbank/toxbank-api-server</projectId>
         <ribbonOrientation>right</ribbonOrientation>
         <ribbonColor>green</ribbonColor>
       </gitHub>

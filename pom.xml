@@ -30,7 +30,12 @@
       <url>https://github.com/vedina</url>
       <organization>IdeaConsult Ltd.</organization>
       <organizationUrl>http://www.ideaconsult.net</organizationUrl>
-    </developer>
+   </developer>
+   <developer>
+      <id>egonw</id>
+ 		<name>Egon Willighagen</name>
+  		<url>https://github.com/egonw</url>
+</developer>
   </developers>
   <dependencies>
     <dependency>
@@ -247,10 +252,7 @@
   </ciManagement>
   <inceptionYear>2011</inceptionYear>
   <contributors>
-  	<contributor>
-  		<name>Egon Willighagen</name>
-  		<url>https://github.com/egonw</url>
-  	</contributor>
+
   	<contributor>
   		<name>Scott Miller</name>
   		<url>https://github.com/smiller-leadscope</url>
@@ -291,18 +293,18 @@
               <report>scm</report>
               <report>dependencies</report>
               <report>dependency-management</report>
-			  <report> dependency-convergence</report>
+			  <report>dependency-convergence</report>
               <report>summary</report>
             </reports>
           </reportSet>
         </reportSets>
       </plugin>
+        <!-- UML class diagrams 
       <plugin>
-        <!-- UML class diagrams  -->
+
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.7</version>
-        <!-- <docletPath>/path/to/UmlGraph.jar</docletPath> -->
         <configuration>
           <source>1.5</source>
           <aggregate>true</aggregate>
@@ -313,25 +315,12 @@
             <version>4.6</version>
           </docletArtifact>
           <additionalparam>
-            <!--  http://www.umlgraph.org/doc/cd-opt.html 
-	          	-attributes
-	          	-views
-	          	-types 
-	            -inferrel -inferdep -quiet -hide java.*
-	            -collpackages java.util.* -qualify
-	            -postfixpackage 
-	            --> 
 	            -all
 	          </additionalparam>
         </configuration>
       </plugin>
-      <!-- 
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jdepend-maven-plugin</artifactId>
-        <version>2.0-beta-2</version>
-      </plugin>
- -->
+      -->
+
     </plugins>
   </reporting>
   <profiles>
