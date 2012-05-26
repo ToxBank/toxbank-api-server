@@ -1,13 +1,13 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.toxbank</groupId>
   <artifactId>toxbank-rest</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>REST-Toxbank</name>
-  <description>proof of concept</description>
-  <url>https://github.com/vedina/toxbank-rest</url>
+  <name>ToxBank Protocols</name>
+  <description>ToxBank Protocol REST service</description>
+  <url>https://github.com/vedina/toxbank-rest/</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <junit.version>4.8.1</junit.version>
@@ -16,16 +16,22 @@
     <restnet.version>0.0.5</restnet.version>
   </properties>
   <issueManagement>
-    <!-- 
-  	<system>GitHub</system>
-  	<url>https://github.com/vedina/toxbank/issues</url>
-  	 -->
+  	<url>https://github.com/ToxBank/toxbank-api-server/issues</url>
   </issueManagement>
   <scm>
     <connection>scm:git://github.com/ToxBank/toxbank-api-server.git</connection>
     <developerConnection>scm:git:git@github.com:ToxBank/toxbank-api-server.git</developerConnection>
     <url>https://github.com/ToxBank/toxbank-api-server</url>
   </scm>
+  <developers>
+      <developer>
+      <id>vedina</id>
+      <name>Nina Jeliazkova</name>
+      <url>https://github.com/vedina</url>
+      <organization>IdeaConsult Ltd.</organization>
+      <organizationUrl>http://www.ideaconsult.net</organizationUrl>
+    </developer>
+  </developers>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -133,6 +139,10 @@
       </snapshots>
     </repository>
   </repositories>
+  <organization>
+  	<name>IdeaConsult Ltd</name>
+  	<url>http://www.ideaconsult.net</url>
+  </organization>
   <build>
     <resources>
       <resource>
@@ -164,6 +174,15 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <locales>en</locales>
+        </configuration>
+      </plugin>
+     
     </plugins>
     <pluginManagement>
       <plugins>
@@ -210,45 +229,74 @@
   </modules>
   <distributionManagement>
     <snapshotRepository>
-      <id>ambit-plovdiv-snapshots</id>
-      <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/snapshots</url>
+      <id>toxbank-snapshots</id>
+      <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/toxbank-snapshots/</url>
     </snapshotRepository>
     <repository>
-      <id>ambit-plovdiv-releases</id>
-      <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/releases</url>
+      <id>toxbank-releases</id>
+      <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/toxbank-releases/</url>
     </repository>
-    <!-- 
     <site>
-      <id>website_ambit</id>
-      <url>scp://shell.sourceforge.net/home/groups/a/am/ambit/htdocs/AMBIT2-LIBS</url>
+     	<id>toxbank-site</id>
+    	<url>http://toxbank.github.com/toxbank-api-server/</url>
     </site>
- 	 -->
   </distributionManagement>
+  
+  <ciManagement>
+  	<url>http://jenkins.toxbank.net</url>
+  </ciManagement>
   <inceptionYear>2011</inceptionYear>
+  <contributors>
+  	<contributor>
+  		<name>Egon Willighagen</name>
+  		<url>https://github.com/egonw</url>
+  	</contributor>
+  	<contributor>
+  		<name>Scott Miller</name>
+  		<url>https://github.com/smiller-leadscope</url>
+  	</contributor>
+  	<contributor>
+  		<name>Christoph Helma</name>
+  		<url>https://github.com/helma</url>
+  	</contributor>
+  	<contributor>
+  		<name>Michael Crump</name>
+  		<url>https://github.com/mcrump</url>
+  	</contributor>
+  	<contributor>
+  		<name>Micha Rautenberg</name>
+  		<url>https://github.com/rautenberg</url>
+  	</contributor>
+  </contributors>
   <licenses>
     <license>
       <name>LGPL3</name>
-      <url>http://www.gnu.org/licenses/lgpl.html</url>
+      <url>http://www.gnu.org/licenses/lgpl.txt</url>
       <distribution>repo</distribution>
-      <comments>LGPL 3</comments>
+      <comments />
     </license>
-  </licenses>
+  </licenses>  
   <reporting>
     <plugins>
-      <!-- 
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jxr-maven-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.4</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>license</report>
+              <report>issue-tracking</report>
+              <report>project-team</report>
+              <report>scm</report>
+              <report>dependencies</report>
+              <report>dependency-management</report>
+			  <report> dependency-convergence</report>
+              <report>summary</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
--->
-      <!-- 
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-     <plugin>
-        <artifactId>maven-clover-plugin</artifactId>
-      </plugin>      
-	-->
       <plugin>
         <!-- UML class diagrams  -->
         <groupId>org.apache.maven.plugins</groupId>
@@ -257,7 +305,7 @@
         <!-- <docletPath>/path/to/UmlGraph.jar</docletPath> -->
         <configuration>
           <source>1.5</source>
-          <aggregate>false</aggregate>
+          <aggregate>true</aggregate>
           <doclet>gr.spinellis.umlgraph.doclet.UmlGraphDoc</doclet>
           <docletArtifact>
             <groupId>gr.spinellis</groupId>
@@ -278,77 +326,12 @@
         </configuration>
       </plugin>
       <!-- 
-		<plugin>
-		    <groupId>org.apache.maven.plugins</groupId>
-		    <artifactId>maven-project-info-reports-plugin</artifactId>
- 			<version>2.1</version> 		    
-		    <configuration>
-		      <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-		    </configuration>
-		  </plugin>
-		   -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-          <linkXref>false</linkXref>
-          <sourceEncoding>utf-8</sourceEncoding>
-          <minimumTokens>100</minimumTokens>
-          <targetJdk>
-					1.5
-				</targetJdk>
-          <excludes>
-            <exclude>*/generated/.java</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-      <!-- 
-          <plugin>
-          	<groupId>org.codehaus.mojo</groupId>
-          	<artifactId>taglist-maven-plugin</artifactId>
-			<configuration>
-				<tags>
-					<tag>TODO</tag>
-					<tag>@todo</tag>
-					<tag>FIXME</tag>
-					<tag>XXX</tag>
-				</tags>
-			</configuration>          	
-          </plugin>
-          -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jdepend-maven-plugin</artifactId>
         <version>2.0-beta-2</version>
       </plugin>
-      <!-- 
-          <plugin>
-          	<groupId>org.codehaus.mojo</groupId>
-          	<artifactId>cobertura-maven-plugin</artifactId>
-          </plugin>
-           -->
-      <!-- Develop our own rules or follow foreign ones ...
-          <plugin>
-          	<groupId>org.apache.maven.plugins</groupId>
-          	<artifactId>maven-checkstyle-plugin</artifactId>
-          	<configuration>
-				<configLocation>config/maven_checks.xml</configLocation>
-			</configuration>
-          </plugin>
-           -->
-      <!-- needs svn executable  
- 	  <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-changelog-plugin</artifactId>
-      </plugin> -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <aggregate>true</aggregate>
-        </configuration>
-      </plugin>
+ -->
     </plugins>
   </reporting>
   <profiles>

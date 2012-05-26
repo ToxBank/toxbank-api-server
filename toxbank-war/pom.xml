@@ -9,7 +9,12 @@
   <artifactId>toxbank-war</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
-  <name>TB REST web services demo</name>
+  <name>ToxBank Web REST services</name>
+    <scm>
+    <connection>scm:git://github.com/ToxBank/toxbank-api-server.git</connection>
+    <developerConnection>scm:git:git@github.com:ToxBank/toxbank-api-server.git</developerConnection>
+    <url>https://github.com/ToxBank/toxbank-api-server/tree/master/toxbank-war</url>
+  </scm>
   <dependencies>
   	<dependency>
   		<groupId>org.toxbank</groupId>
@@ -42,7 +47,15 @@
 	 
 
   </dependencies>
-    <build>
+  <description>ToxBank Web REST services
+Protocol service
+User service
+Organisarion service
+Project service</description>
+  <url>https://github.com/ToxBank/toxbank-api-server</url>
+  <organization>
+  </organization>
+  <build>
   <pluginManagement>
   <plugins>
   <plugin>
