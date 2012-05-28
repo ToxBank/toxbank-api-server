@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import net.toxbank.client.policy.AccessRights;
 import net.toxbank.client.resource.Document;
@@ -66,6 +67,7 @@ public class ProtocolFactory {
 					if (fi.isFormField()) {
 						protocol.setDocument(new Document(new URL(fi.getString(utf8))));
 					} else {	
+						String originalName = "";
 						if (fi.getSize()==0)  throw new ResourceException(new Status(Status.CLIENT_ERROR_BAD_REQUEST,"Empty file!"));
 						File file = null;
 				        if (fi.getName()==null)
@@ -74,10 +76,15 @@ public class ProtocolFactory {
 				        	try { 
 				        		if ((dir!=null) && !dir.exists())  dir.mkdir();
 				        	} catch (Exception x) {dir = null; }
-				          	file = new File(
-				            		String.format("%s/%s",
-				            				dir==null?System.getProperty("java.io.tmpdir"):dir,
-				            				fi.getName()));
+				        	
+				        	int extIndex = fi.getName().lastIndexOf(".");
+				        	String ext = extIndex>0?fi.getName().substring(extIndex):"";
+				        	
+				        	//generate new file name
+				        	originalName = fi.getName();
+				        	String newName = String.format("tb%d_%s%s", protocol.getID()>0?protocol.getID():0,
+				        							UUID.randomUUID().toString(),ext);
+				          	file = new File(String.format("%s/%s",dir==null?System.getProperty("java.io.tmpdir"):dir,newName));
 				        }
 				        fi.write(file);
 				        protocol.setDocument(new Document(file.toURI().toURL()));		
