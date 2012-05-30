@@ -49,7 +49,16 @@ public class UserAuthorizer extends OpenSSOAuthorizer {
 		Integer iduser  = null;
 		try {iduser = Integer.parseInt(vars.get(UserDBResource.resourceKey).toString().substring(1));
 		} catch (Exception x) { return super.authorize(ssoToken, request); }
+		
+		if ((request.getClientInfo()==null) || 
+			(request.getClientInfo().getUser()==null)) {
+			
+			return false; 
+		}
+		
 		try {retrieveUserAttributes(ssoToken, request);} catch (Exception x) { x.printStackTrace();}
+
+		
 		if (verify(iduser,request.getClientInfo().getUser().getIdentifier())) return true;
 		
 		//TODO split user resource into user & workspace
