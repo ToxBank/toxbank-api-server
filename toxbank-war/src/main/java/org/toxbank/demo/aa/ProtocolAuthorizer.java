@@ -109,10 +109,10 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 		/**
 		 *  otherwise try if there is an OpenSSO policy to let me in
 		 */
-		LOGGER.info(request.getResourceRef().toString());
+		LOGGER.info("URI" + request.getResourceRef().toString());
 		if (ssoauthorize(ssoToken, request)) {
 		//if (super.authorize(ssoToken, request)) {
-			LOGGER.info(OpenSSOAuthorizer.class.getName() + Boolean.TRUE);
+			LOGGER.info("NEW" + getClass().getName() +" "+ Boolean.TRUE);
 			//parent method only retrieves user name for non-GET 
 			if (request.getClientInfo().getUser().getIdentifier()==null) { 
 				try {retrieveUserAttributes(ssoToken, request);} 
@@ -120,7 +120,7 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 			}
 			return true;
 		} else {
-			LOGGER.info(OpenSSOAuthorizer.class.getName() + Boolean.FALSE);
+			LOGGER.info("NEW" + getClass().getName() + " "+ Boolean.FALSE);
 			return ref.toString().endsWith(Resources.document)?false:true;
 		}
 		
@@ -130,7 +130,7 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 		Reference ref = request.getResourceRef().clone();
 		ref.setQuery(null);
 		String uri = uri2check(request.getRootRef(),ref);
-		LOGGER.info(OpenSSOAuthorizer.class.getName() + uri);
+		LOGGER.info("ssoauthorize" + getClass().getName() + " " + uri);
 		if (uri==null) return false;
 		if (ssoToken.authorize(uri,request.getMethod().toString()))  {
 			if (!Method.GET.equals(request.getMethod())){
