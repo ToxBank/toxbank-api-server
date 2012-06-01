@@ -5,6 +5,8 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.idea.modbcum.i.query.IQueryUpdate;
 import net.idea.modbcum.p.ProcessorException;
@@ -49,6 +51,7 @@ import org.toxbank.rest.user.db.ReadUser;
 
 
 public class CallableProtocolUpload extends CallableProtectedTask<String> {
+	private final static Logger LOGGER = Logger.getLogger(CallableProtocolUpload.class.getName());
 	public enum UpdateMode {create,update,dataTemplateOnly,createversion}
 	protected List<FileItem> input;
 	protected ProtocolQueryURIReporter reporter;
@@ -366,14 +369,31 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 				connection.commit();
 				TaskResult result = new TaskResult(uri,false);
 				try {
-					addDefaultProtocolRights(policy,protocol.getOwner(),true,true,true,true);
+					if (protocol.getOwner()==null) 
+						LOGGER.log(Level.SEVERE,String.format("Protocol owner is missing!",protocol.getOwner()));
+					else 
+						addDefaultProtocolRights(policy,protocol.getOwner(),true,true,true,true);
+				
 					if ((policy.getRules()!=null) && (policy.getRules().size()>0)) {
 						retrieveAccountNames(policy,connection);
 						policy.setResource(new URL(uri));
 						result.setPolicy(generatePolicy(protocol,policy));
+						 //isNewResource is false, hence the policy will not be updated by the {@link PolicyProtectedTask class)
 					} else result.setPolicy(null);
+					
 				} 
-				catch (Exception x) { result.setPolicy(null);}
+				catch (Exception x) {
+					x.printStackTrace();
+					result.setPolicy(null);
+				}
+				
+				try {
+					if (policy!=null && (policy.getRules()!=null) && (policy.getRules().size()>0))
+						updatePolicy(protocol.getResourceURL(),policy);
+				} catch (Exception x) {
+					x.printStackTrace();
+					//ok, what do we do here?
+				}
 			
 			
 				return result;
@@ -416,6 +436,10 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 			for (PolicyRule rule: accessRights.getRules()) 
 				if (rule instanceof UserPolicyRule)  {
 					DBUser u = ((UserPolicyRule<? extends DBUser>) rule).getSubject();
+					if (u==null) {
+						LOGGER.log(Level.SEVERE,"User policy rule without an user!"+rule);
+						continue;
+					}
 				    if (u.getID()<=0) u.setID(u.parseURI(baseReference));
 					if (u.getUserName()==null) {
 						getUser.setValue(u);
@@ -423,7 +447,10 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 						try { 
 							rs = qexec.process(getUser); 
 							while (rs.next()) { u.setUserName(getUser.getObject(rs).getUserName()); }
-						} catch (Exception x) { if (rs!=null) rs.close(); }
+						} catch (Exception x) { 
+							if (rs!=null) rs.close();
+							x.printStackTrace();
+						}
 					}	
 			}
 			ReadGroup getGroup = null;
@@ -455,6 +482,19 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 		SimpleAccessRights policyTools = new SimpleAccessRights(config.getPolicyService());
 		List<String> policies = policyTools.createPolicyXML(policy);
 		return policies.size()>0?policies:null;
+	}
+	
+	protected void updatePolicy(URL url, AccessRights policy) throws Exception {
+		if (getToken()==null) return;
+		try {
+			OpenSSOServicesConfig config = OpenSSOServicesConfig.getInstance();
+			SimpleAccessRights policyTools = new SimpleAccessRights(config.getPolicyService());
+			OpenSSOToken ssoToken = new OpenSSOToken(config.getOpenSSOService());
+			ssoToken.setToken(getToken());
+			policyTools.updatePolicy(ssoToken, policy);
+		} catch (Exception x) {
+			throw new ResourceException(Status.SERVER_ERROR_BAD_GATEWAY,String.format("Error deleting policies for %s",url),x);
+		}
 	}
 	
 	protected void deletePolicy(URL url) throws Exception {
