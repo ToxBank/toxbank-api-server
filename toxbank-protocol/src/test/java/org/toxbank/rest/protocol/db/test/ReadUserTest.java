@@ -24,6 +24,7 @@ public class ReadUserTest  extends QueryTest<ReadUser> {
 			Assert.assertEquals("guest",user.getUserName());
 			Assert.assertEquals("abcdef",user.getFirstname());
 			Assert.assertEquals("ABCDEF",user.getLastname());
+			Assert.assertEquals("guest@example.org",user.getEmail());
 			records++;
 		}
 		Assert.assertEquals(1,records);

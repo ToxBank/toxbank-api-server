@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-  <user iduser="1" title="Mr." username="guest" firstname="abcdef" lastname="ABCDEF" weblog="http://example.com/blog" homepage="http://mypage.com" />
-  <user iduser="2" firstname="OpenTox" lastname="XYZ" />
+  <user iduser="1" title="Mr." username="guest" firstname="abcdef" lastname="ABCDEF" weblog="http://example.com/blog" homepage="http://mypage.com" email="guest@example.org"/>
+  <user iduser="2" firstname="OpenTox" lastname="XYZ" email="opentox@example.org"/>
   <user iduser="3" firstname="CCCCC" lastname="BBBB" />
-  <user iduser="4" firstname="TEST" lastname="TEST" />
+  <user iduser="4" firstname="TEST" lastname="TEST" email="test@example.org"/>
   <project idproject="1" name="DETECTIVE" ldapgroup="detective"/>
   <project idproject="2" name="Toxbank" ldapgroup="toxbank"/>
   <project idproject="3" name="ABCDEF" ldapgroup="toxbank"/>

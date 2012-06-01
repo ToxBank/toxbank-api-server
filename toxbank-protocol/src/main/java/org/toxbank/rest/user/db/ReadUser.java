@@ -107,10 +107,23 @@ public class ReadUser<T>  extends ReadUserID<T> {
 				} catch (Exception x) {throw new SQLException(x);}
 			}		
 			@Override
-			public Object getValue(DBUser protocol) {
-				return protocol==null?null:protocol.getHomepage();
+			public Object getValue(DBUser user) {
+				return user==null?null:user.getHomepage();
+			}				
+		},
+		email {
+			@Override
+			public void setParam(DBUser user, ResultSet rs) throws SQLException {
+				try {
+					user.setEmail(rs.getString(name()));
+				} catch (Exception x) {throw new SQLException(x);}
+			}		
+			@Override
+			public Object getValue(DBUser user) {
+				return user==null?null:user.getEmail();
 			}				
 		}
+			
 	
 		;
 		public String getCondition() {
@@ -122,11 +135,11 @@ public class ReadUser<T>  extends ReadUserID<T> {
 		public Class getClassType(DBUser user) {
 			return String.class;
 		}
-		public void setParam(DBUser protocol, ResultSet rs) throws SQLException {
-			protocol.setLastname(rs.getString(name()));
+		public void setParam(DBUser user, ResultSet rs) throws SQLException {
+			user.setLastname(rs.getString(name()));
 		}		
-		public Object getValue(DBUser protocol) {
-			return protocol==null?null:protocol.getLastname();
+		public Object getValue(DBUser user) {
+			return user==null?null:user.getLastname();
 		}
 		
 		public String getHTMLField(DBUser user) {
@@ -146,7 +159,7 @@ public class ReadUser<T>  extends ReadUserID<T> {
 	}
 	
 	protected static String sql = 
-		"SELECT iduser,username,title,firstname,lastname,institute,weblog,homepage from user %s %s";
+		"SELECT iduser,username,title,firstname,lastname,institute,weblog,homepage,email from user %s %s";
 
 	
 	public ReadUser(DBUser user) {

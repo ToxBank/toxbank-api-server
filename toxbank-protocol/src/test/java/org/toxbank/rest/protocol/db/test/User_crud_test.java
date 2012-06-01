@@ -34,7 +34,6 @@ import net.idea.modbcum.i.query.IQueryUpdate;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
-import org.toxbank.rest.groups.user.db.AddGroupsPerUser;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.db.CreateUser;
 import org.toxbank.rest.user.db.DeleteUser;
@@ -48,6 +47,7 @@ public final class User_crud_test  extends CRUDTest<Object,DBUser>  {
 		DBUser ref = new DBUser();
 		ref.setFirstname("QWERTY");
 		ref.setLastname("ASDFG");
+		ref.setEmail("me@example.org");
 		return new CreateUser(ref);
 	}
 
@@ -56,9 +56,10 @@ public final class User_crud_test  extends CRUDTest<Object,DBUser>  {
 			throws Exception {
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED",
-				String.format("SELECT iduser,username,firstname,lastname from user where firstname='QWERTY'"));
+				String.format("SELECT iduser,username,firstname,lastname,email from user where firstname='QWERTY'"));
 		
 		Assert.assertEquals(1,table.getRowCount());
+		Assert.assertEquals("me@example.org",table.getValue(0,"email"));
 		c.close();
 	}
 
