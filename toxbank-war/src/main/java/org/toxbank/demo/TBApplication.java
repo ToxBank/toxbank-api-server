@@ -162,7 +162,7 @@ public class TBApplication extends TaskApplication<String> {
 		MyRouter notificationRouter = new MyRouter(getContext());
 		notificationRouter.attachDefault(NotificationResource.class);
 		if (aaenabled) {
-			router.attach(Resources.protocol, createProtectedResource(protocols,"protocol",new ProtocolAuthorizer()));
+			router.attach(Resources.protocol, createProtectedResource(protocols,"protocol",new ProtocolAuthorizer("protocol")));
 			router.attach(Resources.project, createProtectedResource(projectRouter,"project",true));
 			router.attach(Resources.organisation, createProtectedResource(org_router,"organisation",true));
 			router.attach(Resources.alert, createProtectedResource(org_router,"alert",true));

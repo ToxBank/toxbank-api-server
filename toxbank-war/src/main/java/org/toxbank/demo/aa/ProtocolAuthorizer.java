@@ -41,11 +41,13 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 	public void setMaxDepth(int maxDepth) {
 		this.maxDepth = maxDepth;
 	}
-	public ProtocolAuthorizer() {
+	public ProtocolAuthorizer(String prefix) {
 		super();
+		setPrefix(prefix);
 	}
 	@Override
 	public void setPrefix(String u) {
+		
 		super.setPrefix(u);
 	}
 	protected ReadProtocolAccessLocal query;
