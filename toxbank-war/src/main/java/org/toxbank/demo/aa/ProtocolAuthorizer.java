@@ -188,8 +188,9 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 	@Override
 	public String uri2check(Reference root,Reference ref) throws Exception {
 		if (prefix==null) {
-			LOGGER.log(Level.INFO,"Why null prefix " + ref);
-			return ref==null?null:ref.toString();
+			prefix = "protocol";
+			LOGGER.log(Level.INFO,"Why null prefix ... patching this up ");
+			//return ref==null?null:ref.toString();
 		}
 	    if (ref == null) return null;
 	    
