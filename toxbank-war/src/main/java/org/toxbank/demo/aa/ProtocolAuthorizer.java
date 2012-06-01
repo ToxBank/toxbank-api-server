@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.idea.modbcum.p.QueryExecutor;
@@ -20,7 +21,6 @@ import org.restlet.data.Reference;
 import org.restlet.resource.ResourceException;
 import org.restlet.routing.Template;
 import org.toxbank.rest.FileResource;
-import org.toxbank.rest.protocol.CallableProtocolUpload;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocolAccessLocal;
@@ -175,6 +175,7 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 		
 	}
 	
+
 	@Override
 	public String uri2check(Reference root,Reference ref) throws Exception {
 		if (prefix==null) return ref==null?null:ref.toString();
@@ -186,6 +187,7 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 					u.lastIndexOf("/")==u.length()-1?"":"/",
 					prefix));
 		
+		LOGGER.log(Level.INFO,"Fullprefix "+fullPrefix.toString());
 		u = ref.toString();
 		Reference uri = new Reference(String.format("%s%s", 
 				u,
@@ -194,15 +196,18 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 		u = ref.toString();
 		Reference uri2check = new Reference(u==null?null:
 										u.lastIndexOf("/")==u.length()-1?u:String.format("%s/",u)); //add trailing slash
+		LOGGER.log(Level.INFO,uri2check.toString());
 		int prefix_len = fullPrefix.toString().length();
 		int level = 0;
 		while (!fullPrefix.equals(uri)) {
 			uri2check = uri;
+			LOGGER.log(Level.INFO,level + "." + uri2check.toString());
 			if (level>=maxDepth) break;
 			
 			uri = uri.getParentRef();
 			if (uri.toString().length()<prefix_len) return null; //smth wrong
 			level++;
+			
 
 		}
 		u = uri.toString();
