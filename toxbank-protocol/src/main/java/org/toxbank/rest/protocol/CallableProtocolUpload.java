@@ -305,6 +305,7 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 		if ((protocol==null)||(protocol.getID()<=0)) 
 					throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,"Can't update: Not an existing protocol!");
 		AccessRights policy = new AccessRights(null);
+		User owner = protocol.getOwner();		
 		try {
 			//get only fields from the web form
 			DBProtocol newProtocol = ProtocolFactory.getProtocol(null,input, 10000000,dir,policy);
@@ -322,7 +323,9 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 			if (newProtocol.getOwner() != null) {
 				DBUser p = (DBUser) newProtocol.getOwner();
 				p.setID(p.parseURI(baseReference));
-			}					
+			} else {
+				//owner = newProtocol.getOwner(); this will allow changing protocol owners
+			}
 			if (newProtocol.getAuthors()!=null)
 				for (User u: newProtocol.getAuthors()) { 
 					DBUser author =u instanceof DBUser?(DBUser)u:new DBUser(u);
@@ -369,10 +372,10 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 				connection.commit();
 				TaskResult result = new TaskResult(uri,false);
 				try {
-					if (protocol.getOwner()==null) 
-						LOGGER.log(Level.SEVERE,String.format("Protocol owner is missing!",protocol.getOwner()));
+					if (owner==null) 
+						LOGGER.log(Level.SEVERE,String.format("Protocol owner is missing!",owner));
 					else 
-						addDefaultProtocolRights(policy,protocol.getOwner(),true,true,true,true);
+						addDefaultProtocolRights(policy,owner,true,true,true,true);
 				
 					if ((policy.getRules()!=null) && (policy.getRules().size()>0)) {
 						retrieveAccountNames(policy,connection);
