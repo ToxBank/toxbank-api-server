@@ -37,7 +37,12 @@ public class FileReporter extends QueryReporter<DBProtocol, IQueryRetrieval<DBPr
 	public Object processItem(DBProtocol item) throws AmbitException {
 		try {
 			File file = new File(item.getDocument().getResourceURL().toURI());
-			setOutput(new FileRepresentation(file, new MediaType(item.getDocument().getMediaType())));
+			FileRepresentation filerepresentation = new FileRepresentation(file, new MediaType(item.getDocument().getMediaType()));
+			int extIndex = file.getName().lastIndexOf(".");
+			if (extIndex>0)
+				filerepresentation.setDownloadName(String.format("%s%s",item.getIdentifier(),file.getName().substring(extIndex)));
+			else filerepresentation.setDownloadName(item.getIdentifier());	
+			setOutput(filerepresentation);
 			return item;
 		} catch (URISyntaxException x) {
 			throw new AmbitException(x);

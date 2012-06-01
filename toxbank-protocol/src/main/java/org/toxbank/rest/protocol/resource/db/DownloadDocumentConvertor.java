@@ -53,5 +53,11 @@ public class DownloadDocumentConvertor extends   AbstractObjectConvertor<DBProto
 	public Representation process(FileRepresentation doc) throws AmbitException {
 		return doc;
 	}
+	
+	@Override
+	protected void setDisposition(Representation rep) {
+
+		super.setDisposition(rep);
+	}
 
 }
