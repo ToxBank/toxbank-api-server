@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import net.idea.modbcum.p.QueryExecutor;
 import net.idea.restnet.aa.opensso.OpenSSOAuthorizer;
@@ -14,10 +15,12 @@ import net.toxbank.client.policy.PolicyRule;
 
 import org.opentox.aa.opensso.OpenSSOToken;
 import org.restlet.Request;
+import org.restlet.data.Method;
 import org.restlet.data.Reference;
 import org.restlet.resource.ResourceException;
 import org.restlet.routing.Template;
 import org.toxbank.rest.FileResource;
+import org.toxbank.rest.protocol.CallableProtocolUpload;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocolAccessLocal;
@@ -30,6 +33,7 @@ import org.toxbank.rest.protocol.db.ReadProtocolAccessLocal;
  * Otherwise, we resort to the OpenSSO policy
  */
 public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
+	private final static Logger LOGGER = Logger.getLogger(ProtocolAuthorizer.class.getName());
 	protected int maxDepth = Integer.MAX_VALUE;
 	public int getMaxDepth() {
 		return maxDepth;
@@ -105,7 +109,10 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 		/**
 		 *  otherwise try if there is an OpenSSO policy to let me in
 		 */
-		if (super.authorize(ssoToken, request)) {
+		LOGGER.info(request.getResourceRef().toString());
+		if (ssoauthorize(ssoToken, request)) {
+		//if (super.authorize(ssoToken, request)) {
+			LOGGER.info(OpenSSOAuthorizer.class.getName() + Boolean.TRUE);
 			//parent method only retrieves user name for non-GET 
 			if (request.getClientInfo().getUser().getIdentifier()==null) { 
 				try {retrieveUserAttributes(ssoToken, request);} 
@@ -113,9 +120,25 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 			}
 			return true;
 		} else {
-			
+			LOGGER.info(OpenSSOAuthorizer.class.getName() + Boolean.FALSE);
 			return ref.toString().endsWith(Resources.document)?false:true;
 		}
+		
+	}
+	
+	protected boolean ssoauthorize(OpenSSOToken ssoToken, Request request)  throws Exception {
+		Reference ref = request.getResourceRef().clone();
+		ref.setQuery(null);
+		String uri = uri2check(request.getRootRef(),ref);
+		LOGGER.info(OpenSSOAuthorizer.class.getName() + uri);
+		if (uri==null) return false;
+		if (ssoToken.authorize(uri,request.getMethod().toString()))  {
+			if (!Method.GET.equals(request.getMethod())){
+				try {retrieveUserAttributes(ssoToken, request);} 
+				catch (Exception x) {}
+			}
+			return true;
+		} else return false;
 	}
 	@Override
 	protected boolean isEnabled() {
