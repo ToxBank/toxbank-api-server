@@ -41,6 +41,13 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 	public void setMaxDepth(int maxDepth) {
 		this.maxDepth = maxDepth;
 	}
+	public ProtocolAuthorizer() {
+		super();
+	}
+	@Override
+	public void setPrefix(String u) {
+		super.setPrefix(u);
+	}
 	protected ReadProtocolAccessLocal query;
 	protected QueryExecutor<ReadProtocolAccessLocal> executor;
 	@Override
@@ -178,7 +185,10 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 
 	@Override
 	public String uri2check(Reference root,Reference ref) throws Exception {
-		if (prefix==null) return ref==null?null:ref.toString();
+		if (prefix==null) {
+			LOGGER.log(Level.INFO,"Why null prefix " + ref);
+			return ref==null?null:ref.toString();
+		}
 	    if (ref == null) return null;
 	    
 	    String u = root.toString();
