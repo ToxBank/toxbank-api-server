@@ -176,7 +176,7 @@ CREATE TABLE  `version` (
   `comment` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`idmajor`,`idminor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-insert into version (idmajor,idminor,comment) values (1,8,"TB Protocol schema");
+insert into version (idmajor,idminor,comment) values (1,9,"TB Protocol schema");
 
 -- -----------------------------------------------------
 -- Create new protocol version
