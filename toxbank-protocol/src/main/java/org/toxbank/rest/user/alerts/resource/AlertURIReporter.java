@@ -41,8 +41,10 @@ public class AlertURIReporter <Q extends IQueryRetrieval<DBAlert>> extends Query
 
 	@Override
 	public String getURI(String ref, DBAlert item) {
-
-		return String.format("%s%s/A%d%s",ref,Resources.alert,item.getID(),suffix);
+		if ((item.getUser()!=null) && (item.getUser().getID()>0))
+			return String.format("%s%s/U%d%s/A%d%s",ref,Resources.user,item.getUser().getID(),Resources.alert,item.getID(),suffix);
+		else	
+			return String.format("%s%s/A%d%s",ref,Resources.alert,item.getID(),suffix);
 	}
 
 }

@@ -41,6 +41,7 @@ public class CallableAlertCreator extends CallableDBUpdateTask<DBAlert,Form,Stri
 		if (Method.DELETE.equals(method)) return item;
 		else if (Method.POST.equals(method)) {
 			DBAlert alert = new DBAlert();
+			alert.setUser(user);
 			for (DBAlert._fields field:DBAlert._fields.values()) {
 				String value = input.getFirstValue(field.name());
 				if (value != null)

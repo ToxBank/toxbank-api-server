@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -58,7 +60,7 @@ public class AlertResourceTest extends ResourceTest {
 		String line = null;
 		int count = 0;
 		while ((line = r.readLine())!= null) {
-			Assert.assertTrue(line.startsWith(String.format("http://localhost:%d%s/A",port,Resources.alert)));
+			Assert.assertTrue(line.startsWith(String.format("http://localhost:%d%s/U1%s/A",port,Resources.user,Resources.alert)));
 			count++;
 		}
 		return count==2;
@@ -100,16 +102,27 @@ public class AlertResourceTest extends ResourceTest {
 		AlertIO ioClass = new AlertIO();
 		List<Alert> alerts = ioClass.fromJena(model);
 		Assert.assertEquals(2,alerts.size());
-		Assert.assertEquals(String.format("http://localhost:%d%s/A1",port,Resources.alert),
-													alerts.get(0).getResourceURL().toString());
-		Assert.assertEquals("cell", alerts.get(0).getTitle());
-		Assert.assertEquals("cell", alerts.get(0).getQueryString());
-		Assert.assertEquals(Alert.RecurrenceFrequency.daily, alerts.get(0).getRecurrenceFrequency());
-		Assert.assertEquals(Query.QueryType.FREETEXT, alerts.get(0).getType());
-		Assert.assertEquals(1, alerts.get(0).getRecurrenceInterval());
-		Assert.assertNotNull(alerts.get(0).getUser());
-		String user =  String.format("http://localhost:%d%s/U1",port,Resources.user);
-		Assert.assertEquals(user, alerts.get(0).getUser().getResourceURL().toString());
+
+		String uri1 = String.format("http://localhost:%d%s/U1%s/A1",port,Resources.user,Resources.alert);
+		String uri2 = String.format("http://localhost:%d%s/U1%s/A2",port,Resources.user,Resources.alert);
+		for (Alert alert: alerts) {
+			if (uri1.equals(alert.getResourceURL().toString())) {
+				Assert.assertEquals("cell", alert.getTitle());
+				Assert.assertEquals("cell", alert.getQueryString());
+				Assert.assertEquals(Alert.RecurrenceFrequency.daily, alert.getRecurrenceFrequency());
+				Assert.assertEquals(Query.QueryType.FREETEXT, alert.getType());
+				Assert.assertEquals(1, alert.getRecurrenceInterval());
+				Assert.assertNotNull(alert.getUser());
+
+			} else if (uri2.equals(alert.getResourceURL().toString())) {
+				Assert.assertEquals("toxicity", alert.getTitle());
+				Assert.assertEquals("toxicity", alert.getQueryString());
+				Assert.assertEquals(Alert.RecurrenceFrequency.weekly, alert.getRecurrenceFrequency());
+			} else throw new Exception("Unexpected alert URI "+ alert.getResourceURL());
+			String user =  String.format("http://localhost:%d%s/U1",port,Resources.user);
+			Assert.assertEquals(user, alert.getUser().getResourceURL().toString());			
+		}
+		
 		return model;
 	}	
 	
@@ -145,7 +158,7 @@ public class AlertResourceTest extends ResourceTest {
 			Thread.sleep(100);
 			Thread.yield();
 		}
-		Assert.assertTrue(task.getResult().toString().startsWith(String.format("http://localhost:%d%s/A",port,Resources.alert)));
+		Assert.assertTrue(task.getResult().toString().startsWith(String.format("http://localhost:%d%s/U2%s/A",port,Resources.user,Resources.alert)));
 
         c = getConnection();	
 		table = 	c.createQueryTable("EXPECTED","SELECT idquery,name,query,qformat,rfrequency,rinterval,iduser,created FROM alert");
@@ -153,7 +166,7 @@ public class AlertResourceTest extends ResourceTest {
 		table = 	c.createQueryTable("EXPECTED","SELECT idquery,iduser,query from alert where idquery>2");
 		Assert.assertEquals(1,table.getRowCount());
 
-		String expectedURI = String.format("http://localhost:%d%s/A%s",port,Resources.alert,table.getValue(0,"idquery"));
+		String expectedURI = String.format("http://localhost:%d%s/U2%s/A%s",port,Resources.user,Resources.alert,table.getValue(0,"idquery"));
 		Assert.assertEquals(expectedURI,task.getResult().toString());
 		c.close();
 
