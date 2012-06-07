@@ -42,8 +42,8 @@ public class DeleteAlert  extends  AbstractAlertUpdate<DBUser>  {
 		String alert = null;
 		String user = null;
 
-		if (getObject()!=null && getObject().getID()>0 ) user = DBAlert._fields.idquery.getCondition();
-		if (getGroup()!=null && getGroup().getID()>0 ) alert = DBAlert._fields.iduser.getCondition();
+		if (getObject()!=null && getObject().getID()>0 ) alert = DBAlert._fields.idquery.getCondition();
+		if (getGroup()!=null && getGroup().getID()>0 ) user = DBAlert._fields.iduser.getCondition();
 		return new String[] {String.format(sql, 
 				alert==null?"":alert,
 				alert!=null && user!=null?" and ":"",

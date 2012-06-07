@@ -14,6 +14,7 @@ import org.opentox.aa.opensso.OpenSSOToken;
 import org.restlet.Request;
 import org.restlet.data.Reference;
 import org.restlet.routing.Template;
+import org.toxbank.rest.user.alerts.resource.AlertDBResource;
 import org.toxbank.rest.user.author.db.VerifyUser;
 import org.toxbank.rest.user.resource.UserDBResource;
 
@@ -37,6 +38,7 @@ public class UserAuthorizer extends OpenSSOAuthorizer {
 		Template template3 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.user,UserDBResource.resourceKey,Resources.project));
 		Template template4 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.user,UserDBResource.resourceKey,Resources.organisation));
 		Template template5 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.user,UserDBResource.resourceKey,Resources.alert));
+		Template template6 = new Template(String.format("%s%s/{%s}%s/{%s}",request.getRootRef(),Resources.user,UserDBResource.resourceKey,Resources.alert,AlertDBResource.resourceKey));
 		Map<String, Object> vars = new HashMap<String, Object>();
 		Reference ref = request.getResourceRef().clone();
 		ref.setQuery(null);
@@ -45,6 +47,7 @@ public class UserAuthorizer extends OpenSSOAuthorizer {
 		template3.parse(ref.toString(),vars);
 		template4.parse(ref.toString(),vars);
 		template5.parse(ref.toString(),vars);
+		template6.parse(ref.toString(),vars);
 		if (vars.get(UserDBResource.resourceKey)==null) return super.authorize(ssoToken, request);
 		Integer iduser  = null;
 		try {iduser = Integer.parseInt(vars.get(UserDBResource.resourceKey).toString().substring(1));
