@@ -10,40 +10,50 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>Protocol resource implementation</name>
   <dependencies>
-  	<dependency>
-  		<groupId>org.toxbank</groupId>
-  		<artifactId>toxbank-resource</artifactId>
-  		<version>${project.version}</version>
-  		<type>jar</type>
-  		<scope>compile</scope>
-  	</dependency>
-  	<dependency>
-  		<groupId>net.idea</groupId>
-  		<artifactId>modbcum-q</artifactId>
-  		<version>${modbcum.version}</version>
-  		<type>jar</type>
-  		<scope>compile</scope>
-  	</dependency>
-  	<dependency>
-  		<groupId>net.idea</groupId>
-  		<artifactId>modbcum-p</artifactId>
-  		<version>${modbcum.version}</version>
-  		<type>jar</type>
-  		<scope>compile</scope>
-  	</dependency>  	
-  	    <dependency>
-    	<groupId>org.dbunit</groupId>
-    	<artifactId>dbunit</artifactId>
-    	<version>2.4.8</version>
-    	<scope>test</scope>
+        <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+                <version>1.4</version>
+        </dependency>
+        <dependency>
+                <groupId>org.toxbank</groupId>
+                <artifactId>toxbank-resource</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+        </dependency>
+        <dependency>
+                <groupId>net.idea</groupId>
+                <artifactId>modbcum-q</artifactId>
+                <version>${modbcum.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+        </dependency>
+        <dependency>
+                <groupId>net.idea</groupId>
+                <artifactId>modbcum-p</artifactId>
+                <version>${modbcum.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+        </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.1.3</version>
     </dependency>
-  	    <dependency>
-  	    	<groupId>net.ideaconsult.restnet</groupId>
-  	    	<artifactId>restnet-db</artifactId>
-  	    	<version>${restnet.version}</version>
-  	    	<type>jar</type>
-  	    	<scope>compile</scope>
-  	    </dependency>
+            <dependency>
+        <groupId>org.dbunit</groupId>
+        <artifactId>dbunit</artifactId>
+        <version>2.4.8</version>
+        <scope>test</scope>
+    </dependency>
+            <dependency>
+                <groupId>net.ideaconsult.restnet</groupId>
+                <artifactId>restnet-db</artifactId>
+                <version>${restnet.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
   </dependencies>
   <build>
   <pluginManagement>
@@ -58,29 +68,29 @@
      </configuration>
     </plugin>
       <plugin>
-       	<groupId>org.apache.maven.plugins</groupId>
-       	<artifactId>maven-resources-plugin</artifactId>
-      	 <version>2.5</version>
-       	<configuration>
-        	<nonFilteredFileExtensions>
-           	<nonFilteredFileExtension></nonFilteredFileExtension>
-		   <nonFilteredFileExtension>pdf</nonFilteredFileExtension>
-		   <nonFilteredFileExtension>sql</nonFilteredFileExtension>
-          	</nonFilteredFileExtensions>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+         <version>2.5</version>
+        <configuration>
+                <nonFilteredFileExtensions>
+                <nonFilteredFileExtension></nonFilteredFileExtension>
+                   <nonFilteredFileExtension>pdf</nonFilteredFileExtension>
+                   <nonFilteredFileExtension>sql</nonFilteredFileExtension>
+                </nonFilteredFileExtensions>
         </configuration>
-      	</plugin>
+        </plugin>
   </plugins>
   </pluginManagement>
   <plugins>
   </plugins>
   </build>
   <reporting>
-  	<plugins>
-  		<plugin>
-  			<groupId>org.apache.maven.plugins</groupId>
-  			<artifactId>maven-pmd-plugin</artifactId>
-  			<version>2.5</version>
-  		</plugin>
-  	</plugins>
+        <plugins>
+                <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-pmd-plugin</artifactId>
+                        <version>2.5</version>
+                </plugin>
+        </plugins>
   </reporting>
 </project>
