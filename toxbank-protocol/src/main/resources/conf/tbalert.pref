@@ -1,0 +1,8 @@
+alert.admin.email=${alert.admin.email}
+alert.search.service.url=${alert.search.service.url}
+alert.ui.service.url=${alert.ui.service.url}
+
+mail.transport.protocol=${alert.mail.transport.protocol}
+mail.host=${alert.mail.host}
+mail.user=${alert.mail.user}
+mail.debug=${alert.mail.debug}
