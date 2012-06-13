@@ -32,9 +32,10 @@ public interface AlertNotificationUtility {
   /**
    * Retrieves the list of resources matching the given urls
    * @param urls the list of urls of toxbank resources
+   * @param ssoToken an sso token to use when to connecting to the resource services
    * @return list of resources matching the urls
    */
-  public List<AbstractToxBankResource> getResources(List<URL> urls) throws Exception;
+  public List<AbstractToxBankResource> getResources(List<URL> urls, String ssoToken) throws Exception;
   
   /**
    * Gets the url to access the protocol through the UI

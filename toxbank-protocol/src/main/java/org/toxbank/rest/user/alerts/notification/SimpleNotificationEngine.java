@@ -59,7 +59,7 @@ public class SimpleNotificationEngine implements INotificationEngine {
       }
       
       if (results.size() > 0) {
-        sendNotification(email, results);		  
+        sendNotification(email, results, token);		  
       }
     }
     
@@ -122,7 +122,7 @@ public class SimpleNotificationEngine implements INotificationEngine {
     return null;
   }
       
-  private void sendNotification(String userEmail, List<AlertResult> results) throws Exception {
+  private void sendNotification(String userEmail, List<AlertResult> results, String token) throws Exception {
     StringBuilder sb = new StringBuilder();
     sb.append("<html>\n");
     appendStyle(sb);
@@ -131,7 +131,7 @@ public class SimpleNotificationEngine implements INotificationEngine {
     for (AlertResult result : results) {
       sb.append("<div class='alert_result'>\n");
       appendSummary(sb, result.alert);
-      List<AbstractToxBankResource> resources = utility.getResources(result.matchingUrls);
+      List<AbstractToxBankResource> resources = utility.getResources(result.matchingUrls, token);
       for (AbstractToxBankResource resource : resources) {
         if (resource instanceof Protocol) {
           appendSummary(sb, (Protocol)resource);          
