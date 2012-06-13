@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.toxbank</groupId>
@@ -16,7 +16,7 @@
     <restnet.version>0.0.5</restnet.version>
   </properties>
   <issueManagement>
-  	<url>https://github.com/ToxBank/toxbank-api-server/issues</url>
+    <url>https://github.com/ToxBank/toxbank-api-server/issues</url>
   </issueManagement>
   <scm>
     <connection>scm:git://github.com/ToxBank/toxbank-api-server.git</connection>
@@ -24,18 +24,23 @@
     <url>https://github.com/ToxBank/toxbank-api-server</url>
   </scm>
   <developers>
-      <developer>
+    <developer>
       <id>vedina</id>
       <name>Nina Jeliazkova</name>
       <url>https://github.com/vedina</url>
       <organization>IdeaConsult Ltd.</organization>
       <organizationUrl>http://www.ideaconsult.net</organizationUrl>
-   </developer>
-   <developer>
+    </developer>
+    <developer>
       <id>egonw</id>
- 		<name>Egon Willighagen</name>
-  		<url>https://github.com/egonw</url>
-</developer>
+      <name>Egon Willighagen</name>
+      <url>https://github.com/egonw</url>
+    </developer>
+    <developer>
+	   <id>smiller-leadscope</id>
+      <name>Scott Miller</name>
+      <url>https://github.com/smiller-leadscope</url>
+    </developer>
   </developers>
   <dependencies>
     <dependency>
@@ -145,8 +150,8 @@
     </repository>
   </repositories>
   <organization>
-  	<name>IdeaConsult Ltd</name>
-  	<url>http://www.ideaconsult.net</url>
+    <name>IdeaConsult Ltd</name>
+    <url>http://www.ideaconsult.net</url>
   </organization>
   <build>
     <resources>
@@ -187,7 +192,6 @@
           <locales>en</locales>
         </configuration>
       </plugin>
-     
     </plugins>
     <pluginManagement>
       <plugins>
@@ -242,33 +246,27 @@
       <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/toxbank-releases/</url>
     </repository>
     <site>
-     	<id>toxbank-site</id>
-    	<url>http://toxbank.github.com/toxbank-api-server/</url>
+      <id>toxbank-site</id>
+      <url>http://toxbank.github.com/toxbank-api-server/</url>
     </site>
   </distributionManagement>
-  
   <ciManagement>
-  	<url>http://jenkins.toxbank.net</url>
+    <url>http://jenkins.toxbank.net</url>
   </ciManagement>
   <inceptionYear>2011</inceptionYear>
   <contributors>
-
-  	<contributor>
-  		<name>Scott Miller</name>
-  		<url>https://github.com/smiller-leadscope</url>
-  	</contributor>
-  	<contributor>
-  		<name>Christoph Helma</name>
-  		<url>https://github.com/helma</url>
-  	</contributor>
-  	<contributor>
-  		<name>Michael Crump</name>
-  		<url>https://github.com/mcrump</url>
-  	</contributor>
-  	<contributor>
-  		<name>Micha Rautenberg</name>
-  		<url>https://github.com/rautenberg</url>
-  	</contributor>
+    <contributor>
+      <name>Christoph Helma</name>
+      <url>https://github.com/helma</url>
+    </contributor>
+    <contributor>
+      <name>Michael Crump</name>
+      <url>https://github.com/mcrump</url>
+    </contributor>
+    <contributor>
+      <name>Micha Rautenberg</name>
+      <url>https://github.com/rautenberg</url>
+    </contributor>
   </contributors>
   <licenses>
     <license>
@@ -277,7 +275,7 @@
       <distribution>repo</distribution>
       <comments />
     </license>
-  </licenses>  
+  </licenses>
   <reporting>
     <plugins>
       <plugin>
@@ -293,13 +291,13 @@
               <report>scm</report>
               <report>dependencies</report>
               <report>dependency-management</report>
-			  <report>dependency-convergence</report>
+              <report>dependency-convergence</report>
               <report>summary</report>
             </reports>
           </reportSet>
         </reportSets>
       </plugin>
-        <!-- UML class diagrams 
+      <!-- UML class diagrams 
       <plugin>
 
         <groupId>org.apache.maven.plugins</groupId>
@@ -320,7 +318,6 @@
         </configuration>
       </plugin>
       -->
-
     </plugins>
   </reporting>
   <profiles>
@@ -394,6 +391,15 @@
         <!-- used to create the DB in tests - not necessary, if the test DB exists 
 			<toxbank.db.user.root.password></toxbank.db.user.root.password>
 			-->
+	<!-- Alerts configuration -->
+	<!-- TODO specify default values if posuble -->
+	<alert.admin.email></alert.admin.email>
+	<alert.search.service.url></alert.search.service.url>
+	<alert.ui.service.url></alert.ui.service.url>
+	<alert.mail.transport.protocol></alert.mail.transport.protocol>
+	<alert.mail.host>localhost</alert.mail.host>
+	<alert.mail.user></alert.mail.user>
+	<alert.mail.debug></alert.mail.debug>
       </properties>
     </profile>
   </profiles>
