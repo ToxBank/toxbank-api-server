@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,7 +63,7 @@ public class SimpleNotificationTestCase {
         }
         return matchingUrls;
       }
-      public List<AbstractToxBankResource> getResources(List<URL> urls) throws Exception {
+      public List<AbstractToxBankResource> getResources(List<URL> urls, String ssoToken) throws Exception {
         List<AbstractToxBankResource> resources = new ArrayList<AbstractToxBankResource>();
         for (URL url : urls) {
           for (AbstractToxBankResource resource : testResources) {
@@ -93,11 +92,6 @@ public class SimpleNotificationTestCase {
           throw new RuntimeException(e);
         }
       }    
-      @Override
-    	public List<AbstractToxBankResource> getResources(List<URL> urls,
-    			String ssoToken) throws Exception {
-    		return Collections.EMPTY_LIST;
-    	}
     });
     
     engine.sendAlerts(testUser, testAlerts, null);
