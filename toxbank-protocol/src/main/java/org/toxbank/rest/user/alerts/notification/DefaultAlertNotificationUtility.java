@@ -165,7 +165,7 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
     return null;
   }
   
-  private static Pattern investigationUrlPattern = Pattern.compile("(.*)/([0-9]+)");  
+  private static Pattern investigationUrlPattern = Pattern.compile("(.*)/([0-9\\-a-f]+)");  
   
   private Investigation retrieveInvestigation(URL url, String ssoToken) throws Exception {
     String urlString = url.toString();
