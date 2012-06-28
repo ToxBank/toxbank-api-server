@@ -198,7 +198,11 @@ public class NotificationResource<T> extends UserDBResource<T> {
 	@Override
 	protected Representation post(Representation entity, Variant variant)
 			throws ResourceException {
-		params = new Form(entity);
+		try {
+			params = entity.isAvailable()?new Form(entity):null;
+		} catch (Exception x) {
+			//should work with empty form as well
+		}
 		synchronized (this) {
 			return processAndGenerateTask(Method.POST, null, variant,true);
 		}
