@@ -1,38 +1,67 @@
 package org.toxbank.rest.user.alerts.notification;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.security.SecureRandom;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.mail.*;
+import javax.mail.Message;
 import javax.mail.Message.RecipientType;
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.net.ssl.*;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.security.cert.X509Certificate;
 
 import net.toxbank.client.io.rdf.InvestigationIO;
-import net.toxbank.client.resource.*;
+import net.toxbank.client.io.rdf.ProtocolIO;
+import net.toxbank.client.io.rdf.TOXBANK;
+import net.toxbank.client.resource.AbstractToxBankResource;
+import net.toxbank.client.resource.Investigation;
+import net.toxbank.client.resource.Protocol;
 
-import org.apache.http.*;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.*;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.protocol.HttpContext;
 import org.opentox.rest.RestException;
+import org.restlet.data.MediaType;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.ResIterator;
+import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
  * Default implementation of the utilities needed by the alert notification engine
@@ -50,6 +79,8 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
   private Properties config;
   private String configFile;
   private Logger log;
+  
+  
   
   /**
    * @param configFile the resource path to the configuration file
@@ -137,37 +168,92 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
   @Override
   public List<AbstractToxBankResource> getResources(List<URL> urls, String ssoToken) throws Exception {
     List<AbstractToxBankResource> resultList = new ArrayList<AbstractToxBankResource>();
-    
+	/**
+	 * Initializing HTTP client and 
+	 */
+    HttpClient httpClient = createHTTPClient(ssoToken);
+    Model modelProtocols = ModelFactory.createDefaultModel();
     for (URL url : urls) {
-      String urlString = url.toString();
-      AbstractToxBankResource resource = null;
-      try {        
-        if (protocolUrlPattern.matcher(urlString).matches()) {
-          resource = retrieveProtocol(url);
+    	String urlString = url.toString();
+      	AbstractToxBankResource resource = null;
+      	//we could have separate threads at least for both resources
+        if (protocolUrlPattern.matcher(urlString).matches()) try {
+          retrieveProtocol(httpClient, url,modelProtocols);
+        } catch (Exception x) {
+        	//do we need to throw exception? some of the resources could be protected, 
+        	//even if the URIs are returned by the search service
+        	//throw new RuntimeException("Error getting resource: " + url, e);
         }
-        else {
-          resource = retrieveInvestigation(url, ssoToken);
+        try {
+          resource = retrieveInvestigation(httpClient, url);
+          if (resource != null) 
+        	  resultList.add(resource);
+        }  catch (Exception e) {
+        	throw new RuntimeException("Error getting resource: " + url, e);
         }
-        if (resource != null) {
-          resultList.add(resource);
-        }
-      }
-      catch (Exception e) {
-        throw new RuntimeException("Error getting resource: " + url, e);
-      }
     }
+    /**
+     * now read the protocols directly into the resultList
+     */
+    ProtocolIO protocolIO = new ProtocolIO();
+	ResIterator resourceIterator = modelProtocols.listResourcesWithProperty(RDF.type, TOXBANK.PROTOCOL);
+	while (resourceIterator.hasNext()) {
+		Protocol item = protocolIO.fromJena(modelProtocols,resourceIterator.next());
+		resultList.add(item);
+	}
+	
+    //close the client
+    try {
+  		if (httpClient !=null) {
+			httpClient.getConnectionManager().shutdown();
+			httpClient = null;
+		}
+      } catch (Exception x) {}
     
     return resultList;
   }
   
-  private Protocol retrieveProtocol(URL url) throws Exception {
-    // implement once decided how to do so
-    return null;
+  /**
+   * @param httpClient
+   * @param url
+   * @return
+   * @throws Exception
+   */
+  private int retrieveProtocol(HttpClient httpClient, URL url, Model model) throws Exception {
+	    String urlString = url.toString();
+	    Matcher matcher = protocolUrlPattern.matcher(urlString.toString());
+	    if (!matcher.matches()) {
+	      throw new RuntimeException("Invalid protocol url: " + urlString);
+	    }
+	    String rootUrl = matcher.group(1);
+	    
+	    HttpGet httpGet = new HttpGet(urlString);
+	    httpGet.addHeader("Accept", MediaType.APPLICATION_RDF_XML.toString());
+	    httpGet.addHeader("Accept-Charset", "utf-8");
+	    
+	    InputStream in = null;
+	    try {
+	      HttpResponse response = httpClient.execute(httpGet);
+	      HttpEntity entity  = response.getEntity();
+	      in = entity.getContent();
+	      if (response.getStatusLine().getStatusCode()== HttpStatus.SC_OK) {
+	    	  model.read(in, rootUrl.toString(), "RDF/XML");
+	    	  return 1;
+	      }
+	      else {
+	        throw new RestException(response.getStatusLine().getStatusCode(),response.getStatusLine().getReasonPhrase());
+	      }
+	    }
+	    finally {
+	      if (in != null) {
+	        try { in.close(); } catch (Exception e) { }
+	      }
+	    }
   }
   
   private static Pattern investigationUrlPattern = Pattern.compile("(.*)/([0-9]+)");  
   
-  private Investigation retrieveInvestigation(URL url, String ssoToken) throws Exception {
+  private Investigation retrieveInvestigation(HttpClient httpClient, URL url) throws Exception {
     String urlString = url.toString();
     Matcher matcher = investigationUrlPattern.matcher(urlString.toString());
     if (!matcher.matches()) {
@@ -178,8 +264,6 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
     
     Model model = ModelFactory.createDefaultModel();
 
-    HttpClient httpClient = createHTTPClient(ssoToken);
-    
     HttpGet httpGet = new HttpGet(urlString + "/metadata");
     httpGet.addHeader("Accept", "application/rdf+xml");
     httpGet.addHeader("Accept-Charset", "utf-8");

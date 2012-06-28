@@ -51,19 +51,22 @@ public class CallableNotification extends CallableDBUpdateTask<DBUser,Form,Strin
 	protected IQueryUpdate<Object, DBUser> createUpdate(DBUser user)
 			throws Exception {
 		if (Method.POST.equals(method)) try {
-			OpenSSOServicesConfig config = OpenSSOServicesConfig.getInstance();
-			OpenSSOToken ssoToken = new OpenSSOToken(config.getOpenSSOService());
-			ssoToken.setToken(getToken());
-			Hashtable<String,String> results = new Hashtable<String, String>();
-			ssoToken.getAttributes(new String[] {"mail"}, results);
-			String email = results.get("mail");
-			if ((email==null) || "".equals(email)) 
-						throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,String.format("Invalid email address for [%s]",user.getUserName()));
-			Account account = new Account();
-			account.setService("mailto");
-			account.setAccountName(email);
-			account.setResourceURL(new URL(String.format("%s:%s",account.getService(),URLEncoder.encode(email))));
-			user.addAccount(account);
+			//user email should be already read from the protocol service
+			if (user.getEmail()==null) {
+				OpenSSOServicesConfig config = OpenSSOServicesConfig.getInstance();
+				OpenSSOToken ssoToken = new OpenSSOToken(config.getOpenSSOService());
+				ssoToken.setToken(getToken());
+				Hashtable<String,String> results = new Hashtable<String, String>();
+				ssoToken.getAttributes(new String[] {"mail"}, results);
+				String email = results.get("mail");
+				if ((email==null) || "".equals(email)) 
+							throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,String.format("Invalid email address for [%s]",user.getUserName()));
+				Account account = new Account();
+				account.setService("mailto");
+				account.setAccountName(email);
+				account.setResourceURL(new URL(String.format("%s:%s",account.getService(),URLEncoder.encode(email))));
+				user.addAccount(account);
+			}
 			if (notification.sendAlerts(user,user.getAlerts(), getToken())) {
 			//		return new UpdateAlertSentTimeStamp(user.getAlerts());
 				//TODO
