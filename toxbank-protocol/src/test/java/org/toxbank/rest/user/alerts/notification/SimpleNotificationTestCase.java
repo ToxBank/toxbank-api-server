@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -92,6 +93,11 @@ public class SimpleNotificationTestCase {
           throw new RuntimeException(e);
         }
       }    
+      @Override
+    	public List<AbstractToxBankResource> getResources(List<URL> urls,
+    			String ssoToken) throws Exception {
+    		return Collections.EMPTY_LIST;
+    	}
     });
     
     engine.sendAlerts(testUser, testAlerts, null);
