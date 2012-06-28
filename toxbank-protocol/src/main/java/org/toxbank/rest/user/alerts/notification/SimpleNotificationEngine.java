@@ -47,7 +47,7 @@ public class SimpleNotificationEngine implements INotificationEngine {
 	 * @return ? 
 	 */
   @Override
-	public boolean sendAlerts(User user, List<? extends Alert> alerts, String token) throws Exception {
+  public boolean sendAlerts(User user, List<? extends Alert> alerts, String token) throws Exception {
     String email = getEmail(user);
     if (email != null) {
       List<AlertResult> results = new ArrayList<AlertResult>();
@@ -63,8 +63,8 @@ public class SimpleNotificationEngine implements INotificationEngine {
       }
     }
     
-		return true;
-	}
+    return true;
+  }
   
   private static class AlertResult {
     public final Alert alert;
