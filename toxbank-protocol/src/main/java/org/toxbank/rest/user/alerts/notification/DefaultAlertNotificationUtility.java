@@ -80,8 +80,6 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
   private String configFile;
   private Logger log;
   
-  
-  
   /**
    * @param configFile the resource path to the configuration file
    */
@@ -94,6 +92,12 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
       config.load(getClass().getClassLoader().getResourceAsStream(configFile));
       adminEmail = config.getProperty(ADMIN_EMAIL_PROP);
       searchServiceUrl = config.getProperty(SEARCH_SERVICE_URL_PROP);  
+      if (searchServiceUrl.endsWith("/")) {
+        searchServiceUrl = searchServiceUrl.substring(0, searchServiceUrl.length()-1);
+      }
+      if (!searchServiceUrl.endsWith("/search")) {
+        searchServiceUrl += "/search";
+      }
       uiServiceUrl = config.getProperty(UI_SERVICE_URL_PROP);  
       
       mailSession = Session.getInstance(config);
@@ -168,48 +172,49 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
   @Override
   public List<AbstractToxBankResource> getResources(List<URL> urls, String ssoToken) throws Exception {
     List<AbstractToxBankResource> resultList = new ArrayList<AbstractToxBankResource>();
-	/**
-	 * Initializing HTTP client and 
-	 */
+    /**
+     * Initializing HTTP client and 
+     */
     HttpClient httpClient = createHTTPClient(ssoToken);
     Model modelProtocols = ModelFactory.createDefaultModel();
     for (URL url : urls) {
-    	String urlString = url.toString();
-      	AbstractToxBankResource resource = null;
-      	//we could have separate threads at least for both resources
-        if (protocolUrlPattern.matcher(urlString).matches()) try {
-          retrieveProtocol(httpClient, url,modelProtocols);
-        } catch (Exception x) {
-        	//do we need to throw exception? some of the resources could be protected, 
-        	//even if the URIs are returned by the search service
-        	//throw new RuntimeException("Error getting resource: " + url, e);
-        }
-        try {
-          resource = retrieveInvestigation(httpClient, url);
-          if (resource != null) 
-        	  resultList.add(resource);
-        }  catch (Exception e) {
-        	throw new RuntimeException("Error getting resource: " + url, e);
-        }
+      String urlString = url.toString();
+      AbstractToxBankResource resource = null;
+      //we could have separate threads at least for both resources
+      if (protocolUrlPattern.matcher(urlString).matches()) try {
+        retrieveProtocol(httpClient, url,modelProtocols);
+      } catch (Exception x) {
+        //do we need to throw exception? some of the resources could be protected, 
+        //even if the URIs are returned by the search service
+        //throw new RuntimeException("Error getting resource: " + url, e);
+      }
+      try {
+        resource = retrieveInvestigation(httpClient, url);
+        if (resource != null) 
+          resultList.add(resource);
+      } catch (Exception e) {
+        throw new RuntimeException("Error getting resource: " + url, e);
+      }
     }
+
     /**
      * now read the protocols directly into the resultList
      */
     ProtocolIO protocolIO = new ProtocolIO();
-	ResIterator resourceIterator = modelProtocols.listResourcesWithProperty(RDF.type, TOXBANK.PROTOCOL);
-	while (resourceIterator.hasNext()) {
-		Protocol item = protocolIO.fromJena(modelProtocols,resourceIterator.next());
-		resultList.add(item);
-	}
-	
+    ResIterator resourceIterator = modelProtocols.listResourcesWithProperty(RDF.type, TOXBANK.PROTOCOL);
+    while (resourceIterator.hasNext()) {
+      Protocol item = protocolIO.fromJena(modelProtocols,resourceIterator.next());
+      resultList.add(item);
+    }
+
     //close the client
     try {
-  		if (httpClient !=null) {
-			httpClient.getConnectionManager().shutdown();
-			httpClient = null;
-		}
-      } catch (Exception x) {}
-    
+      if (httpClient !=null) {
+        httpClient.getConnectionManager().shutdown();
+        httpClient = null;
+      }
+    } catch (Exception x) {}
+
     return resultList;
   }
   
