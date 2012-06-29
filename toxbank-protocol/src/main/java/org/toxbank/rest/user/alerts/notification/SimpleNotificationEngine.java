@@ -3,8 +3,15 @@ package org.toxbank.rest.user.alerts.notification;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.toxbank.client.resource.*;
+import net.toxbank.client.resource.AbstractToxBankResource;
+import net.toxbank.client.resource.Account;
+import net.toxbank.client.resource.Alert;
+import net.toxbank.client.resource.Investigation;
+import net.toxbank.client.resource.Protocol;
+import net.toxbank.client.resource.User;
 
 /**
  * Handles the querying of alerts and notification of users via email when an
@@ -13,10 +20,9 @@ import net.toxbank.client.resource.*;
 @SuppressWarnings("rawtypes")
 public class SimpleNotificationEngine implements INotificationEngine {
   public static final String notificationSubject = "ToxBank Alert Updates";
-  
   private static final String EMAIL_SERVICE_NAME = "mailto";
   private static final String configFile = "conf/tbalert.pref";
-      
+  private static Logger log  = Logger.getLogger("org.toxbank.rest.user.alerts.notification"); 
   private AlertNotificationUtility utility;
   
   /**
@@ -133,15 +139,15 @@ public class SimpleNotificationEngine implements INotificationEngine {
       appendSummary(sb, result.alert);
       List<AbstractToxBankResource> resources = utility.getResources(result.matchingUrls, token);
       for (AbstractToxBankResource resource : resources) {
-        if (resource instanceof Protocol) {
+        if (resource instanceof Protocol) 
           appendSummary(sb, (Protocol)resource);          
-        }
-        else if (resource instanceof Investigation) {
-          appendSummary(sb, (Investigation)resource);
-        }
-        else {
-          throw new RuntimeException("Unsupported resource type: " + resource.getClass());
-        }
+        else 
+          if (resource instanceof Investigation) {
+        	  appendSummary(sb, (Investigation)resource);
+          } else { 
+				log.log(Level.WARNING,  String.format("Unsupported resource type: ", resource.getClass()));
+          //throw new RuntimeException("Unsupported resource type: " + resource.getClass());
+          }	 
       }
       
       sb.append("</div>\n");

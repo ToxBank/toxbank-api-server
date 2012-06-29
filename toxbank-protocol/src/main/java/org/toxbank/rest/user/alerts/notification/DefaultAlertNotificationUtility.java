@@ -181,20 +181,26 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
       String urlString = url.toString();
       AbstractToxBankResource resource = null;
       //we could have separate threads at least for both resources
-      if (protocolUrlPattern.matcher(urlString).matches()) try {
-        retrieveProtocol(httpClient, url,modelProtocols);
-      } catch (Exception x) {
-        //do we need to throw exception? some of the resources could be protected, 
-        //even if the URIs are returned by the search service
-        //throw new RuntimeException("Error getting resource: " + url, e);
-      }
-      try {
-        resource = retrieveInvestigation(httpClient, url);
-        if (resource != null) 
-          resultList.add(resource);
-      } catch (Exception e) {
-        throw new RuntimeException("Error getting resource: " + url, e);
-      }
+      if (protocolUrlPattern.matcher(urlString).matches()) 
+	      try {
+	        retrieveProtocol(httpClient, url,modelProtocols);
+	      } catch (RestException x) {      
+	    	  log.log(Level.WARNING, String.format("Error [%d %s] retrieving protocol %s",x.getStatus(),x.getMessage(),url), x);
+	      } catch (Exception x) {
+	    	  log.log(Level.WARNING, String.format("Error retrieving protocol %s",url), x);
+	        //do we need to throw exception? some of the resources could be protected, 
+	        //even if the URIs are returned by the search service
+	        //throw new RuntimeException("Error getting resource: " + url, e);
+	      }
+      else
+	      try {
+	        resource = retrieveInvestigation(httpClient, url);
+	        if (resource != null) 
+	          resultList.add(resource);
+	      } catch (Exception e) {
+	    	  log.log(Level.WARNING, String.format("Error retrieving investigation %s",url), e);
+	    	  //throw new RuntimeException("Error getting resource: " + url, e);
+	      }
     }
 
     /**
@@ -213,7 +219,9 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
         httpClient.getConnectionManager().shutdown();
         httpClient = null;
       }
-    } catch (Exception x) {}
+    } catch (Exception x) {
+    	log.log(Level.WARNING, x.getMessage(), x);
+    }
 
     return resultList;
   }
@@ -230,7 +238,6 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
 	    if (!matcher.matches()) {
 	      throw new RuntimeException("Invalid protocol url: " + urlString);
 	    }
-	    String rootUrl = matcher.group(1);
 	    
 	    HttpGet httpGet = new HttpGet(urlString);
 	    httpGet.addHeader("Accept", MediaType.APPLICATION_RDF_XML.toString());
@@ -242,7 +249,7 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
 	      HttpEntity entity  = response.getEntity();
 	      in = entity.getContent();
 	      if (response.getStatusLine().getStatusCode()== HttpStatus.SC_OK) {
-	    	  model.read(in, rootUrl.toString(), "RDF/XML");
+	    	  model.read(in, null, "RDF/XML");
 	    	  return 1;
 	      }
 	      else {
