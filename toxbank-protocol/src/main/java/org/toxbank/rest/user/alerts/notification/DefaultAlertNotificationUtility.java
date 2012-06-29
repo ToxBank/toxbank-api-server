@@ -2,6 +2,7 @@ package org.toxbank.rest.user.alerts.notification;
 
 import java.io.*;
 import java.net.*;
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,7 +16,6 @@ import javax.mail.PasswordAuthentication;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.net.ssl.*;
-import javax.security.cert.X509Certificate;
 
 import net.toxbank.client.io.rdf.*;
 import net.toxbank.client.resource.*;
@@ -25,6 +25,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.*;
+import org.apache.http.conn.ssl.X509HostnameVerifier;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.protocol.HttpContext;
@@ -44,7 +46,6 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
   
   private static String SMTP_AUTH_PROP = "mail.smtp.auth";
   private static String SMTP_USER_PROP = "mail.user";
-  private static String SMTP_HOST_PROP = "mail.host";
   private static String SMTP_PASSWORD_PROP = "alert.mail.password";
   
   private String searchServiceUrl;
@@ -54,7 +55,6 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
   private String mailUser;
   private String mailPassword;
   private boolean useMailAuth; 
-  private String mailHost;
   
   private Session mailSession;  
   private Properties config;
@@ -84,7 +84,6 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
       mailUser = config.getProperty(SMTP_USER_PROP);
       mailPassword = config.getProperty(SMTP_PASSWORD_PROP);
       useMailAuth = "true".equalsIgnoreCase(config.getProperty(SMTP_AUTH_PROP));
-      mailHost = config.getProperty(SMTP_HOST_PROP);
       
       if (useMailAuth) {
         Authenticator auth = new Authenticator() {
@@ -397,7 +396,6 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
     
     SSLSocketFactory sslSocketFactory = new SSLSocketFactory(sslContext, new X509HostnameVerifier() {
       public void verify(String host, SSLSocket ssl) throws IOException { }
-      public void verify(String host, X509Certificate cert) throws SSLException { }
       public void verify(String host, String[] cns, String[] subjectAlts) throws SSLException { }
       public boolean verify(String arg0, SSLSession arg1) {
         return true;
