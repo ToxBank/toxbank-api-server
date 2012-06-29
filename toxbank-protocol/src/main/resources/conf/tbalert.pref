@@ -6,6 +6,7 @@ mail.transport.protocol=${alert.mail.transport.protocol}
 mail.host=${alert.mail.host}
 mail.user=${alert.mail.user}
 mail.smtp.auth=${alert.mail.smtp.auth}
+mail.smtp.starttls.enable=${alert.mail.smtp.starttls.enable}
 mail.debug=${alert.mail.debug}
 
 alert.mail.password=${alert.mail.password}
