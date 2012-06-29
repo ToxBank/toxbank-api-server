@@ -1,66 +1,37 @@
 package org.toxbank.rest.user.alerts.notification;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.mail.Message;
+import javax.mail.*;
 import javax.mail.Message.RecipientType;
-import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.Authenticator;
+import javax.mail.PasswordAuthentication;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.*;
 import javax.security.cert.X509Certificate;
 
-import net.toxbank.client.io.rdf.InvestigationIO;
-import net.toxbank.client.io.rdf.ProtocolIO;
-import net.toxbank.client.io.rdf.TOXBANK;
-import net.toxbank.client.resource.AbstractToxBankResource;
-import net.toxbank.client.resource.Investigation;
-import net.toxbank.client.resource.Protocol;
+import net.toxbank.client.io.rdf.*;
+import net.toxbank.client.resource.*;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
+import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
+import org.apache.http.conn.scheme.*;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.protocol.HttpContext;
 import org.opentox.rest.RestException;
 import org.restlet.data.MediaType;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.ResIterator;
+import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
@@ -71,10 +42,20 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
   private static String UI_SERVICE_URL_PROP = "alert.ui.service.url";
   private static String SEARCH_SERVICE_URL_PROP = "alert.search.service.url";
   
+  private static String SMTP_AUTH_PROP = "mail.smtp.auth";
+  private static String SMTP_USER_PROP = "mail.user";
+  private static String SMTP_HOST_PROP = "mail.host";
+  private static String SMTP_PASSWORD_PROP = "alert.mail.password";
+  
   private String searchServiceUrl;
   private String uiServiceUrl;
   
   private String adminEmail;
+  private String mailUser;
+  private String mailPassword;
+  private boolean useMailAuth; 
+  private String mailHost;
+  
   private Session mailSession;  
   private Properties config;
   private String configFile;
@@ -100,7 +81,22 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
       }
       uiServiceUrl = config.getProperty(UI_SERVICE_URL_PROP);  
       
-      mailSession = Session.getInstance(config);
+      mailUser = config.getProperty(SMTP_USER_PROP);
+      mailPassword = config.getProperty(SMTP_PASSWORD_PROP);
+      useMailAuth = "true".equalsIgnoreCase(config.getProperty(SMTP_AUTH_PROP));
+      mailHost = config.getProperty(SMTP_HOST_PROP);
+      
+      if (useMailAuth) {
+        Authenticator auth = new Authenticator() {
+          public PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication(mailUser, mailPassword);
+          }
+        };
+        mailSession = Session.getInstance(config, auth);
+      }
+      else {
+        mailSession = Session.getInstance(config);
+      }
     }
     catch (Exception e) {
       log.log(Level.SEVERE, "Error getting alerts configuration", e);
@@ -119,13 +115,27 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
       msg.setFrom(new InternetAddress(adminEmail));
       msg.setRecipient(RecipientType.TO, new InternetAddress(toEmail));
       msg.setContent(content, mimeType);
-      Transport.send(msg);
+      
+      if (useMailAuth) {
+        Transport tr = mailSession.getTransport();
+        try {
+          tr.connect();
+          msg.saveChanges();
+          tr.sendMessage(msg, msg.getAllRecipients());
+        }
+        finally {
+          try { tr.close(); } catch (Exception e) {}
+        }
+      }
+      else {
+        Transport.send(msg);
+      }
     }
     else {
       log.log(Level.SEVERE, "Tried to send alert notification but the mail session has not been configured");
     }
-  }
-
+  } 
+  
   private static Pattern protocolUrlPattern = Pattern.compile(".+/protocol/.+");
   
   private static final Pattern urlPattern = Pattern.compile(".*<string>(.+)<\\/string>.*");
