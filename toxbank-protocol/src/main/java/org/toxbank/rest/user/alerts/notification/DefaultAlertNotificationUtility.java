@@ -120,7 +120,7 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
        */
       MailSSLSocketFactory socketFactory= new MailSSLSocketFactory();
       socketFactory.setTrustAllHosts(true);
-      config.put("mail.imaps.ssl.socketFactory", socketFactory);
+      config.put("mail.smtp.ssl.socketFactory", socketFactory);
       
       if (useMailAuth) {
         Authenticator auth = new Authenticator() {
