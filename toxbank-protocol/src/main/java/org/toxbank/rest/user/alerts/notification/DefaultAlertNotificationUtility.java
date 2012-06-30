@@ -1,40 +1,70 @@
 package org.toxbank.rest.user.alerts.notification;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.security.SecureRandom;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.mail.*;
-import javax.mail.Message.RecipientType;
 import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.Message.RecipientType;
+import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.net.ssl.*;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
-import net.toxbank.client.io.rdf.*;
-import net.toxbank.client.resource.*;
+import net.toxbank.client.io.rdf.InvestigationIO;
+import net.toxbank.client.io.rdf.ProtocolIO;
+import net.toxbank.client.io.rdf.TOXBANK;
+import net.toxbank.client.resource.AbstractToxBankResource;
+import net.toxbank.client.resource.Investigation;
+import net.toxbank.client.resource.Protocol;
 
-import org.apache.http.*;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.*;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.protocol.HttpContext;
 import org.opentox.rest.RestException;
 import org.restlet.data.MediaType;
 
-import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
+import com.sun.mail.util.MailSSLSocketFactory;
 
 /**
  * Default implementation of the utilities needed by the alert notification engine
@@ -85,6 +115,13 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
       mailPassword = config.getProperty(SMTP_PASSWORD_PROP);
       useMailAuth = "true".equalsIgnoreCase(config.getProperty(SMTP_AUTH_PROP));
       
+      /*
+       * A workaround to trust all certificates. Better to import the cert in the server key store
+       */
+      MailSSLSocketFactory socketFactory= new MailSSLSocketFactory();
+      socketFactory.setTrustAllHosts(true);
+      config.put("mail.imaps.ssl.socketFactory", socketFactory);
+      
       if (useMailAuth) {
         Authenticator auth = new Authenticator() {
           public PasswordAuthentication getPasswordAuthentication() {
@@ -107,7 +144,7 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
       String toEmail, 
       String subject, 
       Object content, 
-      String mimeType) throws Exception {
+      String mimeType) throws MessagingException {
     if (mailSession != null) {
       Message msg = new MimeMessage(mailSession);
       msg.setSubject(subject);
@@ -179,7 +216,7 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
   }
   
   @Override
-  public List<AbstractToxBankResource> getResources(List<URL> urls, String ssoToken) throws Exception {
+  public List<AbstractToxBankResource> getResources(List<URL> urls, String ssoToken) throws RestException {
     List<AbstractToxBankResource> resultList = new ArrayList<AbstractToxBankResource>();
     /**
      * Initializing HTTP client and 

@@ -9,10 +9,17 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.mail.MessagingException;
+
 import junit.framework.TestCase;
-import net.toxbank.client.resource.*;
+import net.toxbank.client.resource.AbstractToxBankResource;
+import net.toxbank.client.resource.Alert;
+import net.toxbank.client.resource.Investigation;
+import net.toxbank.client.resource.Protocol;
+import net.toxbank.client.resource.User;
 
 import org.junit.Test;
+import org.opentox.rest.RestException;
 
 public class SimpleNotificationTestCase {  
   Pattern paramStringPattern = Pattern.compile("\\?mod=([0-9]+)");
@@ -39,11 +46,8 @@ public class SimpleNotificationTestCase {
     final User testUser = createTestUser();
         
     SimpleNotificationEngine engine = new SimpleNotificationEngine(new AlertNotificationUtility (){
-      public void sendNotification(
-          String toEmail, 
-          String subject, 
-          Object content, 
-          String mimeType) throws Exception {
+    	public void sendNotification(String toEmail, String subject, Object content, String mimeType) throws 
+    			java.io.IOException ,RestException ,RuntimeException ,MessagingException {
         TestCase.assertEquals(testUser.getEmail(), toEmail);
         TestCase.assertEquals(subject, SimpleNotificationEngine.notificationSubject);
         TestCase.assertEquals("text/html", mimeType);
@@ -63,7 +67,7 @@ public class SimpleNotificationTestCase {
         }
         return matchingUrls;
       }
-      public List<AbstractToxBankResource> getResources(List<URL> urls, String ssoToken) throws Exception {
+      public List<AbstractToxBankResource> getResources(List<URL> urls, String ssoToken) throws RestException,RuntimeException {
         List<AbstractToxBankResource> resources = new ArrayList<AbstractToxBankResource>();
         for (URL url : urls) {
           for (AbstractToxBankResource resource : testResources) {

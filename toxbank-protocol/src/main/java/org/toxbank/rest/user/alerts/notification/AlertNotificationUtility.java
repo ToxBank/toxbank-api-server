@@ -1,9 +1,16 @@
 package org.toxbank.rest.user.alerts.notification;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-import net.toxbank.client.resource.*;
+import javax.mail.MessagingException;
+
+import net.toxbank.client.resource.AbstractToxBankResource;
+import net.toxbank.client.resource.Investigation;
+import net.toxbank.client.resource.Protocol;
+
+import org.opentox.rest.RestException;
 
 /**
  * Interface to something that can send submissions
@@ -19,7 +26,7 @@ public interface AlertNotificationUtility {
       String toEmail, 
       String subject,
       Object content,
-      String mimeType) throws Exception;
+      String mimeType) throws IOException, RestException, RuntimeException,MessagingException ;
   
   /**
    * Queries the search service
@@ -35,7 +42,7 @@ public interface AlertNotificationUtility {
    * @param ssoToken an sso token to use when to connecting to the resource services
    * @return list of resources matching the urls
    */
-  public List<AbstractToxBankResource> getResources(List<URL> urls, String ssoToken) throws Exception;
+  public List<AbstractToxBankResource> getResources(List<URL> urls, String ssoToken) throws RestException,RuntimeException;
   
   /**
    * Gets the url to access the protocol through the UI

@@ -1,10 +1,13 @@
 package org.toxbank.rest.user.alerts.notification;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.mail.MessagingException;
 
 import net.toxbank.client.resource.AbstractToxBankResource;
 import net.toxbank.client.resource.Account;
@@ -12,6 +15,8 @@ import net.toxbank.client.resource.Alert;
 import net.toxbank.client.resource.Investigation;
 import net.toxbank.client.resource.Protocol;
 import net.toxbank.client.resource.User;
+
+import org.opentox.rest.RestException;
 
 /**
  * Handles the querying of alerts and notification of users via email when an
@@ -128,7 +133,7 @@ public class SimpleNotificationEngine implements INotificationEngine {
     return null;
   }
       
-  private void sendNotification(String userEmail, List<AlertResult> results, String token) throws Exception {
+  private void sendNotification(String userEmail, List<AlertResult> results, String token) throws IOException, RestException, RuntimeException,MessagingException {
     StringBuilder sb = new StringBuilder();
     sb.append("<html>\n");
     appendStyle(sb);
