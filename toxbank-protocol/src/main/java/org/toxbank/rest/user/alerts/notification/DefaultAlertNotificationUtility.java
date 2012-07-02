@@ -117,11 +117,11 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
       
       /*
        * A workaround to trust all certificates. Better to import the cert in the server key store
-       */
+	   * Now we have the cert imported.	
       MailSSLSocketFactory socketFactory= new MailSSLSocketFactory();
       socketFactory.setTrustAllHosts(true);
       config.put("mail.smtp.ssl.socketFactory", socketFactory);
-      
+             */
       if (useMailAuth) {
         Authenticator auth = new Authenticator() {
           public PasswordAuthentication getPasswordAuthentication() {
