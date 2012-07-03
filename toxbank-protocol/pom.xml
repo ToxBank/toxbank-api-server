@@ -82,6 +82,13 @@
   </plugins>
   </pluginManagement>
   <plugins>
+  <plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>exec-maven-plugin</artifactId>
+    <configuration>
+      <mainClass>org.toxbank.rest.user.alerts.notification.SendMailTest</mainClass>
+    </configuration>
+   </plugin>
   </plugins>
   </build>
   <reporting>
