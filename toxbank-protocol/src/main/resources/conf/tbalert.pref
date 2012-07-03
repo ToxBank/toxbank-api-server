@@ -8,6 +8,6 @@ mail.user=${alert.mail.user}
 mail.smtp.auth=${alert.mail.smtp.auth}
 mail.smtp.starttls.enable=${alert.mail.smtp.starttls.enable}
 mail.debug=${alert.mail.debug}
-mail.smtp.protocol=${alert.mail.smtp.protocol}
+mail.smtp.port=${alert.mail.smtp.port}
 alert.mail.password=${alert.mail.password}
 
