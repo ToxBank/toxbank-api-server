@@ -87,6 +87,7 @@
     <artifactId>exec-maven-plugin</artifactId>
     <configuration>
       <mainClass>org.toxbank.rest.user.alerts.notification.SendMailTest</mainClass>
+      <classpathScope>test</classpathScope>
     </configuration>
    </plugin>
   </plugins>
