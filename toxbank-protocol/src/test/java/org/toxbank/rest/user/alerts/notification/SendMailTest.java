@@ -1,5 +1,7 @@
 package org.toxbank.rest.user.alerts.notification;
 
+import org.junit.Test;
+
 
 public class SendMailTest {
 	private static final String configFile = "conf/tbalert.pref";
@@ -15,5 +17,10 @@ public class SendMailTest {
 			x.printStackTrace();
 		}
 
+	}
+	
+	@Test
+	public void test() {
+		
 	}
 }
