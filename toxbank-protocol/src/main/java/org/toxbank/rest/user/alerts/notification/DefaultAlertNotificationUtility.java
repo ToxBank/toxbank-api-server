@@ -64,7 +64,6 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
-import com.sun.mail.util.MailSSLSocketFactory;
 
 /**
  * Default implementation of the utilities needed by the alert notification engine
