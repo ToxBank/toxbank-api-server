@@ -3,11 +3,11 @@
   <parent>
     <artifactId>toxbank-rest</artifactId>
     <groupId>org.toxbank</groupId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
   </parent>
   <groupId>org.toxbank</groupId>
   <artifactId>toxbank-protocol</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
   <name>Protocol resource implementation</name>
   <dependencies>
         <dependency>
@@ -73,7 +73,7 @@
          <version>2.5</version>
         <configuration>
                 <nonFilteredFileExtensions>
-                <nonFilteredFileExtension></nonFilteredFileExtension>
+                <nonFilteredFileExtension />
                    <nonFilteredFileExtension>pdf</nonFilteredFileExtension>
                    <nonFilteredFileExtension>sql</nonFilteredFileExtension>
                 </nonFilteredFileExtensions>
