@@ -3,11 +3,11 @@
   <parent>
     <artifactId>toxbank-rest</artifactId>
     <groupId>org.toxbank</groupId>
-    <version>0.0.1</version>
+    <version>0.0.2-SNAPSHOT</version>
   </parent>
   <groupId>org.toxbank</groupId>
   <artifactId>toxbank-protocol</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2-SNAPSHOT</version>
   <name>Protocol resource implementation</name>
   <dependencies>
         <dependency>
