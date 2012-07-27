@@ -16,10 +16,10 @@
     <restnet.version>0.0.5</restnet.version>
   </properties>
   <issueManagement>
-    <url>https://github.com/ToxBank/toxbank-api-server/issues</url>
+  	<system>GitHub</system>
+  	<url>https://github.com/ToxBank/toxbank-api-server/issues</url>
   </issueManagement>
   <scm>
-    <connection>scm:git:git://github.com/ToxBank/toxbank-api-server.git</connection>
     <developerConnection>scm:git:git@github.com:ToxBank/toxbank-api-server.git</developerConnection>
     <url>https://github.com/ToxBank/toxbank-api-server</url>
   </scm>
@@ -250,7 +250,7 @@
   <distributionManagement>
     <snapshotRepository>
       <id>toxbank-snapshots</id>
-      <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/toxbank-snapshots/</url>
+      <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/toxbank-snapshots</url>
     </snapshotRepository>
     <repository>
       <id>toxbank-releases</id>
