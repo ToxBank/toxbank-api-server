@@ -116,8 +116,9 @@ public class ProtocolFactory {
 				case project_uri: {
 					String s = fi.getString(utf8);
 					if ((s!=null) && !"".equals(s)) {
-						Project p = protocol.getProject();
-						if (p==null) { p = new DBProject(); protocol.setProject(p);}
+						//TODO what do we do if there are projects already ? e.g. in update ?
+						Project p = new DBProject(); 
+						protocol.addProject(p);
 						if (s.startsWith("http"))
 							p.setResourceURL(new URL(s));
 						else p.setTitle(s);

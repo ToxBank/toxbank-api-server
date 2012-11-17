@@ -381,8 +381,8 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		URL url = getClass().getClassLoader().getResource("org/toxbank/protocol/protocol-sample.pdf");
 		File file = new File(url.getFile());
 		
-		String[] names = new String[ReadProtocol.fields.values().length];
-		String[] values = new String[ReadProtocol.fields.values().length];
+		String[] names = new String[ReadProtocol.fields.values().length+1];
+		String[] values = new String[ReadProtocol.fields.values().length+1];
 		int i=0;
 		for (ReadProtocol.fields field : ReadProtocol.entryFields) {
 			switch (field) {
@@ -443,6 +443,10 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		names[i] = ReadProtocol.fields.author_uri.name();
 		values[i+1] = null;
 		names[i+1] = ReadProtocol.fields.author_uri.name();
+		//second project
+		values[i+2] = String.format("http://localhost:%d%s/%s",port,Resources.project,"U2");
+		names[i+2] = ReadProtocol.fields.project_uri.name();
+		
 		Representation rep = getMultipartWebFormRepresentation(names,values,file,MediaType.APPLICATION_PDF.toString());
 		
         IDatabaseConnection c = getConnection();	
