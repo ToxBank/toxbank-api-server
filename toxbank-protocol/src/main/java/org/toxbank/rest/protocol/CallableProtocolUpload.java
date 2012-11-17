@@ -21,6 +21,7 @@ import net.toxbank.client.policy.GroupPolicyRule;
 import net.toxbank.client.policy.PolicyRule;
 import net.toxbank.client.policy.UserPolicyRule;
 import net.toxbank.client.resource.Group;
+import net.toxbank.client.resource.Project;
 import net.toxbank.client.resource.User;
 
 import org.apache.commons.fileupload.FileItem;
@@ -220,15 +221,22 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 						}	
 				}
 				//project
-				DBProject p = protocol.getProject() instanceof DBProject?
-							(DBProject)protocol.getProject():
-							new DBProject(protocol.getProject());
-			    protocol.setProject(p);
-			    if (p.getID()<=0) p.setID(p.parseURI(baseReference));
-				if (p.getID()<=0) {
-					CreateGroup q1 = new CreateGroup(p);
-					exec.process(q1);
-				}
+				if (protocol.getProjects()!=null)
+					for (int i=0; i < protocol.getProjects().size(); i++) {
+						DBProject p = null;
+						if (protocol.getProjects().get(i) instanceof DBProject) 
+							p = (DBProject)protocol.getProjects().get(i);
+						else {
+							p = new DBProject(protocol.getProjects().get(i));
+							protocol.setProject(i,p);
+						}
+						
+					    if (p.getID()<=0) p.setID(p.parseURI(baseReference));
+						if (p.getID()<=0) {
+							CreateGroup q1 = new CreateGroup(p);
+							exec.process(q1);
+						}
+					}
 				//organisation
 				DBOrganisation o = protocol.getOrganisation() instanceof DBOrganisation?
 						(DBOrganisation)protocol.getOrganisation():
@@ -312,10 +320,11 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 			newProtocol.setID(protocol.getID());
 			newProtocol.setVersion(protocol.getVersion());
 			newProtocol.setIdentifier(null);
-			if (newProtocol.getProject() != null) {
-				DBProject p = (DBProject) newProtocol.getProject();
-				p.setID(p.parseURI(baseReference));
-			}
+			if (newProtocol.getProjects() != null) 
+				for (Project project: newProtocol.getProjects()) {
+					DBProject p = (DBProject) project;
+					p.setID(p.parseURI(baseReference));
+				}
 			if (newProtocol.getOrganisation() != null) {
 				DBOrganisation p = (DBOrganisation) newProtocol.getOrganisation();
 				p.setID(p.parseURI(baseReference));

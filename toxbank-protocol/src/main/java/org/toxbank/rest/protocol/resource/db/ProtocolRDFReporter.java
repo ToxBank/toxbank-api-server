@@ -14,6 +14,7 @@ import net.idea.restnet.db.convertors.QueryRDFReporter;
 import net.toxbank.client.Resources;
 import net.toxbank.client.io.rdf.ProtocolIO;
 import net.toxbank.client.io.rdf.TOXBANK;
+import net.toxbank.client.resource.Project;
 
 import org.restlet.Request;
 import org.restlet.data.MediaType;
@@ -87,8 +88,10 @@ public class ProtocolRDFReporter<Q extends IQueryRetrieval<DBProtocol>> extends 
 	@Override
 	public Object processItem(DBProtocol item) throws AmbitException {
 		try {
-			if ((item.getProject()!=null) && (item.getProject().getResourceURL()==null))
-				item.getProject().setResourceURL(new URL(groupReporter.getURI((DBProject)item.getProject())));
+			if (item.getProjects()!=null)
+				for (Project project: item.getProjects()) 
+					if ((project!=null) && (project.getResourceURL()==null))
+						project.setResourceURL(new URL(groupReporter.getURI((DBProject)project)));
 			if ((item.getOrganisation()!=null) && (item.getOrganisation().getResourceURL()==null))
 				item.getOrganisation().setResourceURL(new URL(groupReporter.getURI((DBOrganisation)item.getOrganisation())));
 			if ((item.getOwner()!=null) && (item.getOwner().getResourceURL()==null))
