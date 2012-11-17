@@ -1,7 +1,6 @@
 package org.toxbank.rest.protocol.db.test;
 
 import java.math.BigInteger;
-import java.util.Date;
 
 import junit.framework.Assert;
 import net.idea.modbcum.i.query.IQueryUpdate;

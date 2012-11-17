@@ -20,7 +20,6 @@ import org.restlet.data.MediaType;
 import org.toxbank.rest.groups.DBOrganisation;
 import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.groups.IDBGroup;
-import org.toxbank.rest.groups.db.ReadProject;
 import org.toxbank.rest.groups.resource.GroupQueryURIReporter;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.user.DBUser;

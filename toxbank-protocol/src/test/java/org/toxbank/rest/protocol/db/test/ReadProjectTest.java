@@ -3,7 +3,6 @@ package org.toxbank.rest.protocol.db.test;
 import java.sql.ResultSet;
 
 import junit.framework.Assert;
-
 import net.toxbank.client.io.rdf.TOXBANK;
 
 import org.toxbank.rest.groups.DBProject;

@@ -1,9 +1,6 @@
 package org.toxbank.rest.protocol.db.test;
 
 import java.sql.ResultSet;
-import java.util.Date;
-
-import junit.framework.Assert;
 
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;

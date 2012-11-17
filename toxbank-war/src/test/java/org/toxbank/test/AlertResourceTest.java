@@ -3,9 +3,6 @@ package org.toxbank.test;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.math.BigInteger;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -13,7 +10,6 @@ import net.toxbank.client.Resources;
 import net.toxbank.client.io.rdf.AlertIO;
 import net.toxbank.client.resource.Alert;
 import net.toxbank.client.resource.Query;
-import net.toxbank.client.resource.User;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
@@ -25,8 +21,6 @@ import org.restlet.data.Method;
 import org.restlet.data.Reference;
 import org.restlet.data.Status;
 import org.restlet.representation.Representation;
-import org.toxbank.rest.groups.DBGroup;
-import org.toxbank.rest.groups.db.ReadProject;
 import org.toxbank.rest.user.alerts.db.DBAlert;
 import org.toxbank.rest.user.alerts.db.ReadAlert;
 

@@ -2,12 +2,9 @@ package org.toxbank.rest.user.alerts.resource;
 
 import java.net.URL;
 
-import net.idea.modbcum.i.IQueryCondition;
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
 import net.idea.modbcum.i.exceptions.DbAmbitException;
-import net.idea.modbcum.p.DefaultAmbitProcessor;
-import net.idea.modbcum.p.MasterDetailsProcessor;
 import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.db.convertors.QueryRDFReporter;
@@ -19,11 +16,6 @@ import net.toxbank.client.io.rdf.UserIO;
 
 import org.restlet.Request;
 import org.restlet.data.MediaType;
-import org.toxbank.rest.groups.DBOrganisation;
-import org.toxbank.rest.groups.DBProject;
-import org.toxbank.rest.groups.db.ReadOrganisation;
-import org.toxbank.rest.groups.db.ReadProject;
-import org.toxbank.rest.groups.resource.GroupQueryURIReporter;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.alerts.db.DBAlert;
 import org.toxbank.rest.user.resource.UserURIReporter;

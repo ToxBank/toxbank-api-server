@@ -8,7 +8,6 @@ import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.update.AbstractUpdate;
 
 import org.toxbank.rest.db.exceptions.InvalidProtocolException;
-import org.toxbank.rest.db.exceptions.InvalidUserException;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.user.DBUser;
 
