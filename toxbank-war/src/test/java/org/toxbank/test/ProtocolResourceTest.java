@@ -97,6 +97,7 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		Assert.assertNotNull(protocols.get(0).getOwner());
 		Assert.assertEquals(String.format("http://localhost:%d%s/U1",port,Resources.user),
 				protocols.get(0).getOwner().getResourceURL().toString());
+		Assert.assertEquals(1,protocols.get(0).getProjects().size());
 		//Assert.assertEquals("abcdef", protocols.get(0).getOwner().getFirstname());
 		return model;
 	}
@@ -332,6 +333,9 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		Assert.assertEquals(2,table.getRowCount());
 		Assert.assertEquals(new BigInteger("1"),table.getValue(0,"iduser"));
 		Assert.assertEquals(new BigInteger("2"),table.getValue(1,"iduser"));
+		
+		table = 	c.createQueryTable("EXPECTED","SELECT idprotocol,version,idproject from protocol_projects p where p.idprotocol=2 and version=1 order by idproject");
+		Assert.assertEquals(2,table.getRowCount());
 		c.close();
 	}
 	@Test
@@ -367,11 +371,13 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		Assert.assertEquals(new BigInteger("1"),table.getValue(0,"iduser"));
 		Assert.assertEquals(new BigInteger("2"),table.getValue(1,"iduser"));
 		Assert.assertEquals(STATUS.SOP.toString(),table.getValue(0,"status"));
-		
 		File f = new File(new URI(table.getValue(0,"filename").toString()));
 		//System.out.println(f);
 		Assert.assertTrue(f.exists());
 		f.delete();
+		//multiple projects
+		table = 	c.createQueryTable("EXPECTED","SELECT p.idprotocol,p.version,idproject from protocol p join protocol_projects pp where pp.idprotocol=p.idprotocol and p.version=pp.version and p.idprotocol>2 order by pp.idproject");
+		Assert.assertEquals(2,table.getRowCount());
 		c.close();
 	}
 	public String createEntryFromMultipartWeb(Reference uri) throws Exception {
@@ -444,7 +450,7 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		values[i+1] = null;
 		names[i+1] = ReadProtocol.fields.author_uri.name();
 		//second project
-		values[i+2] = String.format("http://localhost:%d%s/%s",port,Resources.project,"U2");
+		values[i+2] = String.format("http://localhost:%d%s/%s",port,Resources.project,"G2");
 		names[i+2] = ReadProtocol.fields.project_uri.name();
 		
 		Representation rep = getMultipartWebFormRepresentation(names,values,file,MediaType.APPLICATION_PDF.toString());

@@ -23,6 +23,7 @@ import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.groups.IDBGroup;
 import org.toxbank.rest.groups.resource.GroupQueryURIReporter;
 import org.toxbank.rest.protocol.DBProtocol;
+import org.toxbank.rest.protocol.projects.db.ReadProjectMembership;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.author.db.ReadAuthor;
 import org.toxbank.rest.user.resource.UserURIReporter;
@@ -47,8 +48,8 @@ public class ProtocolRDFReporter<Q extends IQueryRetrieval<DBProtocol>> extends 
 		groupReporter = new GroupQueryURIReporter<IQueryRetrieval<IDBGroup>>(request);
 		userReporter = new UserURIReporter<IQueryRetrieval<DBUser>>(request);
 		getProcessors().clear();
-		IQueryRetrieval<DBUser> queryP = new ReadAuthor(null,null); 
-		MasterDetailsProcessor<DBProtocol,DBUser,IQueryCondition> authersReader = new MasterDetailsProcessor<DBProtocol,DBUser,IQueryCondition>(queryP) {
+		IQueryRetrieval<DBUser> queryA = new ReadAuthor(null,null); 
+		MasterDetailsProcessor<DBProtocol,DBUser,IQueryCondition> authorsReader = new MasterDetailsProcessor<DBProtocol,DBUser,IQueryCondition>(queryA) {
 			@Override
 			protected DBProtocol processDetail(DBProtocol target, DBUser detail)
 					throws Exception {
@@ -58,7 +59,20 @@ public class ProtocolRDFReporter<Q extends IQueryRetrieval<DBProtocol>> extends 
 				return target;
 			}
 		};
-		getProcessors().add(authersReader);
+		getProcessors().add(authorsReader);
+		
+		IQueryRetrieval<DBProject> queryP = new ReadProjectMembership(null,new DBProject()); 
+		MasterDetailsProcessor<DBProtocol,DBProject,IQueryCondition> projectsReader = new MasterDetailsProcessor<DBProtocol,DBProject,IQueryCondition>(queryP) {
+			@Override
+			protected DBProtocol processDetail(DBProtocol target, DBProject detail)
+					throws Exception {
+				detail.setResourceURL(new URL(groupReporter.getURI(detail)));
+				target.addProject(detail);
+				return target;
+			}
+		};
+		getProcessors().add(projectsReader);
+		
 		processors.add(new DefaultAmbitProcessor<DBProtocol,DBProtocol>() {
 			@Override
 			public DBProtocol process(DBProtocol target) throws AmbitException {

@@ -43,6 +43,7 @@ public class DeleteProtocol extends AbstractObjectUpdate<DBProtocol> {
 	public static final String[] delete_sql = {
 		"delete from keywords where idprotocol=? and version=?",
 		"delete from protocol_authors where idprotocol=? and version=?",
+		"delete from protocol_projects where idprotocol=? and version=?",
 		"delete from protocol where idprotocol=? and version=?"
 		};
 

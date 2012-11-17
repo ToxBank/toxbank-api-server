@@ -47,6 +47,8 @@ CREATE TABLE  `project` (
   UNIQUE KEY `Index_2` (`name`),
   KEY `Index_3` (`cluster`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 -- -----------------------------------------------------
 -- User affiliations 
 -- -----------------------------------------------------
@@ -88,7 +90,6 @@ CREATE TABLE  `protocol` (
   `abstract` text,
   `summarySearchable` tinyint(1) NOT NULL DEFAULT '1',
   `iduser` int(10) unsigned NOT NULL COMMENT 'Link to user table',
-  `idproject` int(10) unsigned NOT NULL COMMENT 'Link to projects table',
   `idorganisation` int(10) unsigned NOT NULL COMMENT 'Link to org table',
   `filename` text COMMENT 'Path to file name',
   `template` text COMMENT 'Data template',
@@ -99,15 +100,14 @@ CREATE TABLE  `protocol` (
   `published` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`idprotocol`,`version`) USING BTREE,
   KEY `Index_3` (`title`),
-  KEY `FK_protocol_1` (`idproject`),
   KEY `FK_protocol_2` (`idorganisation`),
   KEY `FK_protocol_3` (`iduser`),
   KEY `Index_7` (`latest`),
   KEY `updated` (`updated`),
-  CONSTRAINT `FK_protocol_1` FOREIGN KEY (`idproject`) REFERENCES `project` (`idproject`),
   CONSTRAINT `FK_protocol_2` FOREIGN KEY (`idorganisation`) REFERENCES `organisation` (`idorganisation`),
   CONSTRAINT `FK_protocol_3` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- -----------------------------------------------------
 -- Protocol authors
 -- -----------------------------------------------------
@@ -120,6 +120,20 @@ CREATE TABLE  `protocol_authors` (
   KEY `FK_protocol_authors_2` (`iduser`),
   CONSTRAINT `FK_protocol_authors_1` FOREIGN KEY (`idprotocol`, `version`) REFERENCES `protocol` (`idprotocol`, `version`),
   CONSTRAINT `FK_protocol_authors_2` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Multiple projects per protocol since v1.10
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `protocol_projects`;
+CREATE TABLE  `protocol_projects` (
+  `idprotocol` int(10) unsigned NOT NULL,
+  `version` int(10) unsigned NOT NULL,
+  `idproject` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`idprotocol`,`version`,`idproject`) USING BTREE,
+  KEY `FK_protocol_projects_2` (`idproject`),
+  CONSTRAINT `FK_protocol_projects_1` FOREIGN KEY (`idprotocol`, `version`) REFERENCES `protocol` (`idprotocol`, `version`),
+  CONSTRAINT `FK_protocol_projects_2` FOREIGN KEY (`idproject`) REFERENCES `project` (`idproject`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
@@ -176,7 +190,7 @@ CREATE TABLE  `version` (
   `comment` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`idmajor`,`idminor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-insert into version (idmajor,idminor,comment) values (1,9,"TB Protocol schema");
+insert into version (idmajor,idminor,comment) values (1,10,"TB Protocol schema");
 
 -- -----------------------------------------------------
 -- Create new protocol version
@@ -207,8 +221,8 @@ begin
 
     select version_new;
   	-- create new version
-    insert into protocol (idprotocol,version,title,abstract,iduser,summarySearchable,idproject,idorganisation,filename,status,created)
-    select idprotocol,version_new,title_new,abstract_new,iduser,summarySearchable,idproject,idorganisation,filename_new,status,now() 
+    insert into protocol (idprotocol,version,title,abstract,iduser,summarySearchable,idorganisation,filename,status,created)
+    select idprotocol,version_new,title_new,abstract_new,iduser,summarySearchable,idorganisation,filename_new,status,now() 
     from protocol where idprotocol=protocol_id and version=version_id;
    	-- copy authors
     -- insert into protocol_authors

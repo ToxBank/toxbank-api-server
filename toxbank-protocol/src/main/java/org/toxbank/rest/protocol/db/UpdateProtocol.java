@@ -37,14 +37,15 @@ import net.idea.modbcum.i.query.QueryParam;
 import net.idea.modbcum.q.update.AbstractObjectUpdate;
 
 import org.toxbank.rest.protocol.DBProtocol;
+import org.toxbank.rest.protocol.projects.db.UpdateProjectMembership;
 
 public class UpdateProtocol extends AbstractObjectUpdate<DBProtocol>{
+	protected UpdateProjectMembership updateProject;
 	private ReadProtocol.fields[] f = new ReadProtocol.fields[] {
 			ReadProtocol.fields.title,
 			ReadProtocol.fields.anabstract,
 			ReadProtocol.fields.summarySearchable,
 			ReadProtocol.fields.filename,
-			ReadProtocol.fields.idproject,
 			ReadProtocol.fields.idorganisation,
 			ReadProtocol.fields.iduser,
 			ReadProtocol.fields.status,
@@ -55,24 +56,37 @@ public class UpdateProtocol extends AbstractObjectUpdate<DBProtocol>{
 
 	public UpdateProtocol(DBProtocol ref) {
 		super(ref);
+		updateProject = new UpdateProjectMembership();
+		updateProject.setObject(ref);
 	}
+	
 	public UpdateProtocol() {
 		this(null);
 	}			
+	
+	@Override
+	public void setObject(DBProtocol object) {
+		super.setObject(object);
+		if (updateProject!=null) updateProject.setObject(object);
+	}
 	public List<QueryParam> getParameters(int index) throws AmbitException {
-		List<QueryParam> params1 = new ArrayList<QueryParam>();
-
-		for (ReadProtocol.fields field: f) 
-			if (field.getValue(getObject())!=null)
-				params1.add(field.getParam(getObject()));
-		
-		if (params1.size()==0) throw new AmbitException("Nothing to update!");
-		params1.add(ReadProtocol.fields.idprotocol.getParam(getObject()));
-		params1.add(ReadProtocol.fields.version.getParam(getObject()));
-		return params1;
+		if (index == 0) {
+			List<QueryParam> params1 = new ArrayList<QueryParam>();
+	
+			for (ReadProtocol.fields field: f) 
+				if (field.getValue(getObject())!=null)
+					params1.add(field.getParam(getObject()));
+			
+			if (params1.size()==0) throw new AmbitException("Nothing to update!");
+			params1.add(ReadProtocol.fields.idprotocol.getParam(getObject()));
+			params1.add(ReadProtocol.fields.version.getParam(getObject()));
+			return params1;
+		} else 
+			return updateProject.getParameters(index-1);
 		
 	}
 	public String[] getSQL() throws AmbitException {
+		String[] sql = updateProject.getSQL();
 		StringBuilder b = new StringBuilder();
 		String d = " ";
 		for (ReadProtocol.fields field: f) 
@@ -88,9 +102,11 @@ public class UpdateProtocol extends AbstractObjectUpdate<DBProtocol>{
 				}
 				d = ",";
 			}
-		String sql = String.format(update_sql,b.toString());
-		System.out.println(sql);
-		return  new String[] { sql};
+		String[] result = new String[sql.length+1];
+		result[0] = String.format(update_sql,b.toString());
+		for (int i=0; i < sql.length; i++)
+			result[i+1] = sql[i];
+		return  result;
 	}
 	public void setID(int index, int id) {
 			

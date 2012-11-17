@@ -2,6 +2,8 @@ package org.toxbank.rest.protocol.db.test;
 
 import java.sql.ResultSet;
 
+import junit.framework.Assert;
+
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.ReadProtocol;
 
@@ -29,6 +31,7 @@ public class ReadProtocolByTimeStampTest extends QueryTest<ReadProtocol> {
 			//Assert.assertEquals(2,protocol.getID());
 			//Assert.assertNotNull(protocol.getKeywords());
 			//Assert.assertEquals(new Long(1326699051000L),protocol.getTimeModified());
+			Assert.assertEquals(0,protocol.getProjects().size());
 			records++;
 		}
 	//	Assert.assertEquals(1,records);

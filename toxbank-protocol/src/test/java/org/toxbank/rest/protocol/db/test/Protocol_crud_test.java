@@ -38,12 +38,14 @@ import net.toxbank.client.resource.Protocol.STATUS;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
+import org.junit.Test;
 import org.toxbank.rest.groups.DBOrganisation;
 import org.toxbank.rest.groups.DBProject;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.db.CreateProtocol;
 import org.toxbank.rest.protocol.db.DeleteProtocol;
 import org.toxbank.rest.protocol.db.UpdateProtocol;
+import org.toxbank.rest.protocol.projects.db.UpdateProjectMembership;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.author.db.AddAuthors;
 
@@ -52,11 +54,12 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 
 	@Override
 	protected IQueryUpdate<Object,DBProtocol> createQuery() throws Exception {
-		DBProtocol ref = new DBProtocol();
-		ref.setID(1);
-		ref.setVersion(1);
-		ref.setAbstract("My abstract");
-		ref.setPublished(true);
+		DBProtocol protocol = new DBProtocol();
+		protocol.addProject(new DBProject(2));	
+		protocol.setID(1);
+		protocol.setVersion(1);
+		protocol.setAbstract("My abstract");
+		protocol.setPublished(true);
 		/*
 		DBUser user = new DBUser();
 		user.setID(1);
@@ -67,7 +70,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 		ref.setDocument(new Document(new URL(file)));
 		ref.setStatus(STATUS.SOP);
 		*/
-		return new UpdateProtocol(ref);
+		return new UpdateProtocol(protocol);
 	}
 
 	@Override
@@ -80,6 +83,11 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 		Assert.assertEquals(1,table.getRowCount());
 		Assert.assertEquals(Boolean.TRUE,table.getValue(0,"published"));
 		Assert.assertEquals("My abstract",table.getValue(0,"abstract"));
+		
+		table = 	c.createQueryTable("EXPECTED",
+				String.format("SELECT idprotocol,version,idproject FROM protocol join protocol_projects using(idprotocol,version) where idprotocol=1 and version=1 and idproject=2"));
+		Assert.assertEquals(1,table.getRowCount());
+				
 		c.close();	
 	}
 
@@ -119,6 +127,32 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 		Assert.assertEquals(2,table.getRowCount());
 		c.close();
 	}
+	
+	@Test
+	public void testAddProjects() throws Exception {
+		IQueryUpdate<Object,DBProtocol> query = addProjectsQuery();
+		setUpDatabase(dbFile);
+		IDatabaseConnection c = getConnection();
+		executor.setConnection(c.getConnection());
+		executor.open();
+		Assert.assertTrue(executor.process(query)>=1);
+		updateProjectVerify(query);
+		c.close();
+	}
+	
+	protected IQueryUpdate<Object, DBProtocol> addProjectsQuery() throws Exception {
+		DBProtocol ref = new DBProtocol(1,1);
+		ref.addProject(new DBProject(2));
+
+		return new UpdateProjectMembership(ref);
+	}
+	protected void updateProjectVerify(IQueryUpdate<Object,DBProtocol> query)
+			throws Exception {
+        IDatabaseConnection c = getConnection();	
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT idprotocol,version,idproject FROM protocol_projects where idprotocol=1");
+		Assert.assertEquals(1,table.getRowCount());
+		c.close();
+	}
 
 	@Override
 	protected IQueryUpdate<Object, DBProtocol> createQueryNew()
@@ -131,7 +165,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 		DBUser user = new DBUser();
 		user.setID(1);
 		ref.setOwner(user);
-		ref.setProject(new DBProject(1));	
+		ref.addProject(new DBProject(1));	
 		ref.setOrganisation(new DBOrganisation(1));
 		ref.setSearchable(true);
 		ref.setDocument(new Document(new URL(file)));
@@ -145,11 +179,18 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 			throws Exception {
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED",
-				String.format("SELECT idprotocol,summarySearchable,status FROM protocol where title='title' and abstract='abstract' and iduser='1' and idproject=1 and idorganisation=1 and filename='%s'",file));
+				String.format("SELECT idprotocol,summarySearchable,status FROM protocol where title='title' and abstract='abstract' and iduser='1' and idorganisation=1 and filename='%s'",file));
 		
 		Assert.assertEquals(1,table.getRowCount());
 		Assert.assertEquals(Boolean.TRUE,table.getValue(0,"summarySearchable"));
 		Assert.assertEquals(STATUS.SOP.toString(),table.getValue(0,"status"));
+		
+		/*
+		 * Projects are updated with a separate query {@link UpdateProjectsMembership} 
+		 */
+		table = 	c.createQueryTable("EXPECTED",
+				String.format("SELECT idprotocol,version,idproject FROM protocol join protocol_projects using(idprotocol,version) where idprotocol=1 and version=1 and idproject=2"));
+		Assert.assertEquals(0,table.getRowCount());		
 		c.close();		
 	}
 

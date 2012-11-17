@@ -1,5 +1,7 @@
 package org.toxbank.rest.groups;
 
+import org.toxbank.rest.protocol.DBProtocol;
+
 public enum GroupType {
 	PROJECT, ORGANISATION;
 	public String getID() {
@@ -53,5 +55,10 @@ public enum GroupType {
 		else
 			return String.format("SELECT %s,name,ldapgroup,cluster FROM %s join user_%s using(%s) where iduser=? and %s=?",
 					getID(), getDBname(),getDBname(),getID(), getID());
+	}	
+	
+	public String getReadByProtocolSQL(DBProtocol protocol) {
+		return String.format("SELECT %s,name,ldapgroup,cluster FROM %s join protocol_%ss using(%s) where idprotocol=? and version=?",
+					getID(), getDBname(),getDBname(),getID(), protocol.getID(),protocol.getVersion());
 	}	
 }

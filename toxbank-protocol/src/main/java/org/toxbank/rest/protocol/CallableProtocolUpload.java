@@ -43,6 +43,7 @@ import org.toxbank.rest.protocol.db.DeleteProtocol;
 import org.toxbank.rest.protocol.db.UpdateKeywords;
 import org.toxbank.rest.protocol.db.UpdateProtocol;
 import org.toxbank.rest.protocol.db.template.UpdateDataTemplate;
+import org.toxbank.rest.protocol.projects.db.UpdateProjectMembership;
 import org.toxbank.rest.protocol.resource.db.ProtocolQueryURIReporter;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.author.db.AddAuthors;
@@ -257,6 +258,11 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 				}
 				
 				String uri = reporter.getURI(protocol);
+				
+				if (protocol.getProjects().size()>0) {
+					UpdateProjectMembership k = new UpdateProjectMembership(protocol);
+					exec.process(k);
+				}
 				
 				if (protocol.getKeywords().size()>0) {
 					UpdateKeywords k = new UpdateKeywords(protocol);

@@ -25,6 +25,7 @@ public class ReadProtocolVersionTest extends QueryTest<ReadProtocol> {
 			Assert.assertNotNull(protocol.getKeywords());
 			Assert.assertEquals(3,protocol.getKeywords().size());
 			Assert.assertNotNull(protocol.getOwner());
+			Assert.assertEquals(0,protocol.getProjects().size());
 			//Assert.assertNotNull(protocol.getOwner().getFirstname());
 			records++;
 		}
