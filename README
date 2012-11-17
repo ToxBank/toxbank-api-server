@@ -5,6 +5,8 @@ The default maven profile is -P toxbank
 The tests assume 
 CREATE USER 'guest'@'localhost' IDENTIFIED BY 'guest';
 GRANT ALL ON tb.* TO 'guest'@'localhost';
+GRANT execute on procedure `tb`.createProtocolVersion to guest@localhost;
 
 Test DB
 GRANT ALL ON `tb-test`.* TO 'guest'@'localhost';
+GRANT execute on procedure `tb-test`.createProtocolVersion to  guest@localhost
