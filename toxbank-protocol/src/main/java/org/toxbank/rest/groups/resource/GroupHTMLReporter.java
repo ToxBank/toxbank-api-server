@@ -169,13 +169,14 @@ public abstract class GroupHTMLReporter extends QueryHTMLReporter<IDBGroup, IQue
 			}				
 			//tables
 			
-			w.write("<table bgcolor='EEEEEE' width='99%'>\n");
+			w.write("<table class='datatable' width='99%'>\n");
 			if (collapsed) {
-				output.write("<tr bgcolor='FFFFFF' >\n");	
+				output.write("<thead bgcolor='FFFFFF' >\n");	
 				for (DBGroup.fields field : DBGroup.fields.values()) {
 					output.write(String.format("<th>%s</th>",field.toString()));
 				}
-				output.write("</tr>\n");
+				output.write("</thead>\n");
+				output.write("<tbody>\n");
 			} else {
 				
 			}
@@ -237,13 +238,14 @@ public abstract class GroupHTMLReporter extends QueryHTMLReporter<IDBGroup, IQue
 			output.write("<tr bgcolor='FFFFFF'>\n");		
 			output.write(String.format("<td><a href='%s'>%s</a></td>",uri,uri));
 			output.write(String.format("<td>%s</td>",item.getTitle()));
-			output.write(String.format("<td>%s</td>",item.getGroupName()));
+			output.write(String.format("<td>%s</td>",item.getGroupName()==null?"":item.getGroupName()));
 			output.write("</tr>\n");
 		} catch (Exception x) {} 
 	}
 	@Override
 	public void footer(Writer output, IQueryRetrieval<IDBGroup> query) {
 		try {
+			output.write("</tbody>");
 			output.write("</table>");
 		} catch (Exception x) {}
 		super.footer(output, query);

@@ -152,13 +152,14 @@ public class UserHTMLReporter extends QueryHTMLReporter<DBUser, IQueryRetrieval<
 			}				
 			//tables
 			
-			w.write("<table bgcolor='EEEEEE' width='99%'>\n");
+			w.write("<table class='datatable' width='99%'>\n");
 			if (collapsed) {
-				output.write("<tr bgcolor='FFFFFF' >\n");	
+				output.write("<thead>\n");	
 				for (DBUser.fields field : DBUser.fields.values()) {
 					output.write(String.format("<th>%s</th>",field.toString()));
 				}
-				output.write("</tr>\n");
+				output.write("</thead>\n");
+				output.write("<tbody>\n");
 			} else {
 				
 			}
@@ -233,6 +234,7 @@ public class UserHTMLReporter extends QueryHTMLReporter<DBUser, IQueryRetrieval<
 	@Override
 	public void footer(Writer output, IQueryRetrieval<DBUser> query) {
 		try {
+			output.write("</tbody>\n");
 			output.write("</table>");
 		} catch (Exception x) {}
 		super.footer(output, query);

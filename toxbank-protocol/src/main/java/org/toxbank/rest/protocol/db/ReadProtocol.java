@@ -323,6 +323,25 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			public String toString() {
 				return "Project";
 			}
+			@Override
+			public String getHTMLField(DBProtocol protocol) {
+				
+				if ((protocol.getProjects()==null) || protocol.getProjects().size()==0) 
+					return "";
+				else {
+					StringBuilder b = new StringBuilder();
+					b.append("<select>");
+					for (Project project: protocol.getProjects()) {
+						b.append("<option value='");
+						b.append(project.getResourceURL());
+						b.append("'>");
+						b.append(project.getTitle());
+						b.append("</option>");
+					}
+					b.append("</select>");
+					return b.toString();
+				}
+			}	
 		},
 		project_uri {
 
@@ -344,6 +363,8 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			public String getHelp(String uri) {
 				return String.format("<a href='%s%s' target='projects'>Projects list</a>",uri,Resources.project);
 			}
+		
+
 		},		
 		project {
 			@Override
@@ -356,24 +377,11 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			}
 			@Override
 			public void setParam(DBProtocol protocol, ResultSet rs) throws SQLException {
-				try {
-					Project p = protocol.getProject();
-					if (p==null) { 
-						DBProject dbp = new DBProject(); 
-						protocol.setProject(dbp);
-						dbp.setTitle(rs.getString(name()));
-						dbp.setGroupName(rs.getString("pgroupname"));
-					} else if (p instanceof DBProject) {
-						((DBProject)p).setTitle(rs.getString(name()));
-						((DBProject)p).setGroupName(rs.getString("pgroupname"));
-					}
-				} catch (Exception x) {
-					throw new SQLException(x);
-				}
+				
 			}		
 			@Override
 			public Object getValue(DBProtocol protocol) {
-				return  protocol==null?null:protocol.getProject();
+				return  protocol==null?null:protocol.getProjects();
 			}			
 		},
 		idorganisation {

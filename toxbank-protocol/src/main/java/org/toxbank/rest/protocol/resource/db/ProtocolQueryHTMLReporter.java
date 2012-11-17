@@ -5,8 +5,11 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Date;
 
+import net.idea.modbcum.i.IQueryCondition;
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
+import net.idea.modbcum.p.DefaultAmbitProcessor;
+import net.idea.modbcum.p.MasterDetailsProcessor;
 import net.idea.restnet.aa.opensso.policy.OpenSSOPoliciesResource;
 import net.idea.restnet.aa.resource.AdminResource;
 import net.idea.restnet.c.ResourceDoc;
@@ -26,7 +29,9 @@ import org.toxbank.rest.groups.resource.GroupQueryURIReporter;
 import org.toxbank.rest.protocol.DBProtocol;
 import org.toxbank.rest.protocol.TBHTMLBeauty;
 import org.toxbank.rest.protocol.db.ReadProtocol;
+import org.toxbank.rest.protocol.projects.db.ReadProjectMembership;
 import org.toxbank.rest.user.DBUser;
+import org.toxbank.rest.user.author.db.ReadAuthor;
 import org.toxbank.rest.user.resource.UserURIReporter;
 
 public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQueryRetrieval<DBProtocol>> {
@@ -47,6 +52,39 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 		this.editable = editable;
 		groupReporter = new GroupQueryURIReporter<IQueryRetrieval<IDBGroup>>(request);
 		userReporter = new UserURIReporter<IQueryRetrieval<DBUser>>(request);
+		getProcessors().clear();
+		IQueryRetrieval<DBUser> queryA = new ReadAuthor(null,null); 
+		MasterDetailsProcessor<DBProtocol,DBUser,IQueryCondition> authorsReader = new MasterDetailsProcessor<DBProtocol,DBUser,IQueryCondition>(queryA) {
+			@Override
+			protected DBProtocol processDetail(DBProtocol target, DBUser detail)
+					throws Exception {
+
+				detail.setResourceURL(new URL(userReporter.getURI(detail)));
+				target.addAuthor(detail);
+				return target;
+			}
+		};
+		getProcessors().add(authorsReader);
+		
+		IQueryRetrieval<DBProject> queryP = new ReadProjectMembership(null,new DBProject()); 
+		MasterDetailsProcessor<DBProtocol,DBProject,IQueryCondition> projectsReader = new MasterDetailsProcessor<DBProtocol,DBProject,IQueryCondition>(queryP) {
+			@Override
+			protected DBProtocol processDetail(DBProtocol target, DBProject detail)
+					throws Exception {
+				detail.setResourceURL(new URL(groupReporter.getURI(detail)));
+				target.addProject(detail);
+				return target;
+			}
+		};
+		getProcessors().add(projectsReader);
+		
+		processors.add(new DefaultAmbitProcessor<DBProtocol,DBProtocol>() {
+			@Override
+			public DBProtocol process(DBProtocol target) throws AmbitException {
+				processItem(target);
+				return target;
+			};
+		});			
 		
 	}
 	@Override
@@ -178,15 +216,16 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 			}				
 			//tables
 			
-			w.write("<table bgcolor='EEEEEE' width='99%'>\n");
+			w.write("<table width='100%' class='datatable'>\n");
 			if (collapsed) {
-				output.write("<tr bgcolor='FFFFFF' >\n");	
+				output.write("<thead >\n");	
 				for (ReadProtocol.fields field : ReadProtocol.displayFields) {
 					if (ReadProtocol.fields.idprotocol.equals(field)) continue;
 					output.write(String.format("<th>%s</th>",field.toString()));
 				}
 
-				output.write("</tr>\n");
+				output.write("</thead>\n");
+				output.write("<tbody>\n");
 			} else {
 				
 			}
@@ -211,7 +250,7 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 			else printForm(output,uri,item,false);
 
 		} catch (Exception x) {
-			
+			x.printStackTrace();
 		}
 		return null;
 	}
@@ -340,7 +379,7 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 	}	
 	protected void printTable(Writer output, String uri, DBProtocol protocol) {
 		try {
-			output.write("<tr bgcolor='FFFFFF'>\n");			
+			output.write("<tr>\n");			
 			for (ReadProtocol.fields field : ReadProtocol.displayFields) {
 
 				Object value = null; 
@@ -352,29 +391,29 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 				}	
 				case updated: {
 					
-					output.write(String.format("<td><a href='%s%s?%s=%s' title='Find protocols modified since this one (Unix time stamp, ms=%s)'>%s</a></td>",
+					output.write(String.format("<td><a href='%s%s?%s=%s' title='Find protocols modified since this one (Unix time stamp, ms=%s)'>%s</a></td>\n",
 							uriReporter.getRequest().getRootRef(),Resources.protocol,"modifiedSince",protocol.getTimeModified(),
 							protocol.getTimeModified(),
 							protocol.getTimeModified()==null?"":new Date(protocol.getTimeModified())));
 					break;
 				}
 				case identifier: {
-					output.write(String.format("<td><a href='%s'>%s</a></td>",uri,value));
+					output.write(String.format("<td><a href='%s'>%s</a></td>\n",uri,value));
 					break;
 				}
 				case filename: {
 					if ((protocol.getDocument()==null) || (protocol.getDocument().getResourceURL()==null))
-						output.write("<td>N/A</td>");
+						output.write("<td>N/A</td>\n");
 					else					
-						output.write(String.format("<td><a href='%s%s?media=%s'>Download</a></td>",
+						output.write(String.format("<td><a href='%s%s?media=%s'>Download</a></td>\n",
 								uri,Resources.document,Reference.encode(MediaType.APPLICATION_ALL.toString())));
 					break;
 				}	
 				case template: {
 					if ((protocol.getDataTemplate()==null) || (protocol.getDataTemplate().getResourceURL()==null))
-						output.write("<td>N/A</td>");
+						output.write("<td>N/A</td>\n");
 					else
-					output.write(String.format("<td><a href='%s%s'>Download</a></td>",uri,Resources.datatemplate));
+					output.write(String.format("<td><a href='%s%s'>Download</a></td>\n",uri,Resources.datatemplate));
 					break;
 				}						
 				case author_uri: {
@@ -382,20 +421,21 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 					break;
 				}				
 				case user_uri: {
-					output.write(String.format("<td><a href='%s'>%s</a></td>",value.toString(),
+					output.write(String.format("<td><a href='%s'>%s</a></td>\n",value.toString(),
 							protocol.getOwner().getUserName()==null?"Owner":protocol.getOwner().getUserName()));
 					break;
 				}
 				case idorganisation: {
-					output.write(String.format("<td>%s</td>",value.toString()));
+					output.write(String.format("<td>%s</td>\n",value.toString()));
 					break;
 				}
 				case idproject: {
-					output.write(String.format("<td>%s</td>",value.toString()));
+					value = field.getHTMLField(protocol);
+					output.write(String.format("<td>%s</td>\n",value==null?"":value.toString()));
 					break;
 				}
 				default:
-					output.write(String.format("<td>%s</td>",value==null?"":
+					output.write(String.format("<td>%s</td>\n",value==null?"":
 								value.toString().length()>40?value.toString().substring(0,40):value.toString()));
 				}
 			}
@@ -405,7 +445,8 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 	@Override
 	public void footer(Writer output, IQueryRetrieval<DBProtocol> query) {
 		try {
-			output.write("</table>");
+			output.write("</tbody>\n");
+			output.write("</table>\n");
 		} catch (Exception x) {}
 		super.footer(output, query);
 	}
