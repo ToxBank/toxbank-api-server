@@ -72,6 +72,8 @@ public class UserDBResource<T>	extends QueryResource<ReadUser<T>,DBUser> {
 						new UserRDFReporter<IQueryRetrieval<DBUser>>(
 								getRequest(),variant.getMediaType(),getDocumentation())
 						,variant.getMediaType(),filenamePrefix) {
+							private static final long serialVersionUID = -1599773662253590223L;
+
 					@Override
 					protected String getDefaultNameSpace() {
 						return TOXBANK.URI;

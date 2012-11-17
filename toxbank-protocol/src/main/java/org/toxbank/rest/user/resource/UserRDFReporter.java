@@ -50,6 +50,8 @@ public class UserRDFReporter<Q extends IQueryRetrieval<DBUser>> extends QueryRDF
 		getProcessors().clear();
 		IQueryRetrieval<DBOrganisation> queryO = new ReadOrganisation(new DBOrganisation()); 
 		MasterDetailsProcessor<DBUser,DBOrganisation,IQueryCondition> orgReader = new MasterDetailsProcessor<DBUser,DBOrganisation,IQueryCondition>(queryO) {
+			private static final long serialVersionUID = 6058051886584582349L;
+
 			@Override
 			protected DBUser processDetail(DBUser target, DBOrganisation detail)
 					throws Exception {
@@ -60,6 +62,8 @@ public class UserRDFReporter<Q extends IQueryRetrieval<DBUser>> extends QueryRDF
 		};
 		IQueryRetrieval<DBProject> queryP = new ReadProject(new DBProject()); 
 		MasterDetailsProcessor<DBUser,DBProject,IQueryCondition> projectReader = new MasterDetailsProcessor<DBUser,DBProject,IQueryCondition>(queryP) {
+			private static final long serialVersionUID = -4012021031885627727L;
+
 			@Override
 			protected DBUser processDetail(DBUser target, DBProject detail)
 					throws Exception {
@@ -71,6 +75,8 @@ public class UserRDFReporter<Q extends IQueryRetrieval<DBUser>> extends QueryRDF
 		getProcessors().add(orgReader);
 		getProcessors().add(projectReader);
 		processors.add(new DefaultAmbitProcessor<DBUser,DBUser>() {
+			private static final long serialVersionUID = 7565709317843220408L;
+
 			public DBUser process(DBUser target) throws AmbitException {
 				processItem(target);
 				return target;
