@@ -12,6 +12,7 @@ import org.restlet.Request;
 import org.restlet.data.Form;
 import org.restlet.data.Method;
 import org.restlet.data.Reference;
+import org.toxbank.rest.user.alerts.notification.NotificationResource;
 
 public class TBHTMLBeauty extends HTMLBeauty {
 	public TBHTMLBeauty() {
@@ -36,7 +37,7 @@ public class TBHTMLBeauty extends HTMLBeauty {
 			w.write(String.format("<a href='%s%s'>Organisations</a>&nbsp;",baseReference,Resources.organisation));
 			w.write(String.format("<a href='%s%s'>Projects</a>&nbsp;",baseReference,Resources.project));
 			w.write(String.format("<a href='%s%s'>Users</a>&nbsp;",baseReference,Resources.user));
-			w.write(String.format("<a href='%s%s'>Alerts</a>&nbsp;",baseReference,Resources.alert));
+			w.write(String.format("<a href='%s%s'>Alerts</a>&nbsp;",baseReference,NotificationResource.resourceKey));
 		}
 		private final static String[] css = new String[] {
 			"<link href=\"%s/style/jquery-ui-1.9.1.custom.min.css\" rel=\"stylesheet\" type=\"text/css\">\n",
