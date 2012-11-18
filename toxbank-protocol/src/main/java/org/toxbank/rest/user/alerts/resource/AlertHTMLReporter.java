@@ -147,16 +147,17 @@ public class AlertHTMLReporter extends QueryHTMLReporter<DBAlert, IQueryRetrieva
 			}				
 			//tables
 			
-			w.write("<table bgcolor='EEEEEE' width='99%'>\n");
+			w.write("<table class='datatable'>\n");
 			if (collapsed) {
-				output.write("<tr bgcolor='FFFFFF' >\n");	
-				for (DBUser.fields field : DBUser.fields.values()) {
+				output.write("<thead>\n");	
+				for (DBAlert._fields field : DBAlert._fields.values()) {
 					output.write(String.format("<th>%s</th>",field.toString()));
 				}
-				output.write("</tr>\n");
+				output.write("</thead>\n");
 			} else {
 				
 			}
+			output.write("<tbody>\n");
 		} catch (Exception x) {}
 	}
 	@Override
@@ -177,7 +178,7 @@ public class AlertHTMLReporter extends QueryHTMLReporter<DBAlert, IQueryRetrieva
 		try {
 			DBUser.fields[] fields = editable?entryFields:displayFields;
 			for (DBAlert._fields field : DBAlert._fields.values()) {
-				output.write("<tr bgcolor='FFFFFF'>\n");	
+				output.write("<tr>\n");	
 				Object value = alert==null?null:field.getValue(alert);
 
 				if (editable) {
@@ -201,14 +202,14 @@ public class AlertHTMLReporter extends QueryHTMLReporter<DBAlert, IQueryRetrieva
 							
 				output.write("</tr>\n");				
 			}
-			output.write("<tr bgcolor='FFFFFF'>\n");
+			output.write("<tr>\n");
 			output.write("</tr>\n");
 			output.flush();
 		} catch (Exception x) {x.printStackTrace();} 
 	}	
 	protected void printTable(Writer output, String uri, DBAlert alert) {
 		try {
-			output.write("<tr bgcolor='FFFFFF'>\n");			
+			output.write("<tr>\n");			
 			for (DBAlert._fields field : DBAlert._fields.values()) {
 
 				Object value = field.getValue(alert);
@@ -228,6 +229,7 @@ public class AlertHTMLReporter extends QueryHTMLReporter<DBAlert, IQueryRetrieva
 	@Override
 	public void footer(Writer output, IQueryRetrieval<DBAlert> query) {
 		try {
+			output.write("</tbody>");
 			output.write("</table>");
 		} catch (Exception x) {}
 		super.footer(output, query);

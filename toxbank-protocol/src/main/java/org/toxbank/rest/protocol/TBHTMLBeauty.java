@@ -3,11 +3,14 @@ package org.toxbank.rest.protocol;
 import java.io.IOException;
 import java.io.Writer;
 
+import net.idea.restnet.c.AbstractResource;
 import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.c.html.HTMLBeauty;
 import net.toxbank.client.Resources;
 
 import org.restlet.Request;
+import org.restlet.data.Form;
+import org.restlet.data.Method;
 import org.restlet.data.Reference;
 
 public class TBHTMLBeauty extends HTMLBeauty {
@@ -18,11 +21,11 @@ public class TBHTMLBeauty extends HTMLBeauty {
 
 		@Override
 		protected String getHomeURI() {
-			return "http://http://toxbank.net/";
+			return "http://toxbank.net/";
 		}
 		@Override
 		protected String getLogoURI(String root) {
-			return "http://toxbank.net/sites/default/files/TB%20banner.jpg";
+			return "http://toxbank.github.com/toxbank-api-server/images/toxbank_rgb-72.png";
 		}
 		@Override
 		public String getTitle() {
@@ -33,16 +36,20 @@ public class TBHTMLBeauty extends HTMLBeauty {
 			w.write(String.format("<a href='%s%s'>Organisations</a>&nbsp;",baseReference,Resources.organisation));
 			w.write(String.format("<a href='%s%s'>Projects</a>&nbsp;",baseReference,Resources.project));
 			w.write(String.format("<a href='%s%s'>Users</a>&nbsp;",baseReference,Resources.user));
+			w.write(String.format("<a href='%s%s'>Alerts</a>&nbsp;",baseReference,Resources.alert));
 		}
 		private final static String[] css = new String[] {
-			"<link href=\"%s/style/jquery-ui-1.8.18.custom.css\" rel=\"stylesheet\" type=\"text/css\">\n",
+			"<link href=\"%s/style/jquery-ui-1.9.1.custom.min.css\" rel=\"stylesheet\" type=\"text/css\">\n",
 			"<link href=\"%s/style/jquery.dataTables.css\" rel=\"stylesheet\" type=\"text/css\">\n",
+			"<link href=\"%s/style/layout-default-latest.css\" rel=\"stylesheet\" type=\"text/css\">\n"
 		};
 		private final static String[] js = new String[] {
-			"<script type='text/javascript' src='%s/jquery/jquery-1.7.1.min.js'></script>\n",
-			"<script type='text/javascript' src='%s/jquery/jquery-ui-1.8.18.custom.min.js'></script>\n",
+			"<script type='text/javascript' src='%s/jquery/jquery-1.8.2.js'></script>\n",
+			"<script type='text/javascript' src='%s/jquery/jquery-ui-1.9.1.custom.min.js'></script>\n",
 			"<script type='text/javascript' charset='utf8' src='%s/jquery/jquery.dataTables-1.9.0.min.js'></script>\n",
-			"<script type='text/javascript'>$(document).ready(function() { $('.datatable').dataTable({ \"bJQueryUI\": true});} )</script>\n"
+			"<script type='text/javascript' charset='utf8' src='%s/jquery/jquery.layout-latest.min.js'></script>\n",
+			"<script type='text/javascript'>$(document).ready(function() { $('.datatable').dataTable({ \"bJQueryUI\": true});} )</script>\n",
+			"<script type='text/javascript'>$(document).ready(function() { $('body').layout({south__size:32,south__spacing_open:0,north__size:66,north__spacing_open:0});} )</script>"
 		};
 		@Override
 		public void writeTopHeader(Writer w,String title,Request request,String meta,ResourceDoc doc) throws IOException {
@@ -90,39 +97,71 @@ public class TBHTMLBeauty extends HTMLBeauty {
 			w.write("</head>\n");
 			w.write("<body>");
 			w.write("\n");
-			w.write("<div style= \"width: 100%; background-color: #516373;");
-			w.write("border: 1px solid #333; padding: 0px; margin: 0px auto;\">");
-			w.write("<div class=\"spacer\"></div>");
 			
-			String top;
-			if (doc!= null) {
-				top = String.format("&nbsp;<a style=\"color:#99CC00\" href='%s' target='_Ontology' title='Opentox %s (%s), describes representation of OpenTox REST resources'>OpenTox %s</a>&nbsp;",
-						doc.getPrimaryTopic(),
-						doc.getResource(),doc.getPrimaryTopic(),doc.getResource());
-				top += String.format("<a style=\"color:#99CC00\" href='%s' target='_API' title='REST API documentation'>REST API</a>&nbsp;",doc.getPrimaryDoc());
-			} else top = "";
-
-			w.write(String.format("<div class=\"row\"><span class=\"left\">&nbsp;%s",top));
+			w.write("<div class='ui-layout-north ui-widget-header' style=\"padding: 1 1 1 1;\">\n");
+			
+			w.write("<span style='float:left;'>");
+			w.write(String.format("<a href=\"%s\"><img src='%s' alt='%s' title='%s' border='0'></a>\n",
+					getHomeURI(),getLogoURI(baseReference.toString()),getTitle(),baseReference));
 			w.write("</span>");
-		
+			w.write("<span style='position:relative;' class='ui-button'>");
+			writeTopLinks(w, title, request, meta, doc, baseReference);
+			w.write("</span>");
 			
-			w.write(String.format("	<span class=\"right\">%s&nbsp;<a style=\"color:#99CC00\" href='%s/%s'>%s</a>",
-					top,
+			w.write(String.format("<span style='float:right;' class='ui-button'><a href='%s/%s'>%s</a></span>",
 					baseReference.toString(),
 					getLoginLink(),
 					request.getClientInfo().getUser()==null?"Login":"My account"));
-			
-			
-			w.write("</span></div>");
-			w.write("	<div class=\"spacer\"></div>");
+			w.write("<span style='float:right;'>");
+			writeSearchForm(w, title, request, meta);
+			w.write("</span>");
 			w.write("</div>");
-			w.write("<div>");		
-			writeTopLinks(w, title, request, meta, doc, baseReference);
-			w.write("</div>");
+			
+		}
+		
+		@Override
+		public void writeSearchForm(Writer w, String title, Request request,
+				String meta, Method method, Form params) throws IOException {
+			String query_smiles = "";
+			try {
+				Form form = getParams(params,request);
+				if ((form != null) && (form.size()>0))
+					query_smiles = form.getFirstValue(AbstractResource.search_param);
+				else query_smiles = null;
+			} catch (Exception x) {
+				query_smiles = "";
+			}
+			w.write(String.format("<br><form action='' method='%s'>\n",method));
+			w.write(String.format("<input name='%s' size='40' value='%s' required>\n",AbstractResource.search_param,query_smiles==null?"":query_smiles));
+			w.write("<input type='submit' class='ui-button' value='Search'>");
+			//w.write(baseReference.toString());
+			w.write("</form>\n");
 
-			w.write("\n<div id=\"targetDiv\"></div>\n");
-			w.write("\n<div id=\"statusDiv\"></div>\n");
+		}
+		
+		@Override
+		public void writeHTMLHeader(Writer w, String title, Request request,
+				String meta, ResourceDoc doc) throws IOException {
 
+			writeTopHeader(w, title, request, meta,doc);
+			/*
+			w.write("<div class=\"ui-layout-west\" style=\"padding: 1 1 1 1;\">\n");
+			writeSearchForm(w, title, request, meta);
+			w.write("</div>\n");
+			*/
+			w.write("<div class=\"ui-layout-center\" style=\"padding: 1 1 1 1;\">\n");
+		}
+		@Override
+		public void writeHTMLFooter(Writer output, String title, Request request) 	throws IOException {
+			Reference baseReference = request==null?null:request.getRootRef();
+			output.write("</div>\n");
+			output.write("<div class='ui-layout-south footer ui-widget-header' style='padding: 1 1 1 1'>\n");
+			output.write("<span style='float:right;' class='ui-button'><a href='http://www.ideaconsult.net'>Developed by Ideaconsult Ltd. (2011-2012)</a></span>"); 
+			output.write("</div>\n");
+			output.write("\n");
+			output.write(jsGoogleAnalytics()==null?"":jsGoogleAnalytics());
+			output.write("</body>");
+			output.write("</html>");
 		}
 		@Override
 		public String getLoginLink() {
