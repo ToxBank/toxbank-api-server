@@ -57,13 +57,13 @@ public class TBTaskResource extends TaskResource<String> {
 							htmlBeauty.writeHTMLHeader(output, htmlBeauty.getTitle(), getRequest(),"",
 									getDocumentation()
 									);//,"<meta http-equiv=\"refresh\" content=\"10\">");
-							output.write("\n<div class='ui-widget-content'>Tasks:\n");
+							output.write("\n<h3>Tasks:\n");
 							for (TaskStatus status :TaskStatus.values())
 								output.write(String.format("<a href='%s%s?search=%s&%s=%s'>%s</a>&nbsp;\n",
 										baseReference,SimpleTaskResource.resource,status,AbstractResource.max_hits,max,status));
-							output.write("</div>\n");
-							output.write("<table class='datatable'>\n");
-							output.write("<thead><th>Start time</th><th>Elapsed time,ms</th><th>Task</th><th>Name</th><th colspan='2'>Status</th><th></th></thead>\n");
+							output.write("</h3>\n");
+							output.write("<table class='datatable' id='tasktable'>\n");
+							output.write("<thead><th>Start time</th><th>Elapsed time,ms</th><th>Task</th><th>Name</th><th></th><th>Status</th><th>Status Message</th><th></th></thead>\n");
 							output.write("<tbody>\n");
 						} catch (Exception x) {
 							

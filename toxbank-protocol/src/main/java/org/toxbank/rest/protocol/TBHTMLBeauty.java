@@ -44,7 +44,8 @@ public class TBHTMLBeauty extends HTMLBeauty {
 		private final static String[] css = new String[] {
 			"<link href=\"%s/style/jquery-ui-1.9.1.custom.min.css\" rel=\"stylesheet\" type=\"text/css\">\n",
 			"<link href=\"%s/style/jquery.dataTables.css\" rel=\"stylesheet\" type=\"text/css\">\n",
-			"<link href=\"%s/style/layout-default-latest.css\" rel=\"stylesheet\" type=\"text/css\">\n"
+			"<link href=\"%s/style/layout-default-latest.css\" rel=\"stylesheet\" type=\"text/css\">\n",
+			"<link href=\"%s/style/ambit.css\" rel=\"stylesheet\" type=\"text/css\">"
 		};
 		private final static String[] js = new String[] {
 			"<script type='text/javascript' src='%s/jquery/jquery-1.8.2.js'></script>\n",
@@ -93,7 +94,6 @@ public class TBHTMLBeauty extends HTMLBeauty {
 				w.write(String.format(s,request.getRootRef().toString()));
 			w.write(meta);
 					
-			w.write(String.format("<link href=\"%s/style/ambit.css\" rel=\"stylesheet\" type=\"text/css\">",baseReference));
 			w.write("<meta name=\"robots\" content=\"index,nofollow\"><META NAME=\"GOOGLEBOT\" CONTENT=\"index,noFOLLOW\">");
 			w.write("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
 
