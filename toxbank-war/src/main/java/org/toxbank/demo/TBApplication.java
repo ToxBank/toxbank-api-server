@@ -8,15 +8,10 @@ import net.idea.modbcum.i.config.Preferences;
 import net.idea.restnet.aa.opensso.OpenSSOAuthenticator;
 import net.idea.restnet.aa.opensso.OpenSSOAuthorizer;
 import net.idea.restnet.aa.opensso.OpenSSOVerifierSetUser;
-import net.idea.restnet.aa.opensso.policy.CallablePolicyCreator;
-import net.idea.restnet.aa.opensso.policy.PolicyProtectedTask;
 import net.idea.restnet.c.ChemicalMediaType;
 import net.idea.restnet.c.TaskApplication;
 import net.idea.restnet.c.routers.MyRouter;
 import net.idea.restnet.c.task.TaskStorage;
-import net.idea.restnet.i.task.ICallableTask;
-import net.idea.restnet.i.task.Task;
-import net.idea.restnet.i.task.TaskResult;
 import net.toxbank.client.Resources;
 
 import org.restlet.Component;
@@ -46,6 +41,7 @@ import org.toxbank.demo.task.TBAdminResource;
 import org.toxbank.demo.task.TBAdminRouter;
 import org.toxbank.demo.task.TBTaskResource;
 import org.toxbank.demo.task.TBTaskRouter;
+import org.toxbank.demo.task.TBTaskStorage;
 import org.toxbank.rest.groups.OrganisationRouter;
 import org.toxbank.rest.groups.ProjectRouter;
 import org.toxbank.rest.protocol.ProtocolRouter;
@@ -316,22 +312,8 @@ public class TBApplication extends TaskApplication<String> {
 	}
 
 	protected TaskStorage<String> createTaskStorage() {
-		return new TaskStorage<String>(getName(),getLogger()) {
-			
-			
-			@Override
-			protected Task<TaskResult, String> createTask(String user,ICallableTask callable) {
-				
-				return new PolicyProtectedTask(user,!(callable instanceof CallablePolicyCreator)) {
-					@Override
-					public synchronized void setPolicy() throws Exception {
+		return new TBTaskStorage(getName(),getLogger());
 
-						super.setPolicy();
-					}
-				};
-			}
-
-		};
 	}
 
 	/**
