@@ -17,6 +17,7 @@ import org.restlet.data.Method;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
 import org.toxbank.rest.user.DBUser;
+import org.toxbank.rest.user.alerts.db.DBAlert;
 import org.toxbank.rest.user.resource.UserURIReporter;
 
 public class CallableNotification extends CallableDBUpdateTask<DBUser,Form,String> {
@@ -67,10 +68,18 @@ public class CallableNotification extends CallableDBUpdateTask<DBUser,Form,Strin
 				account.setResourceURL(new URL(String.format("%s:%s",account.getService(),URLEncoder.encode(email))));
 				user.addAccount(account);
 			}
-			if (notification.sendAlerts(user,user.getAlerts(), getToken())) {
-			//		return new UpdateAlertSentTimeStamp(user.getAlerts());
-				//TODO
-			}	
+			try {
+				if (notification.sendAlerts(user,user.getAlerts(), getToken())) {
+				//		return new UpdateAlertSentTimeStamp(user.getAlerts());
+					//TODO
+					System.out.println("Update " + user.getAlerts());
+				}	
+				
+			} catch (Exception x) {
+				for (DBAlert alert : user.getAlerts())
+				System.out.println("Update " + alert.getID());
+				//return new UpdateAlertSentTimeStamp(user.getAlerts());
+			}
 			return null;
 		} catch (ResourceException x) {
 			throw x;
