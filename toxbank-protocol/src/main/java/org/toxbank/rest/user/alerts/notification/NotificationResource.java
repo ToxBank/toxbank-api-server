@@ -65,11 +65,10 @@ public class NotificationResource<T> extends UserDBResource<T> {
 
 		try {
 			frequency = new HashSet<RecurrenceFrequency>();
-			if (search==null) frequency.add(RecurrenceFrequency.weekly);
-			else for (String freq : search) try {
+			if (search!=null) 
+			for (String freq : search) try {
 				frequency.add(RecurrenceFrequency.valueOf(freq));
 			} catch (Exception x) {};
-			if (frequency.isEmpty() ) frequency.add(RecurrenceFrequency.weekly);
 			return new ReadUsersByAlerts(frequency);
 		}catch (ResourceException x) {
 			throw x;
