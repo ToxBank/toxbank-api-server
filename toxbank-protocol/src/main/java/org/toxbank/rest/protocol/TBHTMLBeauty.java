@@ -6,6 +6,7 @@ import java.io.Writer;
 import net.idea.restnet.c.AbstractResource;
 import net.idea.restnet.c.ResourceDoc;
 import net.idea.restnet.c.html.HTMLBeauty;
+import net.idea.restnet.c.resource.TaskResource;
 import net.toxbank.client.Resources;
 
 import org.restlet.Request;
@@ -37,7 +38,8 @@ public class TBHTMLBeauty extends HTMLBeauty {
 			w.write(String.format("<a href='%s%s'>Organisations</a>&nbsp;",baseReference,Resources.organisation));
 			w.write(String.format("<a href='%s%s'>Projects</a>&nbsp;",baseReference,Resources.project));
 			w.write(String.format("<a href='%s%s'>Users</a>&nbsp;",baseReference,Resources.user));
-			w.write(String.format("<a href='%s%s'>Alerts</a>&nbsp;",baseReference,NotificationResource.resourceKey));
+			w.write(String.format("<a href='%s%s'>Jobs</a>&nbsp;",baseReference,TaskResource.resource));
+			w.write(String.format("<a href='%s%s' title='Notifications'>Alerts</a>&nbsp;",baseReference,NotificationResource.resourceKey));
 		}
 		private final static String[] css = new String[] {
 			"<link href=\"%s/style/jquery-ui-1.9.1.custom.min.css\" rel=\"stylesheet\" type=\"text/css\">\n",
@@ -50,7 +52,7 @@ public class TBHTMLBeauty extends HTMLBeauty {
 			"<script type='text/javascript' charset='utf8' src='%s/jquery/jquery.dataTables-1.9.0.min.js'></script>\n",
 			"<script type='text/javascript' charset='utf8' src='%s/jquery/jquery.layout-latest.min.js'></script>\n",
 			"<script type='text/javascript'>$(document).ready(function() { $('.datatable').dataTable({ \"bJQueryUI\": true});} )</script>\n",
-			"<script type='text/javascript'>$(document).ready(function() { $('body').layout({south__size:32,south__spacing_open:0,north__size:66,north__spacing_open:0});} )</script>"
+			"<script type='text/javascript'>$(document).ready(function() { $('body').layout({south__size:32,south__spacing_open:0,north__size:66,north__spacing_open:0});} )</script>\n"
 		};
 		@Override
 		public void writeTopHeader(Writer w,String title,Request request,String meta,ResourceDoc doc) throws IOException {
@@ -96,27 +98,26 @@ public class TBHTMLBeauty extends HTMLBeauty {
 			w.write("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
 
 			w.write("</head>\n");
-			w.write("<body>");
-			w.write("\n");
+			w.write("<body>\n");
 			
 			w.write("<div class='ui-layout-north ui-widget-header' style=\"padding: 1 1 1 1;\">\n");
 			
 			w.write("<span style='float:left;'>");
 			w.write(String.format("<a href=\"%s\"><img src='%s' alt='%s' title='%s' border='0'></a>\n",
 					getHomeURI(),getLogoURI(baseReference.toString()),getTitle(),baseReference));
-			w.write("</span>");
+			w.write("</span>\n");
 			w.write("<span style='position:relative;' class='ui-button'>");
 			writeTopLinks(w, title, request, meta, doc, baseReference);
-			w.write("</span>");
+			w.write("</span>\n");
 			
-			w.write(String.format("<span style='float:right;' class='ui-button'><a href='%s/%s'>%s</a></span>",
+			w.write(String.format("<span style='float:right;' class='ui-button'><a href='%s/%s'>%s</a></span>\n",
 					baseReference.toString(),
 					getLoginLink(),
 					request.getClientInfo().getUser()==null?"Login":"My account"));
 			w.write("<span style='float:right;'>");
 			writeSearchForm(w, title, request, meta);
-			w.write("</span>");
-			w.write("</div>");
+			w.write("</span>\n");
+			w.write("</div>\n");
 			
 		}
 		
@@ -133,8 +134,8 @@ public class TBHTMLBeauty extends HTMLBeauty {
 				query_smiles = "";
 			}
 			w.write(String.format("<br><form action='' method='%s'>\n",method));
-			w.write(String.format("<input name='%s' size='40' value='%s' required>\n",AbstractResource.search_param,query_smiles==null?"":query_smiles));
-			w.write("<input type='submit' class='ui-button' value='Search'>");
+			w.write(String.format("<input name='%s' size='40' value='%s' required/>\n",AbstractResource.search_param,query_smiles==null?"":query_smiles));
+			w.write("<input type='submit' class='ui-button' value='Search'/>");
 			//w.write(baseReference.toString());
 			w.write("</form>\n");
 
@@ -150,7 +151,7 @@ public class TBHTMLBeauty extends HTMLBeauty {
 			writeSearchForm(w, title, request, meta);
 			w.write("</div>\n");
 			*/
-			w.write("<div class=\"ui-layout-center\" style=\"padding: 1 1 1 1;\">\n");
+			w.write("\n<div class=\"ui-layout-center\" style=\"clear:both;padding: 5 5 5 5;\">\n");
 		}
 		@Override
 		public void writeHTMLFooter(Writer output, String title, Request request) 	throws IOException {
