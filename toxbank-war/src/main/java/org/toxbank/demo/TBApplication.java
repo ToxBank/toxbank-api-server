@@ -164,7 +164,7 @@ public class TBApplication extends TaskApplication<String> {
 			router.attach(Resources.alert, createProtectedResource(org_router,"alert",true));
 			router.attach(Resources.user, createProtectedResource(
 							new UserRouter(getContext(),protocols,org_router,projectRouter,alertRouter),"user",new UserAuthorizer()));
-			router.attach(NotificationResource.resourceKey, createProtectedResource(notificationRouter,"notification",true));	
+			router.attach(NotificationResource.resourceKey, createProtectedResource(notificationRouter,"notification",new OpenSSOAuthorizerRIAP()));	
 			
 		} else {
 			router.attach(Resources.protocol, createOpenSSOVerifiedResource(protocols));
@@ -521,3 +521,9 @@ public class TBApplication extends TaskApplication<String> {
 
 }
 
+class OpenSSOAuthorizerRIAP extends OpenSSOAuthorizer {
+	@Override
+	protected boolean authorize(Request request, Response response) {
+		return Protocol.RIAP.equals(request.getProtocol())?true:super.authorize(request, response);
+	}
+}

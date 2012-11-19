@@ -52,6 +52,7 @@ public class TBNotifier implements Callable<String> {
 		String pass=properties.getProperty("toxbank.aa.pass");
 		if (!ssoToken.login(username,pass)) 
 			throw new ResourceException(Status.CLIENT_ERROR_FORBIDDEN, "Notifier: error loggin in!");
+		logger.log(Level.INFO, "Login attempt successful "+ username);		
 	}
 	/**
 	 * Sends POST to the /notification resource
@@ -75,7 +76,7 @@ public class TBNotifier implements Callable<String> {
 			    cr.getRequest().getAttributes().put("org.restlet.http.headers", headers);
 			}
 			headers.add("subjectid", ssoToken.getToken());
-			//headers.add("Accept", "text/uri-list");
+			logger.log(Level.INFO, ssoToken.getToken());
 			repr = cr.post(form.getWebRepresentation(),MediaType.TEXT_URI_LIST);
 			return repr.getText();
 		} catch (ResourceException x) {
