@@ -12,7 +12,7 @@ import org.toxbank.rest.user.DBUser;
 public class UpdateAlertSentTimeStamp extends AbstractAlertUpdate<DBUser> {
 			
 	public static final String[] sql_updateAlert = new String[] {
-		"update alert set sent=now() where idquery=?"
+		"update alert set sent=now() where idquery = ?"
 	};
 	
 	public UpdateAlertSentTimeStamp(DBAlert alert,DBUser author) {

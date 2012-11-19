@@ -101,7 +101,9 @@ public class UserHTMLReporter extends QueryHTMLReporter<DBUser, IQueryRetrieval<
 				output.write(String.format("&nbsp;|<a href='%s%s'>Projects</a>",
 						uri,Resources.project));	
 				output.write(String.format("&nbsp;|<a href='%s%s'>Protocols</a>",
-						uri,Resources.protocol));					
+						uri,Resources.protocol));		
+				output.write(String.format("&nbsp;|<a href='%s%s'>Alerts</a>",
+						uri,Resources.alert));					
 			}
 			
 			String curlHint = String.format("curl -X GET -H 'Accept:%s' -H 'subjectid:%s' %s","SUPPORTED-MEDIA-TYPE","TOKEN",uri);

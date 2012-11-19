@@ -220,7 +220,8 @@ public class AlertHTMLReporter extends QueryHTMLReporter<DBAlert, IQueryRetrieva
 				}	
 		
 				default:
-					output.write(String.format("<td>%s</td>",value==null?"":value.toString().length()>40?value.toString().substring(0,40):value.toString()));
+					output.write(String.format("<td title='%s'>%s</td>",value==null?"":value,
+							value==null?"":value.toString().length()>40?value.toString().substring(0,40):value.toString()));
 				}
 			}
 			output.write("</tr>\n");

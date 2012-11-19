@@ -4,6 +4,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.sql.Connection;
 import java.util.Hashtable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.query.IQueryUpdate;
@@ -18,12 +20,14 @@ import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.alerts.db.DBAlert;
+import org.toxbank.rest.user.alerts.db.UpdateAlertsSentTimeStamp;
 import org.toxbank.rest.user.resource.UserURIReporter;
 
 public class CallableNotification extends CallableDBUpdateTask<DBUser,Form,String> {
 	protected UserURIReporter<IQueryRetrieval<DBUser>> reporter;
 	protected DBUser user;
 	protected INotificationEngine notification;
+	protected Logger logger = Logger.getLogger(CallableNotification.class.getName());
 	
 	public INotificationEngine getNotification() {
 		return notification;
@@ -41,6 +45,7 @@ public class CallableNotification extends CallableDBUpdateTask<DBUser,Form,Strin
 		this.reporter = reporter;
 		this.user = item;
 		this.baseReference = baseReference;
+		
 	}
 
 	@Override
@@ -69,18 +74,18 @@ public class CallableNotification extends CallableDBUpdateTask<DBUser,Form,Strin
 				user.addAccount(account);
 			}
 			try {
-				if (notification.sendAlerts(user,user.getAlerts(), getToken())) {
-				//		return new UpdateAlertSentTimeStamp(user.getAlerts());
-					//TODO
-					System.out.println("Update " + user.getAlerts());
-				}	
-				
+				if (notification.sendAlerts(user,user.getAlerts(), getToken()))
+					logger.log(Level.INFO,"Notification email sent successfully"+user.getID());
 			} catch (Exception x) {
-				for (DBAlert alert : user.getAlerts())
-				System.out.println("Update " + alert.getID());
-				//return new UpdateAlertSentTimeStamp(user.getAlerts());
+				logger.log(Level.SEVERE,"Error sending notification emails to "+user.getID(),x);
 			}
-			return null;
+
+			StringBuilder b = new StringBuilder();
+			//Anyway, update the sent stamp
+			b.append("Updating the timestamp of alerts id=");
+			for (DBAlert alert : user.getAlerts()) b.append(alert.getID());b.append(',');
+			logger.log(Level.INFO,b.toString()); 
+			return new UpdateAlertsSentTimeStamp(user);
 		} catch (ResourceException x) {
 			throw x;
 		} catch (Exception x) {
@@ -95,17 +100,6 @@ public class CallableNotification extends CallableDBUpdateTask<DBUser,Form,Strin
 	@Override
 	protected String getURI(DBUser user) throws Exception {
 		return reporter.getURI(user);
-	}
-
-	@Override
-	protected Object executeQuery(IQueryUpdate<Object, DBUser> query)
-			throws Exception {
-		/*TODO
-		Object result = super.executeQuery(query);
-		if (Method.POST.equals(method)) {
-		}
-		*/
-		return null;
 	}
 
 	@Override

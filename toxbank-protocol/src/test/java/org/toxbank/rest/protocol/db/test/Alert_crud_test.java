@@ -1,6 +1,8 @@
 package org.toxbank.rest.protocol.db.test;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.Assert;
 import net.idea.modbcum.i.query.IQueryUpdate;
@@ -8,11 +10,13 @@ import net.toxbank.client.resource.Alert.RecurrenceFrequency;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
+import org.junit.Test;
 import org.toxbank.rest.user.DBUser;
 import org.toxbank.rest.user.alerts.db.AddAlert;
 import org.toxbank.rest.user.alerts.db.DBAlert;
 import org.toxbank.rest.user.alerts.db.DeleteAlert;
 import org.toxbank.rest.user.alerts.db.UpdateAlertSentTimeStamp;
+import org.toxbank.rest.user.alerts.db.UpdateAlertsSentTimeStamp;
 
 public class Alert_crud_test  extends CRUDTest<DBUser,DBAlert>  {
 
@@ -93,4 +97,20 @@ public class Alert_crud_test  extends CRUDTest<DBUser,DBAlert>  {
 	public void testCreateNew() throws Exception {
 	}
 
+	@Test
+	public void testUpdateTimeStamp() throws Exception {
+		setUpDatabase(dbFile);
+		DBUser user = new DBUser();
+		DBAlert ref = new DBAlert();
+		ref.setID(2);
+		user.setAlerts(new ArrayList<DBAlert>());
+		user.getAlerts().add(ref);
+		IQueryUpdate query =  new UpdateAlertsSentTimeStamp(user);
+		IDatabaseConnection c = getConnection();
+		executor.setConnection(c.getConnection());
+		executor.open();
+		Assert.assertTrue(executor.process(query)>=1);
+		updateVerify(query);
+		c.close();
+	}
 }

@@ -26,7 +26,6 @@ public class TBTaskStorage extends TaskStorage<String> {
 			public void run() {
 				try {
 					String task = notifier.call();
-					System.out.println(task);
 					logger.log(Level.INFO, task);
 				} catch (Exception x) {
 					logger.log(Level.SEVERE, "Error launching notifications!", x);
@@ -35,7 +34,7 @@ public class TBTaskStorage extends TaskStorage<String> {
 			}
 		};
 		notificationTimer = new ScheduledThreadPoolExecutor(1);
-		notificationTimer.scheduleWithFixedDelay(notificationTasks, 1, 30,TimeUnit.SECONDS);
+		notificationTimer.scheduleWithFixedDelay(notificationTasks, 0, 30,TimeUnit.MINUTES);
 	}
 	
 	@Override
