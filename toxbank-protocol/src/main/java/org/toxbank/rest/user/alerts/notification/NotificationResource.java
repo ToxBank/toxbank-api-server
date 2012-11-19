@@ -1,6 +1,7 @@
 package org.toxbank.rest.user.alerts.notification;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -10,14 +11,18 @@ import java.util.UUID;
 import net.idea.modbcum.i.IQueryCondition;
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
+import net.idea.modbcum.i.exceptions.NotFoundException;
 import net.idea.modbcum.p.MasterDetailsProcessor;
 import net.idea.restnet.c.TaskApplication;
+import net.idea.restnet.c.exception.RResourceException;
 import net.idea.restnet.c.task.CallableProtectedTask;
+import net.idea.restnet.c.task.FactoryTaskConvertor;
 import net.idea.restnet.c.task.TaskCreator;
 import net.idea.restnet.c.task.TaskCreatorForm;
 import net.idea.restnet.db.DBConnection;
 import net.idea.restnet.db.QueryURIReporter;
 import net.idea.restnet.i.task.ICallableTask;
+import net.idea.restnet.i.task.ITaskStorage;
 import net.idea.restnet.i.task.Task;
 import net.toxbank.client.resource.Alert.RecurrenceFrequency;
 
@@ -199,9 +204,16 @@ public class NotificationResource<T> extends UserDBResource<T> {
 			//should work with empty form as well
 		}
 		synchronized (this) {
-			return processAndGenerateTask(Method.POST, null, variant,true);
+			try {
+				return processAndGenerateTask(Method.POST, null, variant,true);
+			} catch (ResourceException x) {
+				if ((x.getStatus()!=null) && (x.getStatus().getThrowable() instanceof NotFoundException)) {
+					//then it's fine, just no alerts to worry about. Upgrade restnet for a better 'not found' handler!
+					throw new ResourceException(Status.CLIENT_ERROR_NOT_FOUND,x.getStatus().getThrowable());
+				} else throw x;
+			}
 		}
 	}
-		
+	
 	
 }

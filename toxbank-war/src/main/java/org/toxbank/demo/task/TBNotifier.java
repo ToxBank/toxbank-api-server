@@ -78,6 +78,12 @@ public class TBNotifier implements Callable<String> {
 			//headers.add("Accept", "text/uri-list");
 			repr = cr.post(form.getWebRepresentation(),MediaType.TEXT_URI_LIST);
 			return repr.getText();
+		} catch (ResourceException x) {
+			if (Status.CLIENT_ERROR_NOT_FOUND.equals(x.getStatus())) {
+				logger.log(Level.INFO, "No active alerts found");
+				return x.getStatus().toString();
+			}
+			else throw x;
 		} catch (Exception x) {
 			throw x;
 		} finally {
