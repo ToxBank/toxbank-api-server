@@ -34,7 +34,7 @@ public class TBTaskStorage extends TaskStorage<String> {
 			}
 		};
 		notificationTimer = new ScheduledThreadPoolExecutor(1);
-		notificationTimer.scheduleWithFixedDelay(notificationTasks, 0, 30,TimeUnit.MINUTES);
+		notificationTimer.scheduleWithFixedDelay(notificationTasks, 0, 12,TimeUnit.HOURS);
 	}
 	
 	@Override
