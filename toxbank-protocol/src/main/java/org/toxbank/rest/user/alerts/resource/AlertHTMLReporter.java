@@ -2,6 +2,9 @@ package org.toxbank.rest.user.alerts.resource;
 
 import java.io.Writer;
 import java.net.URLEncoder;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.util.Date;
 
 import net.idea.modbcum.i.IQueryRetrieval;
 import net.idea.modbcum.i.exceptions.AmbitException;
@@ -195,6 +198,7 @@ public class AlertHTMLReporter extends QueryHTMLReporter<DBAlert, IQueryRetrieva
 							uri));		
 					break;
 				}	
+
 				default :
 					output.write(String.format("<th>%s</th><td align='left'>%s</td>\n",
 						field.toString(),value));
@@ -218,7 +222,16 @@ public class AlertHTMLReporter extends QueryHTMLReporter<DBAlert, IQueryRetrieva
 					output.write(String.format("<td><a href='%s'>%s</a></td>",uri,uri));
 					break;
 				}	
-		
+				case sent: {
+					output.write(String.format("<td align='left'>%s</td>\n",
+							DateFormat.getDateTimeInstance().format(new Timestamp(1000L*(Long)value))));
+					break;
+				}
+				case created: {
+					output.write(String.format("<td align='left'>%s</td>\n",
+							DateFormat.getDateTimeInstance().format(new Timestamp(1000L*(Long)value))));
+					break;
+				}		
 				default:
 					output.write(String.format("<td title='%s'>%s</td>",value==null?"":value,
 							value==null?"":value.toString().length()>40?value.toString().substring(0,40):value.toString()));

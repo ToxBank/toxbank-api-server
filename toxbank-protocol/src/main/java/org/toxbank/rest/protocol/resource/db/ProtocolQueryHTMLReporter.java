@@ -3,6 +3,7 @@ package org.toxbank.rest.protocol.resource.db;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.DateFormat;
 import java.util.Date;
 
 import net.idea.modbcum.i.IQueryCondition;
@@ -389,12 +390,18 @@ public class ProtocolQueryHTMLReporter extends QueryHTMLReporter<DBProtocol, IQu
 					//output.write(String.format("<td><a href='%s'>%s</a></td>",uri,uri));
 					break;
 				}	
+				case created: {
+					output.write(String.format("<td>%s</td>\n",
+							DateFormat.getDateTimeInstance().format(new Date(protocol.getSubmissionDate()))));
+					break;					
+				}
 				case updated: {
 					
 					output.write(String.format("<td><a href='%s%s?%s=%s' title='Find protocols modified since this one (Unix time stamp, ms=%s)'>%s</a></td>\n",
 							uriReporter.getRequest().getRootRef(),Resources.protocol,"modifiedSince",protocol.getTimeModified(),
 							protocol.getTimeModified(),
-							protocol.getTimeModified()==null?"":new Date(protocol.getTimeModified())));
+							protocol.getTimeModified()==null?"":
+							DateFormat.getDateTimeInstance().format(new Date(protocol.getTimeModified()))));
 					break;
 				}
 				case identifier: {

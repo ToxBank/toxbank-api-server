@@ -2,6 +2,7 @@ package org.toxbank.rest.user.alerts.db;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import net.toxbank.client.resource.Alert;
 import net.toxbank.client.resource.Query.QueryType;
@@ -98,13 +99,30 @@ public class DBAlert extends Alert<DBUser> {
 			}
 			@Override
 			public void setParam(DBAlert alert, ResultSet rs) throws SQLException {
-				alert.setSentAt(rs.getLong(name()));
+				Timestamp date = rs.getTimestamp(name());
+				alert.setSentAt(date.getTime()/1000);
 			}			
 			@Override
 			public Object getValue(DBAlert alert) {
 				return alert.getSentAt();
 			}
 		},		
+		created {
+			@Override
+			public void setValue(DBAlert alert, String value)
+					throws SQLException {
+				alert.setCreated(Long.parseLong(value));
+			}
+			@Override
+			public void setParam(DBAlert alert, ResultSet rs) throws SQLException {
+				Timestamp date = rs.getTimestamp(name());
+				alert.setCreated(date.getTime()/1000);
+			}			
+			@Override
+			public Object getValue(DBAlert alert) {
+				return alert.getCreated();
+			}
+		},			
 		iduser {
 			@Override
 			public void setValue(DBAlert alert, String value)
