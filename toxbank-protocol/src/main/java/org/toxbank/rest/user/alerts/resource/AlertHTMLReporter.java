@@ -224,12 +224,12 @@ public class AlertHTMLReporter extends QueryHTMLReporter<DBAlert, IQueryRetrieva
 				}	
 				case sent: {
 					output.write(String.format("<td align='left'>%s</td>\n",
-							DateFormat.getDateTimeInstance().format(new Timestamp(1000L*(Long)value))));
+							DateFormat.getDateTimeInstance().format(new Timestamp((Long)value))));
 					break;
 				}
 				case created: {
 					output.write(String.format("<td align='left'>%s</td>\n",
-							DateFormat.getDateTimeInstance().format(new Timestamp(1000L*(Long)value))));
+							DateFormat.getDateTimeInstance().format(new Timestamp((Long)value))));
 					break;
 				}		
 				default:
