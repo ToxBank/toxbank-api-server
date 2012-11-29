@@ -238,7 +238,9 @@ public class AlertHTMLReporter extends QueryHTMLReporter<DBAlert, IQueryRetrieva
 				}
 			}
 			output.write("</tr>\n");
-		} catch (Exception x) {} 
+		} catch (Exception x) {
+			x.printStackTrace();
+		} 
 	}
 	@Override
 	public void footer(Writer output, IQueryRetrieval<DBAlert> query) {

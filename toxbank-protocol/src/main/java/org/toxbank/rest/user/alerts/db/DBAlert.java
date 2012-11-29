@@ -99,8 +99,12 @@ public class DBAlert extends Alert<DBUser> {
 			}
 			@Override
 			public void setParam(DBAlert alert, ResultSet rs) throws SQLException {
-				Timestamp date = rs.getTimestamp(name());
-				alert.setSentAt(date.getTime());
+				try {
+					Timestamp date = rs.getTimestamp(name());
+					alert.setSentAt(date.getTime());
+				} catch (Exception x) {
+					alert.setSentAt(0L);
+				}
 			}			
 			@Override
 			public Object getValue(DBAlert alert) {
@@ -115,8 +119,12 @@ public class DBAlert extends Alert<DBUser> {
 			}
 			@Override
 			public void setParam(DBAlert alert, ResultSet rs) throws SQLException {
-				Timestamp date = rs.getTimestamp(name());
-				alert.setCreated(date.getTime());
+				try {
+					Timestamp date = rs.getTimestamp(name());
+					alert.setCreated(date.getTime());
+				} catch (Exception x) {
+					alert.setCreated(0L);
+				}
 			}			
 			@Override
 			public Object getValue(DBAlert alert) {
