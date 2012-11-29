@@ -15,7 +15,7 @@ import org.toxbank.rest.user.DBUser;
  *
  */
 public class AddAlert  extends AbstractAlertUpdate<DBUser> {
-	public static final String[] sql_addAlert = new String[] {"insert into alert (name,query,qformat,rfrequency,rinterval,iduser) values (?,?,?,?,?,?) "};
+	public static final String[] sql_addAlert = new String[] {"insert into alert (name,query,qformat,rfrequency,rinterval,iduser,sent) values (?,?,?,?,?,?,now()) "};
 	
 	public AddAlert(DBAlert alert,DBUser author) {
 		super(alert);
