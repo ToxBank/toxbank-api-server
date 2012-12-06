@@ -96,7 +96,7 @@ Project service</description>
 <profile>
    <id>http</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
 			<properties>
 				<web_xml>src/main/resources/web.xml</web_xml>
