@@ -5,8 +5,8 @@
 <!--  can't make working multople restlet applications in single war -->
 <web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" >
 
-	<display-name>ToxBank protocol service</display-name>
-	<description>ToxBank protocol service</description>
+	<display-name>TB demo</display-name>
+	<description>TB demo</description>
 	
 	
 	<context-param>
@@ -20,7 +20,8 @@
 		<param-name>org.restlet.component</param-name>
 		<param-value>org.toxbank.demo.TBRESTComponent</param-value>
 	</context-param>	
-	<!-- Java melody -->
+			
+<!-- Java melody -->
  	<filter>
                 <filter-name>monitoring</filter-name>
                 <filter-class>net.bull.javamelody.MonitoringFilter</filter-class>
@@ -32,7 +33,7 @@
         <listener>
                 <listener-class>net.bull.javamelody.SessionListener</listener-class>
         </listener>			
-	<!-- Restlet app -->	
+	<!-- Restlet app -->			
 	<servlet>
 		<servlet-name>RestletServlet</servlet-name>
 		<servlet-class>org.restlet.ext.servlet.ServerServlet</servlet-class>
@@ -41,7 +42,6 @@
 		<servlet-name>RestletServlet</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
-	   
       
     <security-constraint>
         <web-resource-collection>
