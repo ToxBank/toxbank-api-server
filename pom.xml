@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.toxbank</groupId>
   <artifactId>toxbank-rest</artifactId>
-  <version>0.0.4-SNAPSHOT</version>
+  <version>0.0.3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>ToxBank Protocols</name>
   <description>ToxBank Protocol REST service</description>
@@ -382,7 +382,7 @@
         <toxbank.db.user>guest</toxbank.db.user>
         <toxbank.db.user.password>guest</toxbank.db.user.password>
         <!-- The folder where protocol files are stored -->
-        <toxbank.dir.protocol />
+        <toxbank.dir.protocol></toxbank.dir.protocol>
         <!-- How to serialize RDF - by Jena or StAX  jena|stax -->
         <rdf.writer>jena</rdf.writer>
         <!-- Protect /admin resource by AA -->
@@ -409,13 +409,13 @@
 			-->
 	<!-- Alerts configuration -->
 	<!-- TODO specify default values if posuble -->
-	<alert.admin.email />
-	<alert.search.service.url />
-	<alert.ui.service.url />
-	<alert.mail.transport.protocol />
+	<alert.admin.email></alert.admin.email>
+	<alert.search.service.url></alert.search.service.url>
+	<alert.ui.service.url></alert.ui.service.url>
+	<alert.mail.transport.protocol></alert.mail.transport.protocol>
 	<alert.mail.host>localhost</alert.mail.host>
-	<alert.mail.user />
-	<alert.mail.debug />
+	<alert.mail.user></alert.mail.user>
+	<alert.mail.debug></alert.mail.debug>
       </properties>
     </profile>
   </profiles>
