@@ -184,6 +184,7 @@
           </execution>
         </executions>
       </plugin>
+<!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
@@ -192,6 +193,7 @@
           <locales>en</locales>
         </configuration>
       </plugin>
+-->
     </plugins>
     <pluginManagement>
       <plugins>
@@ -256,10 +258,12 @@
       <id>toxbank-releases</id>
       <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/toxbank-releases</url>
     </repository>
+<!--
     <site>
       <id>toxbank-site</id>
       <url>http://toxbank.github.com/toxbank-api-server/</url>
     </site>
+-->
   </distributionManagement>
   <ciManagement>
     <url>http://jenkins.toxbank.net</url>
