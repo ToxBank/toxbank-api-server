@@ -209,13 +209,15 @@ public class ProjectResourceTest  extends ResourceTest {
 	@Test
 	public void testUpdate() throws Exception {
 		IDatabaseConnection c = getConnection();	
-		ITable table = 	c.createQueryTable("EXPECTED","SELECT name,ldapgroup FROM project where idproject=2");
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT name,ldapgroup,cluster FROM project where idproject=2");
 		Assert.assertEquals("Toxbank",table.getValue(0,"name"));
 		Assert.assertEquals("toxbank",table.getValue(0,"ldapgroup"));
+
 		c.close();		
 		
 		Form form = new Form();
 		form.add(DBGroup.fields.name.name(), "ToxBank");
+		form.add("cluster", "http://onto.toxbank.net/api/SEURAT-1");
 		
 		String org = String.format("http://localhost:%d%s/G2", port,Resources.project);
 		RemoteTask task = testAsyncPoll(new Reference(org),
@@ -224,9 +226,10 @@ public class ProjectResourceTest  extends ResourceTest {
 		Assert.assertEquals(Status.SUCCESS_OK, task.getStatus());
 		//Assert.assertNull(task.getResult());
 		c = getConnection();	
-		table = 	c.createQueryTable("EXPECTED","SELECT name,ldapgroup FROM project where idproject=2");
+		table = 	c.createQueryTable("EXPECTED","SELECT name,ldapgroup,cluster FROM project where idproject=2");
 		Assert.assertEquals("ToxBank",table.getValue(0,"name"));
 		Assert.assertEquals("toxbank",table.getValue(0,"ldapgroup"));
+		Assert.assertEquals("http://onto.toxbank.net/api/SEURAT-1",table.getValue(0,"cluster"));
 		c.close();			
 	}
 	

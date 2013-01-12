@@ -31,6 +31,7 @@ public class UpdateGroup extends AbstractObjectUpdate<IDBGroup>{
 			List<QueryParam> params1 = new ArrayList<QueryParam>();
 			params1.add(new QueryParam<String>(String.class,  getObject().getTitle()));
 			params1.add(new QueryParam<String>(String.class,  getObject().getGroupName()));
+			params1.add(new QueryParam<String>(String.class,  getObject().getCluster()==null?null:getObject().getCluster().toExternalForm()));
 			params1.add(new QueryParam<Integer>(Integer.class,  getObject().getID()));
 			return params1;
 		} else throw new AmbitException("Empty ID");

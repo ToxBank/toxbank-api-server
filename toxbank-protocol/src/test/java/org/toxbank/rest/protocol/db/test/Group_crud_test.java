@@ -1,5 +1,7 @@
 package org.toxbank.rest.protocol.db.test;
 
+import java.net.URL;
+
 import junit.framework.Assert;
 import net.idea.modbcum.i.query.IQueryUpdate;
 
@@ -19,6 +21,7 @@ public class Group_crud_test  extends CRUDTest<Object,IDBGroup>  {
 		DBProject ref = new DBProject();
 		ref.setGroupName("opentox");
 		ref.setTitle("OpenTox");
+		ref.setCluster(new URL("http://onto.toxbank.net/api/SEURAT-1"));
 		return new CreateGroup(ref);
 	}
 
@@ -27,11 +30,12 @@ public class Group_crud_test  extends CRUDTest<Object,IDBGroup>  {
 			throws Exception {
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED",
-				"SELECT idproject,name,ldapgroup from project where name='OpenTox'");
+				"SELECT idproject,name,ldapgroup,cluster from project where name='OpenTox'");
 		
 		Assert.assertEquals(1,table.getRowCount());
 		Assert.assertEquals("opentox",table.getValue(0,"ldapgroup"));
 		Assert.assertEquals("OpenTox",table.getValue(0,"name"));
+		Assert.assertEquals("http://onto.toxbank.net/api/SEURAT-1",table.getValue(0,"cluster"));
 		c.close();
 	}
 

@@ -70,6 +70,9 @@ public class CallableGroupCreator extends CallableDBUpdateTask<IDBGroup,Form,Str
 			}
 			group.setTitle(input.getFirstValue(DBGroup.fields.name.name()));
 			group.setGroupName(input.getFirstValue(DBGroup.fields.ldapgroup.name()));
+			try { if (input.getFirstValue("cluster")!=null) 
+				group.setCluster(new URL(input.getFirstValue("cluster")));
+			} catch (Exception x) {group.setCluster(null);}
 	 		return group;
 		} else if (Method.PUT.equals(method)) {
 			String newValue = input.getFirstValue(DBGroup.fields.name.name());
@@ -78,6 +81,10 @@ public class CallableGroupCreator extends CallableDBUpdateTask<IDBGroup,Form,Str
 			newValue = input.getFirstValue(DBGroup.fields.ldapgroup.name());
 			if (newValue!=null)
 				item.setGroupName(input.getFirstValue(DBGroup.fields.ldapgroup.name()));
+			newValue = input.getFirstValue("cluster");
+			if (newValue!=null) try {
+				item.setCluster(new URL(newValue));
+			} catch (Exception x) { item.setCluster(null);}			
 			return item;
 		} else throw new ResourceException(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
 	}

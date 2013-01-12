@@ -115,6 +115,7 @@ public class OrganisationResourceTest extends ResourceTest {
 		Form form = new Form();
 		form.add(DBGroup.fields.name.name(), "organisation");
 		form.add(DBGroup.fields.ldapgroup.name(), "toxbank");
+		form.add("cluster", "http://onto.toxbank.net/api/SEURAT-1");
 
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM organisation");
@@ -138,10 +139,11 @@ public class OrganisationResourceTest extends ResourceTest {
         c = getConnection();	
 		table = 	c.createQueryTable("EXPECTED","SELECT * FROM organisation");
 		Assert.assertEquals(4,table.getRowCount());
-		table = 	c.createQueryTable("EXPECTED","SELECT idorganisation,name,ldapgroup from organisation where idorganisation>3");
+		table = 	c.createQueryTable("EXPECTED","SELECT idorganisation,name,ldapgroup,cluster from organisation where idorganisation>3");
 		Assert.assertEquals(1,table.getRowCount());
 		Assert.assertEquals("toxbank",table.getValue(0,"ldapgroup"));
 		Assert.assertEquals("organisation",table.getValue(0,"name"));
+		Assert.assertEquals("http://onto.toxbank.net/api/SEURAT-1",table.getValue(0,"cluster"));
 		
 
 		String expectedURI = String.format("http://localhost:%d/organisation/G%s",port,table.getValue(0,"idorganisation"));

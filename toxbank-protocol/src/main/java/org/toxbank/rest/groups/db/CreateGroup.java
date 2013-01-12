@@ -25,6 +25,7 @@ public class CreateGroup extends AbstractObjectUpdate<IDBGroup>{
 		params1.add(new QueryParam<Integer>(Integer.class,  null));
 		params1.add(new QueryParam<String>(String.class,  getObject().getTitle()));
 		params1.add(new QueryParam<String>(String.class,  getObject().getGroupName()));
+		params1.add(new QueryParam<String>(String.class,  getObject().getCluster()==null?null:getObject().getCluster().toExternalForm()));
 		return params1;
 	}
 

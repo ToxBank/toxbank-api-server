@@ -37,13 +37,13 @@ public enum GroupType {
 	
 	public String getCreateSQL() {
 		return String.format(
-				"INSERT into %s (%s,name,ldapgroup) values (?,?,?)",
+				"INSERT into %s (%s,name,ldapgroup,cluster) values (?,?,?,?)",
 				getDBname(), getID());
 	}
 	
 	public String getUpdateSQL() {
 		return String.format(
-				"UPDATE %s set name = ?,ldapgroup=? where %s = ?",
+				"UPDATE %s set name = ?,ldapgroup=?,cluster=? where %s = ?",
 				getDBname(), getID());
 	}
 
