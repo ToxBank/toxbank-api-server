@@ -82,11 +82,12 @@ public class UpdateProtocol extends AbstractObjectUpdate<DBProtocol>{
 			params1.add(ReadProtocol.fields.version.getParam(getObject()));
 			return params1;
 		} else 
-			return updateProject.getParameters(index-1);
+			if (getObject().getProjects()==null || getObject().getProjects().size()==0) return null;
+			else return updateProject.getParameters(index-1);
 		
 	}
 	public String[] getSQL() throws AmbitException {
-		String[] sql = updateProject.getSQL();
+
 		StringBuilder b = new StringBuilder();
 		String d = " ";
 		for (ReadProtocol.fields field: f) 
@@ -102,11 +103,16 @@ public class UpdateProtocol extends AbstractObjectUpdate<DBProtocol>{
 				}
 				d = ",";
 			}
-		String[] result = new String[sql.length+1];
-		result[0] = String.format(update_sql,b.toString());
-		for (int i=0; i < sql.length; i++)
-			result[i+1] = sql[i];
-		return  result;
+		if (getObject().getProjects()==null || getObject().getProjects().size()==0) {
+			return new String[] {String.format(update_sql,b.toString())};
+		} else {
+			String[] sql = updateProject.getSQL();
+			String[] result = new String[sql.length+1];
+			result[0] = String.format(update_sql,b.toString());
+			for (int i=0; i < sql.length; i++)
+				result[i+1] = sql[i];
+			return  result;
+		}
 	}
 	public void setID(int index, int id) {
 			
