@@ -480,6 +480,43 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 	}	
 	
 	
+	@Test
+	public void testPublish() throws Exception {
+		String uri = String.format("http://localhost:%d%s/%s-2-1", port,Resources.protocol,Protocol.id_prefix);
+
+		File file = new File(getClass().getClassLoader().getResource("org/toxbank/protocol/protocol-sample.pdf").getFile());
+		
+		String[] names = new String[11];
+		String[] values = new String[11];
+		values[0] = Boolean.TRUE.toString();
+		names[0] = "published";
+		Representation rep = getMultipartWebFormRepresentation(names,values,file,MediaType.APPLICATION_PDF.toString());
+		
+        IDatabaseConnection c = getConnection();	
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
+		Assert.assertEquals(3,table.getRowCount());
+		c.close();
+
+		RemoteTask task = testAsyncPoll(new Reference(uri),MediaType.TEXT_URI_LIST, rep,Method.PUT);
+		//wait to complete
+		while (!task.isDone()) {
+			task.poll();
+			Thread.sleep(100);
+			Thread.yield();
+		}
+		if (!task.isCompletedOK())
+			System.out.println(task.getError());
+		Assert.assertTrue(task.getResult().toString().startsWith(
+							String.format("http://localhost:%d/protocol/%s",port,Protocol.id_prefix)));
+		
+		c = getConnection();	
+		table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
+		Assert.assertEquals(3,table.getRowCount());
+		table = 	c.createQueryTable("EXPECTED","SELECT published from protocol where idprotocol=2 and version=1 and published=true");
+		Assert.assertEquals(1,table.getRowCount());
+		c.close();
+	}
+	
 	public void testDownloadFile() throws Exception {
 		testGet(String.format("http://localhost:%d%s/%s-1-1%s", 
 					port,

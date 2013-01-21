@@ -387,12 +387,16 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 				connection.commit();
 				TaskResult result = new TaskResult(uri,false);
 				try {
-					if (owner==null) 
-						LOGGER.log(Level.SEVERE,String.format("Protocol owner is missing!",owner));
-					else 
-						addDefaultProtocolRights(policy,owner,true,true,true,true);
-				
+					/**
+					 * Don't change anything if no access rights are specified
+					 */
 					if ((policy.getRules()!=null) && (policy.getRules().size()>0)) {
+						//ensure the default rights are set
+						if (owner==null) 
+							LOGGER.log(Level.SEVERE,String.format("Protocol owner is missing!",owner));
+						else 
+							addDefaultProtocolRights(policy,owner,true,true,true,true);
+						
 						retrieveAccountNames(policy,connection);
 						policy.setResource(new URL(uri));
 						result.setPolicy(generatePolicy(protocol,policy));
