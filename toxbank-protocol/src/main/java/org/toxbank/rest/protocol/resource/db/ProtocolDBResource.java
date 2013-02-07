@@ -65,7 +65,6 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 					variant.getMediaType().equals(MediaType.APPLICATION_RDF_TURTLE) ||
 					variant.getMediaType().equals(MediaType.TEXT_RDF_N3) ||
 					variant.getMediaType().equals(MediaType.TEXT_RDF_NTRIPLES) ||
-					variant.getMediaType().equals(MediaType.APPLICATION_JSON) ||
 					variant.getMediaType().equals(MediaType.TEXT_CSV) 
 					
 					) {
@@ -78,6 +77,9 @@ public class ProtocolDBResource<Q extends ReadProtocol> extends QueryResource<Q,
 						return TOXBANK.URI;
 					}					
 				};
+		} else if (variant.getMediaType().equals(MediaType.APPLICATION_JSON)) {
+			ProtocolJSONReporter r = new ProtocolJSONReporter(getRequest());
+			return new StringConvertor(	r,MediaType.APPLICATION_JSON,filenamePrefix);				
 		} else if (variant.getMediaType().equals(MediaType.TEXT_HTML))
 				return new OutputWriterConvertor(
 						new ProtocolQueryHTMLReporter(getRequest(),!singleItem,isEditable()),
