@@ -191,6 +191,7 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
     }
     
     URL searchUrl = new URL(searchServiceUrl + paramString);
+    log.info("Querying search service  " + searchUrl);
     try {
       URLConnection conn = searchUrl.openConnection();
       conn.setRequestProperty("Accept", "application/xml");
@@ -210,6 +211,7 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
           }
         }
       }
+      log.info("Found " + resultUrls.size() + " search results");
       return resultUrls;
     }
     catch (Exception e) {
