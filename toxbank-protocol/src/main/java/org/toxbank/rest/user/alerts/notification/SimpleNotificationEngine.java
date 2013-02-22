@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 import javax.mail.MessagingException;
 
 import net.toxbank.client.resource.AbstractToxBankResource;
-import net.toxbank.client.resource.Account;
 import net.toxbank.client.resource.Alert;
 import net.toxbank.client.resource.Investigation;
 import net.toxbank.client.resource.Protocol;
@@ -25,7 +24,6 @@ import org.opentox.rest.RestException;
 @SuppressWarnings("rawtypes")
 public class SimpleNotificationEngine implements INotificationEngine {
   public static final String notificationSubject = "ToxBank Alert Updates";
-  private static final String EMAIL_SERVICE_NAME = "mailto";
   private static final String configFile = "conf/tbalert.pref";
   private static Logger log  = Logger.getLogger("org.toxbank.rest.user.alerts.notification"); 
   private AlertNotificationUtility utility;
@@ -59,7 +57,7 @@ public class SimpleNotificationEngine implements INotificationEngine {
 	 */
   @Override
   public boolean sendAlerts(User user, List<? extends Alert> alerts, String token) throws Exception {
-    String email = getEmail(user);
+    String email = user.getEmail();
     if (email != null) {
       List<AlertResult> results = new ArrayList<AlertResult>();
       for (Alert alert : alerts) {
@@ -126,15 +124,6 @@ public class SimpleNotificationEngine implements INotificationEngine {
       sb.append(alert.getSentAt());
     }
     return sb.toString();
-  }
-  
-  private String getEmail(User user) {
-    for (Account account : user.getAccounts()) {
-      if (EMAIL_SERVICE_NAME.equals(account.getService())) {
-        return account.getAccountName();
-      }
-    }
-    return null;
   }
       
   private void sendNotification(String userEmail, List<AlertResult> results, String token) throws IOException, RestException, RuntimeException,MessagingException {

@@ -59,6 +59,7 @@ public class CallableNotification extends CallableDBUpdateTask<DBUser,Form,Strin
 		if (Method.POST.equals(method)) try {
 			//user email should be already read from the protocol service
 			if (user.getEmail()==null) {
+				logger.log(Level.INFO,"Retrieving email for "+user.getUserName());
 				OpenSSOServicesConfig config = OpenSSOServicesConfig.getInstance();
 				OpenSSOToken ssoToken = new OpenSSOToken(config.getOpenSSOService());
 				ssoToken.setToken(getToken());
@@ -67,12 +68,10 @@ public class CallableNotification extends CallableDBUpdateTask<DBUser,Form,Strin
 				String email = results.get("mail");
 				if ((email==null) || "".equals(email)) 
 							throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,String.format("Invalid email address for [%s]",user.getUserName()));
-				Account account = new Account();
-				account.setService("mailto");
-				account.setAccountName(email);
-				account.setResourceURL(new URL(String.format("%s:%s",account.getService(),URLEncoder.encode(email))));
-				user.addAccount(account);
-			}
+				else logger.log(Level.INFO,"Retrieved email "+ email + " for "+user.getUserName()); 
+				user.setEmail(email);
+			} else
+				logger.log(Level.INFO,"User email is "+ user.getEmail());
 			try {
 				if (notification.sendAlerts(user,user.getAlerts(), getToken()))
 					logger.log(Level.INFO,"Notification email sent successfully"+user.getID());
