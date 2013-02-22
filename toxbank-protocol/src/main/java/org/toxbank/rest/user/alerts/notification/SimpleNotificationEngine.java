@@ -76,7 +76,7 @@ public class SimpleNotificationEngine implements INotificationEngine {
     	  log.log(Level.INFO, "No active alerts to send for " + user.getResourceURL());
       }
     } else
-    	log.log(Level.INFO, "No email configured for " + user.getResourceURL());
+    	log.log(Level.INFO, "No email configured for " + user.getUserName());
     
     return true;
   }

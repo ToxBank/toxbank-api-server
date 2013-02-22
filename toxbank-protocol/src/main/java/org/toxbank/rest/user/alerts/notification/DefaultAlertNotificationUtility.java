@@ -157,6 +157,7 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
         try {
           tr.connect();
           msg.saveChanges();
+          log.log(Level.INFO, "Sending message  "+msg.getSubject() + " to " + msg.getAllRecipients()[0]);
           tr.sendMessage(msg, msg.getAllRecipients());
         } catch (Exception x) {
         	log.log(Level.SEVERE, "Error sending message to "+toEmail ,x);
