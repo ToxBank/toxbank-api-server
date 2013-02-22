@@ -100,6 +100,7 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
     config = new Properties();
     try {
       config.load(getClass().getClassLoader().getResourceAsStream(configFile));
+      log.log(Level.INFO, "Mail session properties loaded "+config);
       adminEmail = config.getProperty(ADMIN_EMAIL_PROP);
       searchServiceUrl = config.getProperty(SEARCH_SERVICE_URL_PROP);  
       if (searchServiceUrl.endsWith("/")) {
@@ -157,6 +158,8 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
           tr.connect();
           msg.saveChanges();
           tr.sendMessage(msg, msg.getAllRecipients());
+        } catch (Exception x) {
+        	log.log(Level.SEVERE, "Error sending message to "+toEmail ,x);
         }
         finally {
           try { tr.close(); } catch (Exception e) {}

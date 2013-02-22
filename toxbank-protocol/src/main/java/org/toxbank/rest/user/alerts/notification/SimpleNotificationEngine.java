@@ -70,6 +70,7 @@ public class SimpleNotificationEngine implements INotificationEngine {
       }
       
       if (results.size() > 0) {
+    	log.log(Level.INFO, "Sending " + results.size()  + " results to "+ user.getEmail());
         sendNotification(email, results, token);		  
       }
     }
