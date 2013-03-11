@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -191,33 +190,50 @@ public class DefaultAlertNotificationUtility implements AlertNotificationUtility
       throw new RuntimeException("The alert.search.service.url has not been configured in " + configFile);
     }
     
-    URL searchUrl = new URL(searchServiceUrl + paramString);
+    HttpClient httpClient = createHTTPClient(ssoToken);    
+    
+    URL searchUrl = new URL(searchServiceUrl + paramString);    
     log.info("Querying search service  " + searchUrl);
     try {
-      URLConnection conn = searchUrl.openConnection();
-      conn.setRequestProperty("Accept", "application/xml");
-      InputStream is = conn.getInputStream();
-      BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-      List<URL> resultUrls = new ArrayList<URL>();
-      for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-        line = line.trim();
-        if (line.length() > 0) {
-          Matcher urlMatcher = urlPattern.matcher(line);
-          if (urlMatcher.matches()) {
-            String urlString = urlMatcher.group(1);
-            resultUrls.add(new URL(urlString));
-          }
-          else if (!ignoredLines.contains(line)){
-            log.info("Line from search service did not match anything: " + line);
+      HttpGet httpGet = new HttpGet(searchUrl.toString());
+      httpGet.addHeader("Accept", "application/xml");
+      HttpResponse response = httpClient.execute(httpGet);
+      HttpEntity entity  = response.getEntity();
+      InputStream is = entity.getContent();
+      try {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        List<URL> resultUrls = new ArrayList<URL>();
+        for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+          line = line.trim();
+          if (line.length() > 0) {
+            Matcher urlMatcher = urlPattern.matcher(line);
+            if (urlMatcher.matches()) {
+              String urlString = urlMatcher.group(1);
+              resultUrls.add(new URL(urlString));
+            }
+            else if (!ignoredLines.contains(line)){
+              log.info("Line from search service did not match anything: " + line);
+            }
           }
         }
+        log.info("Found " + resultUrls.size() + " search results");
+        return resultUrls;
       }
-      log.info("Found " + resultUrls.size() + " search results");
-      return resultUrls;
+      finally {
+        if (is != null) {
+          try { is.close(); } catch (Exception e) { }
+        }
+      }
     }
     catch (Exception e) {
       throw new RuntimeException("Error connecting to search url: " + searchUrl, e);
     }
+    finally {
+      if (httpClient !=null) {
+        httpClient.getConnectionManager().shutdown();
+        httpClient = null;
+      }
+    }    
   }
   
   @Override
