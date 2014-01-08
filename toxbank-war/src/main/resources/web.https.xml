@@ -21,7 +21,7 @@
 		<param-value>org.toxbank.demo.TBRESTComponent</param-value>
 	</context-param>	
 			
-<!-- Java melody -->
+<!-- Java melody 
  	<filter>
                 <filter-name>monitoring</filter-name>
                 <filter-class>net.bull.javamelody.MonitoringFilter</filter-class>
@@ -32,7 +32,8 @@
         </filter-mapping>
         <listener>
                 <listener-class>net.bull.javamelody.SessionListener</listener-class>
-        </listener>			
+        </listener>
+        			-->
 	<!-- Restlet app -->			
 	<servlet>
 		<servlet-name>RestletServlet</servlet-name>

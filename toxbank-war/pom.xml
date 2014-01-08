@@ -37,7 +37,7 @@
     	<version>2.4.8</version>
     	<scope>test</scope>
     </dependency>
-
+<!-- 
   	<dependency>
   	<groupId>net.bull.javamelody</groupId>
   	<artifactId>javamelody-core</artifactId>
@@ -50,7 +50,7 @@
 	<artifactId>jrobin</artifactId>
 	<version>1.5.9</version>
 	</dependency>
-	 
+	  -->
 
   </dependencies>
   <description>ToxBank Web REST services
