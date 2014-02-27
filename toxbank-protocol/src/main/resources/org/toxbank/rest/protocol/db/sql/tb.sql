@@ -160,7 +160,7 @@ CREATE TABLE  `alert` (
 -- -----------------------------------------------------
 -- DELIMITER $
 -- CREATE TRIGGER insert_protocol_id BEFORE UPDATE ON protocol
---FOR EACH ROW BEGIN
+-- FOR EACH ROW BEGIN
 --	IF NEW.idprotocol != null THEN
 --		set NEW.version = OLD.version+1;
 --	END IF;
