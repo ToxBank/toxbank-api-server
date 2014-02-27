@@ -59,7 +59,10 @@ public class UserDBResource<T>	extends QueryResource<ReadUser<T>,DBUser> {
 				return new StringConvertor(	
 						new UserURIReporter<IQueryRetrieval<DBUser>>(getRequest())
 						,MediaType.TEXT_URI_LIST,filenamePrefix);
-				
+		} else if (variant.getMediaType().equals(MediaType.APPLICATION_JSON)) {
+			return new OutputWriterConvertor(
+					new UserJSONReporter<IQueryRetrieval<DBUser>>(getRequest()),
+					MediaType.APPLICATION_JSON);							
 		} else if (variant.getMediaType().equals(MediaType.APPLICATION_RDF_XML) ||
 					variant.getMediaType().equals(MediaType.APPLICATION_RDF_TURTLE) ||
 					variant.getMediaType().equals(MediaType.TEXT_RDF_N3) ||
