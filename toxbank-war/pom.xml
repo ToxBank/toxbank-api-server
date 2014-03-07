@@ -1,43 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>toxbank-rest</artifactId>
     <groupId>org.toxbank</groupId>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
   <groupId>org.toxbank</groupId>
   <artifactId>toxbank-war</artifactId>
-  <version>0.0.4-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>ToxBank Web REST services</name>
-    <scm>
+  <scm>
     <connection>scm:git://github.com/ToxBank/toxbank-api-server.git</connection>
     <developerConnection>scm:git:git@github.com:ToxBank/toxbank-api-server.git</developerConnection>
     <url>https://github.com/ToxBank/toxbank-api-server/tree/master/toxbank-war</url>
   </scm>
   <dependencies>
-  	<dependency>
-  		<groupId>org.toxbank</groupId>
-  		<artifactId>toxbank-protocol</artifactId>
-  		<version>${project.version}</version>
-  		<type>jar</type>
-  		<scope>compile</scope>
-  	</dependency>
-  	<dependency>
-  	 <!-- reuse src/test/java code from moduleA! -->
-  		<groupId>org.toxbank</groupId>
-  		<artifactId>toxbank-protocol</artifactId>
-  		<version>${project.version}</version>
-  		<scope>test</scope>
-  		<classifier>tests</classifier>
-  	</dependency>
-  	<dependency>
-    	<groupId>org.dbunit</groupId>
-    	<artifactId>dbunit</artifactId>
-    	<version>2.4.8</version>
-    	<scope>test</scope>
+    <dependency>
+      <groupId>org.toxbank</groupId>
+      <artifactId>toxbank-protocol</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+      <scope>compile</scope>
     </dependency>
-<!-- 
+    <dependency>
+      <!-- reuse src/test/java code from moduleA! -->
+      <groupId>org.toxbank</groupId>
+      <artifactId>toxbank-protocol</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+      <classifier>tests</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.dbunit</groupId>
+      <artifactId>dbunit</artifactId>
+      <version>2.4.8</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- 
   	<dependency>
   	<groupId>net.bull.javamelody</groupId>
   	<artifactId>javamelody-core</artifactId>
@@ -51,7 +52,6 @@
 	<version>1.5.9</version>
 	</dependency>
 	  -->
-
   </dependencies>
   <description>ToxBank Web REST services
 Protocol service
@@ -59,86 +59,82 @@ User service
 Organisarion service
 Project service</description>
   <url>https://github.com/ToxBank/toxbank-api-server</url>
-  <organization>
-  </organization>
+  <organization></organization>
   <build>
-  <pluginManagement>
-  <plugins>
-  <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-surefire-plugin</artifactId>
-      <configuration>
-      <skip>false</skip>
-      <disableXmlReport>false</disableXmlReport>
-      <argLine>-Xmx1024m</argLine>
-     </configuration>
-    </plugin>
-      <plugin>
-  				<groupId>org.codehaus.mojo</groupId>
-  				<artifactId>tomcat-maven-plugin</artifactId>
-  				<configuration>
-					<server>localhost</server>
-					<path>/toxbank</path>
-					<port>8080</port>
-				</configuration>
-  	</plugin>
-  	
-  	<plugin>
-      <artifactId>maven-war-plugin</artifactId>
-      <version>2.1.1</version>
-      <configuration>
-         <webXml>${web_xml}</webXml>
-      <!-- 
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <skip>false</skip>
+            <disableXmlReport>false</disableXmlReport>
+            <argLine>-Xmx1024m</argLine>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>tomcat-maven-plugin</artifactId>
+          <configuration>
+            <server>localhost</server>
+            <path>/toxbank</path>
+            <port>8080</port>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>2.1.1</version>
+          <configuration>
+            <webXml>${web_xml}</webXml>
+            <!-- 
         <manifest>
           <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
         </manifest>
          -->
-        <archive>
-          <manifestEntries>
-            <Implementation-Build>${build.version}</Implementation-Build>
-            </manifestEntries>
-        </archive>
-      </configuration>
-    </plugin>
-  </plugins>
-  </pluginManagement>
+            <archive>
+              <manifestEntries>
+                <Implementation-Build>${build.version}</Implementation-Build>
+              </manifestEntries>
+            </archive>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <finalName>toxbank</finalName>
-	<resources>
-		<resource>
-			<directory>src/main/resources</directory>
-			<filtering>true</filtering>
-		</resource>
-	</resources>
-	</build>  
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+  </build>
   <profiles>
-<profile>
-   <id>http</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-			<properties>
-				<web_xml>src/main/resources/web.xml</web_xml>
-
-				<aa.opensso>src/main/resources/web.xml</aa.opensso>
-				<aa.opensso>http://opensso.in-silico.ch/opensso/identity</aa.opensso>
-        		<aa.policy>http://opensso.in-silico.ch/Pol/opensso-pol</aa.policy>
-			</properties>
-   </profile>
-   <profile>
-            <id>https</id>
- 			<activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>            
-			<properties>
-				<web_xml>src/main/resources/web.https.xml</web_xml>
-				    <aa.opensso>http://opensso.in-silico.ch/opensso/identity</aa.opensso>
-        			<aa.policy>http://opensso.in-silico.ch/Pol/opensso-pol</aa.policy>
-			</properties>			
-	    </profile>
+    <profile>
+      <id>http</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <web_xml>src/main/resources/web.xml</web_xml>
+        <aa.opensso>src/main/resources/web.xml</aa.opensso>
+        <aa.opensso>http://opensso.in-silico.ch/opensso/identity</aa.opensso>
+        <aa.policy>http://opensso.in-silico.ch/Pol/opensso-pol</aa.policy>
+      </properties>
+    </profile>
+    <profile>
+      <id>https</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <web_xml>src/main/resources/web.https.xml</web_xml>
+        <aa.opensso>http://opensso.in-silico.ch/opensso/identity</aa.opensso>
+        <aa.policy>http://opensso.in-silico.ch/Pol/opensso-pol</aa.policy>
+      </properties>
+    </profile>
     <!--  release build, with AA -->
     <profile>
       <id>aa-enabled</id>
-
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
@@ -146,8 +142,6 @@ Project service</description>
         <toxbank.protected>true</toxbank.protected>
       </properties>
     </profile>
-    
-    
     <!--  release build, without AA -->
     <profile>
       <id>aa-disabled</id>
@@ -157,7 +151,6 @@ Project service</description>
       <properties>
         <toxbank.protected>false</toxbank.protected>
       </properties>
-    </profile>    
-	    
-</profiles>
+    </profile>
+  </profiles>
 </project>
