@@ -93,7 +93,7 @@ CREATE TABLE  `protocol` (
   `idorganisation` int(10) unsigned NOT NULL COMMENT 'Link to org table',
   `filename` text COMMENT 'Path to file name',
   `template` text COMMENT 'Data template',
-  `status` enum('RESEARCH','SOP') NOT NULL DEFAULT 'RESEARCH' COMMENT 'Research or Standard Operating Procedure',
+  `status` enum('RESEARCH','SOP','REPORT') NOT NULL DEFAULT 'RESEARCH' COMMENT 'Research or Standard Operating Procedure',
   `latest` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Is the latest version',
   `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Last updated',
   `created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -190,7 +190,7 @@ CREATE TABLE  `version` (
   `comment` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`idmajor`,`idminor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-insert into version (idmajor,idminor,comment) values (1,10,"TB Protocol schema");
+insert into version (idmajor,idminor,comment) values (1,11,"TB Protocol schema");
 
 -- -----------------------------------------------------
 -- Create new protocol version
