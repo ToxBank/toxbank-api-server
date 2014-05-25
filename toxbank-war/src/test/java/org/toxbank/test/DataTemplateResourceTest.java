@@ -11,6 +11,7 @@ import java.net.URL;
 import junit.framework.Assert;
 import net.toxbank.client.Resources;
 import net.toxbank.client.resource.Protocol;
+import net.toxbank.client.resource.Protocol.STATUS;
 
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ITable;
@@ -33,7 +34,7 @@ public class DataTemplateResourceTest extends ResourceTest {
 	@Override
 	public String getTestURI() {
 		return String.format("http://localhost:%d%s/%s-1-1%s", port,Resources.protocol,
-					Protocol.id_prefix,Resources.datatemplate);
+					STATUS.RESEARCH.getPrefix(),Resources.datatemplate);
 	}
 	
 	@Test
@@ -52,7 +53,7 @@ public class DataTemplateResourceTest extends ResourceTest {
 		while ((line = r.readLine())!= null) {
 			Assert.assertEquals(
 					String.format("http://localhost:%d%s/%s-1-1%s",port,Resources.protocol,
-							Protocol.id_prefix,Resources.datatemplate)
+							STATUS.RESEARCH.getPrefix(),Resources.datatemplate)
 							, line);
 			count++;
 		}
@@ -123,7 +124,7 @@ public class DataTemplateResourceTest extends ResourceTest {
 		if (!task.isCompletedOK())
 			System.out.println(task.getError());
 		Assert.assertTrue(task.getResult().toString().startsWith(
-							String.format("http://localhost:%d/protocol/%s",port,Protocol.id_prefix)));
+							String.format("http://localhost:%d/protocol/%s",port,STATUS.RESEARCH.getPrefix())));
 		
 		return task.getResult().toString();
 

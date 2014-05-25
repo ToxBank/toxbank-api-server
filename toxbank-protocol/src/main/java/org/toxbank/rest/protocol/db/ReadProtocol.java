@@ -840,7 +840,7 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 			x.printStackTrace();
 			return null;
 		} finally {
-			if (p!=null) p.setIdentifier(String.format("SEURAT-Protocol-%d-%d", p.getID(),p.getVersion()));
+			if (p!=null) p.setIdentifier(String.format("%s-%d-%d", p.getStatus().getPrefix(), p.getID(),p.getVersion()));
 		}
 	}
 	@Override
@@ -850,7 +850,7 @@ public class ReadProtocol  extends AbstractQuery<DBUser, DBProtocol, EQCondition
 	
 	public static int[] parseIdentifier(String identifier) throws ResourceException {
 		String ids[] = identifier.split("-");
-		if ((ids.length!=4) || !identifier.startsWith(Protocol.id_prefix)) throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,"Invalid format");
+		if ((ids.length!=4) || !identifier.startsWith("SEURAT-")) throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,"Invalid format");
 		int[] id = new int[2];
 		for (int i=0; i < 2; i++)
 			try {
