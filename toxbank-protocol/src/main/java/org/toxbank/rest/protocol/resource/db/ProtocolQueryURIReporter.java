@@ -46,7 +46,7 @@ public class ProtocolQueryURIReporter <Q extends IQueryRetrieval<DBProtocol>> ex
 		return String.format("%s%s/%s-%d-%d%s",
 				ref,
 				Resources.protocol,
-				STATUS.RESEARCH.getPrefix(),item.getID(),item.getVersion(),
+				item.getStatus().getPrefix(),item.getID(),item.getVersion(),
 				suffix==null?"":suffix);
 	}
 
