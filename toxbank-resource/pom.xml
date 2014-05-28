@@ -4,11 +4,11 @@
   <parent>
     <artifactId>toxbank-rest</artifactId>
     <groupId>org.toxbank</groupId>
-    <version>0.0.5</version>
+    <version>0.0.6-SNAPSHOT</version>
   </parent>
   <groupId>org.toxbank</groupId>
   <artifactId>toxbank-resource</artifactId>
-  <version>0.0.5</version>
+  <version>0.0.6-SNAPSHOT</version>
   <name>Generic Toxbank resource</name>
   <description>To be reused by protocols, data, etc. implementations</description>
   <dependencies>
