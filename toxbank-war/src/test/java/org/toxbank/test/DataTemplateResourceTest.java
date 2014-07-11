@@ -88,7 +88,7 @@ public class DataTemplateResourceTest extends ResourceTest {
 		
 		 IDatabaseConnection c = getConnection();	
 		 ITable  table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
-		Assert.assertEquals(3,table.getRowCount());
+		Assert.assertEquals(4,table.getRowCount());
 		table = 	c.createQueryTable("EXPECTED","SELECT p.idprotocol,p.version,filename,template from protocol p where p.idprotocol=1 and p.version=1");
 		Assert.assertEquals(1,table.getRowCount());
 		Assert.assertEquals(new BigInteger("1"),table.getValue(0,"version"));
@@ -109,7 +109,7 @@ public class DataTemplateResourceTest extends ResourceTest {
 		
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
-		Assert.assertEquals(3,table.getRowCount());
+		Assert.assertEquals(4,table.getRowCount());
 		c.close();
 
 		RemoteTask task = testAsyncPoll(uri,

@@ -325,7 +325,7 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		
 		c = getConnection();	
 		table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
-		Assert.assertEquals(3,table.getRowCount());
+		Assert.assertEquals(4,table.getRowCount());
 		table = 	c.createQueryTable("EXPECTED","SELECT p.idprotocol,p.version,published from protocol p where p.idprotocol=2 and version=1");
 		Assert.assertEquals(1,table.getRowCount());
 		Assert.assertEquals(Boolean.TRUE,table.getValue(0,"published"));
@@ -343,7 +343,7 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		String url =createEntryFromMultipartWeb(new Reference(getTestURI()+Resources.versions));
 		 IDatabaseConnection c = getConnection();	
 		 ITable  table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
-		Assert.assertEquals(4,table.getRowCount());
+		Assert.assertEquals(5,table.getRowCount());
 		table = 	c.createQueryTable("EXPECTED","SELECT p.idprotocol,p.version,filename from protocol p where p.idprotocol=1 order by version");
 		Assert.assertEquals(2,table.getRowCount());
 		Assert.assertEquals(new BigInteger("1"),table.getValue(0,"version"));
@@ -364,7 +364,7 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		
 		 IDatabaseConnection c = getConnection();	
 		 ITable  table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
-		Assert.assertEquals(4,table.getRowCount());
+		Assert.assertEquals(5,table.getRowCount());
 		table = 	c.createQueryTable("EXPECTED","SELECT p.idprotocol,p.version,filename,pa.iduser,status from protocol p join protocol_authors pa where pa.idprotocol=p.idprotocol and p.version=pa.version and p.idprotocol>2 order by pa.iduser");
 		Assert.assertEquals(2,table.getRowCount());
 		Assert.assertEquals(new BigInteger("1"),table.getValue(0,"version"));
@@ -457,7 +457,7 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
-		Assert.assertEquals(3,table.getRowCount());
+		Assert.assertEquals(4,table.getRowCount());
 		c.close();
 
 		RemoteTask task = testAsyncPoll(uri,
@@ -494,7 +494,7 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
-		Assert.assertEquals(3,table.getRowCount());
+		Assert.assertEquals(4,table.getRowCount());
 		c.close();
 
 		RemoteTask task = testAsyncPoll(new Reference(uri),MediaType.TEXT_URI_LIST, rep,Method.PUT);
@@ -511,7 +511,7 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		
 		c = getConnection();	
 		table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
-		Assert.assertEquals(3,table.getRowCount());
+		Assert.assertEquals(4,table.getRowCount());
 		table = 	c.createQueryTable("EXPECTED","SELECT published from protocol where idprotocol=2 and version=1 and published=true");
 		Assert.assertEquals(1,table.getRowCount());
 		c.close();
