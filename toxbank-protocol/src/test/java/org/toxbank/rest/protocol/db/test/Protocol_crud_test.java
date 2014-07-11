@@ -130,6 +130,20 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 	}
 	
 	@Test
+	public void testDeleteProjects() throws Exception {
+		DBProtocol ref = new DBProtocol(1,1);
+		//don't add any project
+		IQueryUpdate<Object,DBProtocol> query = new UpdateProjectMembership(ref);
+		setUpDatabase(dbFile);
+		IDatabaseConnection c = getConnection();
+		executor.setConnection(c.getConnection());
+		executor.open();
+		Assert.assertTrue(executor.process(query)>=1);
+		updateProjectVerify(query,0);
+		c.close();
+	}
+	
+	@Test
 	public void testAddProjects() throws Exception {
 		IQueryUpdate<Object,DBProtocol> query = addProjectsQuery();
 		setUpDatabase(dbFile);
@@ -137,7 +151,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 		executor.setConnection(c.getConnection());
 		executor.open();
 		Assert.assertTrue(executor.process(query)>=1);
-		updateProjectVerify(query);
+		updateProjectVerify(query,1);
 		c.close();
 	}
 	
@@ -147,11 +161,11 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 
 		return new UpdateProjectMembership(ref);
 	}
-	protected void updateProjectVerify(IQueryUpdate<Object,DBProtocol> query)
+	protected void updateProjectVerify(IQueryUpdate<Object,DBProtocol> query, int expected)
 			throws Exception {
         IDatabaseConnection c = getConnection();	
 		ITable table = 	c.createQueryTable("EXPECTED","SELECT idprotocol,version,idproject FROM protocol_projects where idprotocol=1");
-		Assert.assertEquals(1,table.getRowCount());
+		Assert.assertEquals(expected,table.getRowCount());
 		c.close();
 	}
 

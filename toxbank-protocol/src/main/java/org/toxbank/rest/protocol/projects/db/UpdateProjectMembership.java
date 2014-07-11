@@ -55,6 +55,10 @@ public class UpdateProjectMembership extends AbstractObjectUpdate<DBProtocol> {
 	}
 
 	public String[] getSQL() throws AmbitException {
+		//do not update projects if none submitted
+		if (getObject().getProjects()==null || getObject().getProjects().size()==0)
+			return new String[] {deleteProject.getSQL()[0]};
+		
 		StringBuilder b = new StringBuilder();
 		b.append(AddProject.sql_addProject);
 		if (getObject()==null || getObject().getID()<=0) throw new InvalidProtocolException();

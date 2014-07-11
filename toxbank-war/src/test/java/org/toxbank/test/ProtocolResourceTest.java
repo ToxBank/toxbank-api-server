@@ -359,6 +359,38 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		Assert.assertEquals(2,table.getRowCount());
 		c.close();
 	}
+	
+	@Test
+	public void testUpdateEntryFromMultipartWeb_noproject() throws Exception {
+		String uri = String.format("http://localhost:%d%s/%s-2-1", port,Resources.protocol,STATUS.RESEARCH.getPrefix());
+		IDatabaseConnection c = getConnection();	
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT idprotocol,version,iduser from protocol_authors p where p.idprotocol=2 and version=1");
+		Assert.assertEquals(1,table.getRowCount());
+		Assert.assertEquals(new BigInteger("3"),table.getValue(0,"iduser"));
+		//2 projects
+		table = 	c.createQueryTable("EXPECTED","SELECT idprotocol,version,idproject from protocol_projects p where p.idprotocol=2 and version=1 order by idproject");
+		Assert.assertEquals(1,table.getRowCount());
+		
+		c.close();
+
+		createEntryFromMultipartWeb(new Reference(uri),Method.PUT,true);
+		
+		c = getConnection();	
+		table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol");
+		Assert.assertEquals(4,table.getRowCount());
+		table = 	c.createQueryTable("EXPECTED","SELECT p.idprotocol,p.version,published from protocol p where p.idprotocol=2 and version=1");
+		Assert.assertEquals(1,table.getRowCount());
+		Assert.assertEquals(Boolean.TRUE,table.getValue(0,"published"));
+		table = 	c.createQueryTable("EXPECTED","SELECT idprotocol,version,iduser from protocol_authors p where p.idprotocol=2 and version=1 order by iduser");
+		Assert.assertEquals(2,table.getRowCount());
+		Assert.assertEquals(new BigInteger("1"),table.getValue(0,"iduser"));
+		Assert.assertEquals(new BigInteger("2"),table.getValue(1,"iduser"));
+		
+		table = 	c.createQueryTable("EXPECTED","SELECT idprotocol,version,idproject from protocol_projects p where p.idprotocol=2 and version=1 order by idproject");
+		Assert.assertEquals(0,table.getRowCount());
+		c.close();
+	}
+	
 	@Test
 	public void testCreateVersionEntryFromMultipartWeb() throws Exception {
 		String url =createEntryFromMultipartWeb(new Reference(getTestURI()+Resources.versions));
@@ -401,10 +433,14 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		Assert.assertEquals(2,table.getRowCount());
 		c.close();
 	}
+	
 	public String createEntryFromMultipartWeb(Reference uri) throws Exception {
 		return createEntryFromMultipartWeb(uri,Method.POST);
 	}
 	public String createEntryFromMultipartWeb(Reference uri,Method method) throws Exception {
+		return createEntryFromMultipartWeb(uri,method,false);
+	}
+	public String createEntryFromMultipartWeb(Reference uri,Method method,boolean noProject) throws Exception {
 		URL url = getClass().getClassLoader().getResource("org/toxbank/protocol/protocol-sample.pdf");
 		File file = new File(url.getFile());
 		
@@ -422,7 +458,8 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 			}
 			*/
 			case project_uri: {
-				values[i] = String.format("http://localhost:%d%s/%s",port,Resources.project,"G1");
+				if (noProject) values[i] = null;
+				else values[i] = String.format("http://localhost:%d%s/%s",port,Resources.project,"G1");
 				break;
 			}
 			case organisation_uri: {
@@ -471,8 +508,13 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		values[i+1] = null;
 		names[i+1] = ReadProtocol.fields.author_uri.name();
 		//second project
-		values[i+2] = String.format("http://localhost:%d%s/%s",port,Resources.project,"G2");
-		names[i+2] = ReadProtocol.fields.project_uri.name();
+		if (noProject)  {
+			values[i+2] = null;
+			names[i+2] = null;//ReadProtocol.fields.project_uri.name();
+		} else {	
+			values[i+2] = String.format("http://localhost:%d%s/%s",port,Resources.project,"G2");
+			names[i+2] = ReadProtocol.fields.project_uri.name();
+		}
 		
 		Representation rep = getMultipartWebFormRepresentation(names,values,file,MediaType.APPLICATION_PDF.toString());
 		

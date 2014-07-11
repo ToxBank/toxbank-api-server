@@ -327,9 +327,19 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 			newProtocol.setVersion(protocol.getVersion());
 			newProtocol.setIdentifier(null);
 			if (newProtocol.getProjects() != null) 
-				for (Project project: newProtocol.getProjects()) {
-					DBProject p = (DBProject) project;
-					p.setID(p.parseURI(baseReference));
+				for (int i= newProtocol.getProjects().size()-1; i >=0; i --) {
+					DBProject p = (DBProject) newProtocol.getProjects().get(i);
+					if (p.getResourceURL()==null) {
+						newProtocol.getProjects().remove(i);
+						continue;
+					}
+					try {
+						p.setID(p.parseURI(baseReference));
+						if (p.getID()<=0)
+							newProtocol.getProjects().remove(i);
+					} catch (Exception x) {
+						newProtocol.getProjects().remove(i);
+					}
 				}
 			if (newProtocol.getOrganisation() != null) {
 				DBOrganisation p = (DBOrganisation) newProtocol.getOrganisation();
