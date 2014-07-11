@@ -170,6 +170,27 @@ public class ProtocolResourceTest extends ProtectedResourceTest {
 		Assert.assertEquals(0,table.getRowCount());
 		c.close();			
 	}
+	
+	@Test
+	public void testDeleteProtocolWithoutProjects() throws Exception {
+		IDatabaseConnection c = getConnection();	
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT idprotocol,version FROM protocol where idprotocol=3 and version=1");
+		Assert.assertEquals(new BigInteger("3"),table.getValue(0,"idprotocol"));
+		table = 	c.createQueryTable("EXPECTED","SELECT idprotocol,version FROM protocol join protocol_projects using(idprotocol,version) where idprotocol=3 and version=1");
+		Assert.assertEquals(0,table.getRowCount());
+		
+		c.close();		
+		String org = String.format("http://localhost:%d%s/%s-3-1", port,Resources.protocol,STATUS.RESEARCH.getPrefix());
+		RemoteTask task = testAsyncPoll(new Reference(org),
+				MediaType.TEXT_URI_LIST, null,
+				Method.DELETE);
+		Assert.assertEquals(Status.SUCCESS_OK, task.getStatus());
+		//Assert.assertNull(task.getResult());
+		c = getConnection();	
+		table = 	c.createQueryTable("EXPECTED","SELECT * FROM protocol where idprotocol=3 and version=1");
+		Assert.assertEquals(0,table.getRowCount());
+		c.close();			
+	}
 	/*
 	@Test
 	public void testCopyEntry() throws Exception {
