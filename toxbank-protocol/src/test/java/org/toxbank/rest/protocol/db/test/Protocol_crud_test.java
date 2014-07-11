@@ -56,6 +56,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 	protected IQueryUpdate<Object,DBProtocol> createQuery() throws Exception {
 		DBProtocol protocol = new DBProtocol();
 		protocol.addProject(new DBProject(2));	
+		protocol.setOrganisation(null);
 		protocol.setID(1);
 		protocol.setVersion(1);
 		protocol.setAbstract("My abstract");
@@ -165,7 +166,7 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 		DBUser user = new DBUser();
 		user.setID(1);
 		ref.setOwner(user);
-		ref.addProject(new DBProject(1));	
+		//ref.addProject(new DBProject(1));	
 		ref.setOrganisation(new DBOrganisation(1));
 		ref.setSearchable(true);
 		ref.setDocument(new Document(new URL(file)));
@@ -192,6 +193,26 @@ public final class Protocol_crud_test  extends CRUDTest<Object,DBProtocol>  {
 				String.format("SELECT idprotocol,version,idproject FROM protocol join protocol_projects using(idprotocol,version) where idprotocol=1 and version=1 and idproject=2"));
 		Assert.assertEquals(0,table.getRowCount());		
 		c.close();		
+	}
+
+	@Test
+	public void testDeleteProtocolWithoutProject() throws Exception {
+		DBProtocol ref = new DBProtocol(3,1);
+		DeleteProtocol query = new DeleteProtocol(ref);
+		
+		setUpDatabase(dbFile);
+		IDatabaseConnection c = getConnection();
+		
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT idprotocol FROM protocol where idprotocol=3 and version=1");
+		Assert.assertEquals(1,table.getRowCount());
+		executor.setConnection(c.getConnection());
+		executor.open();
+		Assert.assertTrue(executor.process(query)>=1);
+		
+		table = 	c.createQueryTable("EXPECTED","SELECT idprotocol FROM protocol where idprotocol=3 and version=1");
+		Assert.assertEquals(0,table.getRowCount());
+		
+		c.close();
 	}
 
 

@@ -17,7 +17,12 @@
   idorganisation="2" filename="C://Users//nina//Downloads//eduard.pdf" updated="1999-01-01 00:00:33.000000000" created="2004-09-17 00:00:30.000000000" published="0"/>
   <protocol idprotocol="2" version="2"  title="My second protocol" abstract="ZZZZZZZZZZZ" 
   iduser="2" summarySearchable="false" 
-  idorganisation="2" filename="C://Users//nina//Downloads//eduard.pdf" updated="2012-01-16 09:30:51.000000000" created="2004-09-17 00:00:30.000000000" published="0"/>  
+  idorganisation="2" filename="C://Users//nina//Downloads//eduard.pdf" updated="2012-01-16 09:30:51.000000000" created="2004-09-17 00:00:30.000000000" published="0"/>
+  
+  <protocol idprotocol="3" version="1" title="Protocol without assigned projects." 
+  iduser="1" summarySearchable="true" 
+  idorganisation="1" filename="some.pdf" 
+  template="http://example.com/protocol/P1/dataTemplate" updated="2014-09-17 00:00:30.000000000" created="2014-09-17 00:00:30.000000000" published="1"/>  
   <keywords idprotocol="2" version="1" keywords="one;two;three" />
   <keywords idprotocol="2" version="2" keywords="one;two;four" />
   <!-- 	yyyy-mm-dd hh:mm:ss.fffffffff -->
