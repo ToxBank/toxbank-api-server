@@ -21,7 +21,6 @@ import net.toxbank.client.policy.GroupPolicyRule;
 import net.toxbank.client.policy.PolicyRule;
 import net.toxbank.client.policy.UserPolicyRule;
 import net.toxbank.client.resource.Group;
-import net.toxbank.client.resource.Project;
 import net.toxbank.client.resource.User;
 
 import org.apache.commons.fileupload.FileItem;
@@ -40,6 +39,7 @@ import org.toxbank.rest.policy.SimpleAccessRights;
 import org.toxbank.rest.protocol.db.CreateProtocol;
 import org.toxbank.rest.protocol.db.CreateProtocolVersion;
 import org.toxbank.rest.protocol.db.DeleteProtocol;
+import org.toxbank.rest.protocol.db.PublishProtocol;
 import org.toxbank.rest.protocol.db.UpdateKeywords;
 import org.toxbank.rest.protocol.db.UpdateProtocol;
 import org.toxbank.rest.protocol.db.template.UpdateDataTemplate;
@@ -54,7 +54,7 @@ import org.toxbank.rest.user.db.ReadUser;
 
 public class CallableProtocolUpload extends CallableProtectedTask<String> {
 	private final static Logger LOGGER = Logger.getLogger(CallableProtocolUpload.class.getName());
-	public enum UpdateMode {create,update,dataTemplateOnly,createversion}
+	public enum UpdateMode {create,update,dataTemplateOnly,createversion,publication}
 	protected List<FileItem> input;
 	protected ProtocolQueryURIReporter reporter;
 	protected Connection connection;
@@ -165,6 +165,32 @@ public class CallableProtocolUpload extends CallableProtectedTask<String> {
 		}
 		//now write
 		switch (updateMode) {
+		case publication: {
+			try {
+				connection.setAutoCommit(false);
+					//protocol.setOwner(user);
+				exec = new UpdateExecutor<IQueryUpdate>();
+				exec.setConnection(connection);					
+				PublishProtocol k = new PublishProtocol(protocol);
+				exec.process(k);
+				connection.commit();
+				String uri = reporter.getURI(protocol);
+				return new TaskResult(uri,false);
+			} catch (ProcessorException x) {
+				try {connection.rollback();} catch (Exception xx) {}
+				throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,x);
+			} catch (ResourceException x) {
+				try {connection.rollback();} catch (Exception xx) {}
+				throw x;
+			} catch (Exception x) {
+				try {connection.rollback();} catch (Exception xx) {}
+				throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x);
+			} finally {
+				try {exec.close();} catch (Exception x) {}
+				try {connection.setAutoCommit(true);} catch (Exception x) {}
+				try {connection.close();} catch (Exception x) {}
+			}
+		}
 		case dataTemplateOnly:  {
 			try {
 				if ((protocol.getDataTemplate()!=null) && protocol.getDataTemplate().getResourceURL().toString().startsWith("file:")) {

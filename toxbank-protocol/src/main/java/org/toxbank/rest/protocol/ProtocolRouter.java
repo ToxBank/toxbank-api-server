@@ -8,6 +8,7 @@ import org.toxbank.rest.FileResource;
 import org.toxbank.rest.protocol.resource.db.ProtocolDBResource;
 import org.toxbank.rest.protocol.resource.db.ProtocolDocumentResource;
 import org.toxbank.rest.protocol.resource.db.ProtocolPreviousVersionDBResource;
+import org.toxbank.rest.protocol.resource.db.ProtocolPublicationResource;
 import org.toxbank.rest.protocol.resource.db.ProtocolVersionDBResource;
 import org.toxbank.rest.protocol.resource.db.template.DataTemplateResource;
 import org.toxbank.rest.user.author.resource.ProtocolAuthorsResource;
@@ -21,6 +22,8 @@ public class ProtocolRouter extends MyRouter {
 		attach(String.format("/{%s}%s",FileResource.resourceKey,Resources.versions), ProtocolVersionDBResource.class);
 		attach(String.format("/{%s}%s",FileResource.resourceKey,Resources.authors), ProtocolAuthorsResource.class);
 		attach(String.format("/{%s}%s",FileResource.resourceKey,Resources.datatemplate), DataTemplateResource.class);
+		attach(String.format("/{%s}%s",FileResource.resourceKey,Resources.publication), ProtocolPublicationResource.class);
+		
 		
 		attach(String.format("/{%s}%s",FileResource.resourceKey,Resources.previous), ProtocolPreviousVersionDBResource.class);
 		

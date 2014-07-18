@@ -10,7 +10,6 @@ import java.net.URL;
 
 import junit.framework.Assert;
 import net.toxbank.client.Resources;
-import net.toxbank.client.resource.Protocol;
 import net.toxbank.client.resource.Protocol.STATUS;
 
 import org.dbunit.database.IDatabaseConnection;

@@ -63,7 +63,8 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 		Template template3 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.protocol,FileResource.resourceKey,Resources.versions));
 		Template template4 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.protocol,FileResource.resourceKey,Resources.previous));
 		Template template5 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.protocol,FileResource.resourceKey,Resources.document));
-		Template template6 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.protocol,FileResource.resourceKey,Resources.datatemplate));
+		Template template6 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.protocol,FileResource.resourceKey,Resources.publication));
+		Template template7 = new Template(String.format("%s%s/{%s}%s",request.getRootRef(),Resources.protocol,FileResource.resourceKey,Resources.datatemplate));
 		Map<String, Object> vars = new HashMap<String, Object>();
 		Reference ref = request.getResourceRef().clone();
 		ref.setQuery(null);
@@ -73,6 +74,7 @@ public class ProtocolAuthorizer  extends OpenSSOAuthorizer {
 		template4.parse(ref.toString(),vars);
 		template5.parse(ref.toString(),vars);
 		template6.parse(ref.toString(),vars);
+		template7.parse(ref.toString(),vars);
 
 		/**
 		 * Try if there is a protocol identifier, or this is a top level query, in the later case, try the OpenSSO AA
