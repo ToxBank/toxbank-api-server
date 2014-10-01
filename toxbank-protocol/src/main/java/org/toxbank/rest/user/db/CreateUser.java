@@ -10,16 +10,13 @@ import net.idea.modbcum.q.update.AbstractObjectUpdate;
 import org.toxbank.rest.user.DBUser;
 
 public class CreateUser extends AbstractObjectUpdate<DBUser>{
-
+	private static final String[] sql = {"insert into user (iduser,username,title,firstname,lastname,weblog,homepage,email) values (?,?,?,?,?,?,?,?)"};
 	public CreateUser(DBUser user) {
 		setObject(user);
 	}
 	@Override
 	public String[] getSQL() throws AmbitException {
-		return new String[] {
-				"insert into user (iduser,username,title,firstname,lastname,weblog,homepage,email) " +
-				"values (?,?,?,?,?,?,?,?)"
-				};
+		return sql;
 	}
 
 	@Override

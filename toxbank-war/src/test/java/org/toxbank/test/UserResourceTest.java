@@ -96,6 +96,34 @@ public class UserResourceTest extends ResourceTest {
 
 		return o;
 	}
+	@Test
+	public void testUpdateUserEmail() throws Exception {
+		Form form = new Form();
+		form.add(ReadUser.fields.email.name(),"email@example.com");
+
+		IDatabaseConnection c = getConnection();	
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT * FROM user");
+		Assert.assertEquals(4,table.getRowCount());
+		c.close();
+
+		RemoteTask task = testAsyncPoll(new Reference(String.format("http://localhost:%d%s/U2", port,
+				Resources.user)),
+				MediaType.TEXT_URI_LIST, form.getWebRepresentation(),
+				Method.PUT);
+		//wait to complete
+		while (!task.isDone()) {
+			task.poll();
+			Thread.sleep(100);
+			Thread.yield();
+		}
+		Assert.assertTrue(task.getResult().toString().startsWith(String.format("http://localhost:%d/user/U",port)));
+
+        c = getConnection();	
+		table = 	c.createQueryTable("EXPECTED","SELECT email FROM user where iduser=2");
+		Assert.assertEquals("email@example.com",table.getValue(0,"email"));
+		c.close();
+
+	}	
 	
 	@Test
 	public void testCreateUserFromName() throws Exception {

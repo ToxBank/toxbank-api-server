@@ -79,14 +79,11 @@ public final class User_crud_test  extends CRUDTest<Object,DBUser>  {
 		
 	}
 
-	@Override
-	public void testUpdate() throws Exception {
-		//TODO Not implemented
-	}
+
 	@Override
 	protected IQueryUpdate<Object,DBUser> updateQuery() throws Exception {
 		DBUser ref = new DBUser();
-		ref.setLastname("NEW");
+		ref.setEmail("new@example.com");
 		ref.setID(2);
 
 		return new UpdateUser(ref);
@@ -96,10 +93,10 @@ public final class User_crud_test  extends CRUDTest<Object,DBUser>  {
 	protected void updateVerify(IQueryUpdate<Object,DBUser> query)
 			throws Exception {
         IDatabaseConnection c = getConnection();	
-		ITable table = 	c.createQueryTable("EXPECTED","SELECT lastname FROM user where iduser=3");
+		ITable table = 	c.createQueryTable("EXPECTED","SELECT email FROM user where iduser=2");
 		Assert.assertEquals(1,table.getRowCount());
 
-		Assert.assertEquals("NEW",table.getValue(0,"lastname"));
+		Assert.assertEquals("new@example.com",table.getValue(0,"email"));
 		
 		c.close();
 		

@@ -38,31 +38,42 @@ public class CallableUserCreator extends CallableDBUpdateTask<DBUser,Form,String
 	protected DBUser getTarget(Form input) throws Exception {
 		if (input==null) return user;
 		
-		DBUser user = new DBUser();
-		user.setUserName(input.getFirstValue(ReadUser.fields.username.name()));
-		user.setFirstname(input.getFirstValue(ReadUser.fields.firstname.name()));
-		user.setLastname(input.getFirstValue(ReadUser.fields.lastname.name()));
-		user.setTitle(input.getFirstValue(ReadUser.fields.title.name()));
-		try {user.setHomepage(new URL(input.getFirstValue(ReadUser.fields.homepage.name()))); } catch (Exception x) {}
-		try {user.setWeblog(new URL(input.getFirstValue(ReadUser.fields.weblog.name())));} catch (Exception x) {}
+		DBUser user = null;
 		
-		String[] values = input.getValuesArray("organisation_uri");
-		if (values != null)
-			for (String value:values) try { 
-				DBOrganisation org = new DBOrganisation();
-				org.setResourceURL(new URL(value));
-				org.setID(org.parseURI(baseReference));
-				if (org.getID()>0) user.addOrganisation(org);
-			} catch (Exception x) {}
+		if (method.equals(Method.PUT)) {
+			user = this.user;
+			try {user.setEmail(input.getFirstValue(ReadUser.fields.email.name()));} catch (Exception x) {}
+		} else {
+			user = new DBUser();
+			user.setUserName(input.getFirstValue(ReadUser.fields.username.name()));
+			user.setFirstname(input.getFirstValue(ReadUser.fields.firstname.name()));
+			user.setLastname(input.getFirstValue(ReadUser.fields.lastname.name()));
+			user.setTitle(input.getFirstValue(ReadUser.fields.title.name()));
+			try {user.setEmail(input.getFirstValue(ReadUser.fields.email.name()));} catch (Exception x) {}
+			try {user.setHomepage(new URL(input.getFirstValue(ReadUser.fields.homepage.name()))); } catch (Exception x) {}
+			try {user.setWeblog(new URL(input.getFirstValue(ReadUser.fields.weblog.name())));} catch (Exception x) {}
+			
+			String[] values = input.getValuesArray("organisation_uri");
+			if (values != null)
+				for (String value:values) try { 
+					DBOrganisation org = new DBOrganisation();
+					org.setResourceURL(new URL(value));
+					org.setID(org.parseURI(baseReference));
+					if (org.getID()>0) user.addOrganisation(org);
+				} catch (Exception x) {}
 
-		values = input.getValuesArray("project_uri");	
-		if (values != null)
-			for (String value:values) try { 
-				DBProject org = new DBProject();
-				org.setResourceURL(new URL(value));
-				org.setID(org.parseURI(baseReference));
-				if (org.getID()>0) user.addProject(org);
-			} catch (Exception x) {}		
+			values = input.getValuesArray("project_uri");	
+			if (values != null)
+				for (String value:values) try { 
+					DBProject org = new DBProject();
+					org.setResourceURL(new URL(value));
+					org.setID(org.parseURI(baseReference));
+					if (org.getID()>0) user.addProject(org);
+				} catch (Exception x) {}		
+							
+		}
+
+
  		return user;
 	}
 
@@ -94,7 +105,7 @@ public class CallableUserCreator extends CallableDBUpdateTask<DBUser,Form,String
 				AddGroupsPerUser q = new AddGroupsPerUser(user,user.getProjects());
 				exec.process(q);
 			}			
-		}
+		} 
 		return result;
 	}
 

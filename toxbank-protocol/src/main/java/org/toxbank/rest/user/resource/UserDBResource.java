@@ -115,6 +115,8 @@ public class UserDBResource<T>	extends QueryResource<ReadUser<T>,DBUser> {
 			} else throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
 		}		
 	}
+	
+	
 	@Override
 	protected ReadUser createQuery(Context context, Request request, Response response)
 			throws ResourceException {
@@ -148,7 +150,7 @@ public class UserDBResource<T>	extends QueryResource<ReadUser<T>,DBUser> {
 		} catch (Exception x) {
 			throw new ResourceException(
 					Status.CLIENT_ERROR_BAD_REQUEST,
-					String.format("Invalid protocol id %d",key),
+					String.format("Invalid user id %d",key),
 					x
 					);
 		}
@@ -191,7 +193,20 @@ public class UserDBResource<T>	extends QueryResource<ReadUser<T>,DBUser> {
 		if (Method.POST.equals(method)) {
 			if (key==null) return null;//post allowed only on /user level, not on /user/id
 		} else {
-			if (key!=null) return super.createUpdateQuery(method, context, request, response);
+			if (key!=null)  {
+	
+				try {
+					return getUserQuery(key,null,null);
+				}catch (ResourceException x) {
+					throw x;
+				} catch (Exception x) {
+					throw new ResourceException(
+							Status.CLIENT_ERROR_BAD_REQUEST,
+							String.format("Invalid user id %d",key),
+							x
+							);
+				}				
+			}
 		}
 		throw new ResourceException(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
 	}
