@@ -4,11 +4,11 @@
   <parent>
     <artifactId>toxbank-rest</artifactId>
     <groupId>org.toxbank</groupId>
-    <version>0.0.6-SNAPSHOT</version>
+    <version>0.0.6</version>
   </parent>
   <groupId>org.toxbank</groupId>
   <artifactId>toxbank-war</artifactId>
-  <version>0.0.6-SNAPSHOT</version>
+  <version>0.0.6</version>
   <packaging>war</packaging>
   <name>ToxBank Web REST services</name>
   <scm>
